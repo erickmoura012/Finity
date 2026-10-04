@@ -12,8 +12,9 @@ const PRIORIDADES = {
   baixa: 'Baixa'
 };
 
-// As categorias também aparecem como "projetos" na página Meus projetos
-const CATEGORIAS = [
+// As categorias aparecem como "projetos" na página Meus projetos.
+// Essas são as que já vêm no sistema, as novas são criadas pelo usuário.
+const CATEGORIAS_PADRAO = [
   { nome: 'Desenvolvimento', icone: 'bx-code-alt' },
   { nome: 'Design', icone: 'bx-palette' },
   { nome: 'Marketing', icone: 'bx-trending-up' },
@@ -67,6 +68,21 @@ function validarTarefa(dados) {
   }
   if (!STATUS[dados.status]) {
     return 'Status inválido.';
+  }
+  return '';
+}
+
+function validarProjeto(nome, categorias) {
+  if (!nome) {
+    return 'Informe o nome do projeto.';
+  }
+  if (nome.length < 2) {
+    return 'O nome precisa ter pelo menos 2 caracteres.';
+  }
+
+  const jaExiste = categorias.some(c => c.nome.toLowerCase() === nome.toLowerCase());
+  if (jaExiste) {
+    return 'Já existe um projeto com esse nome.';
   }
   return '';
 }

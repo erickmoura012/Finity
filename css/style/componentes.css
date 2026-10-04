@@ -412,6 +412,12 @@
   font-size: 21px;
 }
 
+.projeto-topo-direita {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .projeto-total {
   font-size: 12px;
   color: var(--cor-texto-claro);
@@ -421,6 +427,7 @@
   margin-bottom: 6px;
   font-size: 16px;
   font-weight: 600;
+  word-break: break-word;
 }
 
 .projeto-numeros {

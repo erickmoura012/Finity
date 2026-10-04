@@ -1,7 +1,9 @@
 // Arquivo principal: guarda o estado da página e liga os eventos
 
 let tarefas = [];
+let categorias = [];
 let idParaExcluir = null;
+let paginaAtual = 'dashboard';
 
 const filtros = {
   busca: '',
@@ -31,22 +33,23 @@ const paginas = {
 document.addEventListener('DOMContentLoaded', iniciar);
 
 function iniciar() {
-  preencherCategorias();
   configurarMenu();
   configurarFiltros();
   configurarModais();
   configurarCliques();
   configurarDragAndDrop();
-  carregarTarefas();
+  carregarDados();
 }
 
-async function carregarTarefas() {
+async function carregarDados() {
   try {
+    categorias = await listarCategorias();
     tarefas = await listarTarefas();
+    preencherCategorias(categorias);
     atualizarTela();
   } catch (erro) {
     console.error(erro);
-    mostrarToast('Não foi possível carregar as tarefas', 'erro');
+    mostrarToast('Não foi possível carregar os dados', 'erro');
   }
 }
 
@@ -59,7 +62,7 @@ function atualizarTela() {
   renderizarQuadro(filtradas);
   renderizarTabela(filtradas, 'listaTarefas', 'Nenhuma tarefa encontrada.');
   renderizarTabela(concluidas, 'listaConcluidas', 'Nenhuma tarefa concluída por enquanto.');
-  renderizarProjetos(tarefas);
+  renderizarProjetos(tarefas, categorias);
 }
 
 // ---------- Navegação ----------
@@ -78,6 +81,8 @@ function configurarMenu() {
 }
 
 function mudarPagina(nome) {
+  paginaAtual = nome;
+
   document.querySelectorAll('.pagina').forEach(p => p.classList.remove('ativa'));
   document.getElementById('pagina-' + nome).classList.add('ativa');
 
@@ -90,6 +95,10 @@ function mudarPagina(nome) {
 
   // na página de projetos os filtros não fazem sentido
   document.getElementById('filtros').classList.toggle('escondido', nome === 'projetos');
+
+  // o botão do topo cria projeto na página de projetos e tarefa nas outras
+  document.querySelector('#btnAdicionar span').textContent =
+    nome === 'projetos' ? 'Novo projeto' : 'Nova tarefa';
 }
 
 function abrirMenuCelular() {
@@ -158,7 +167,7 @@ function configurarCliques() {
     if (botao) {
       const acao = botao.dataset.acao;
 
-      if (acao === 'nova') abrirModalNovaTarefa(botao.dataset.status);
+      if (acao === 'nova') abrirModalNovaTarefa(botao.dataset.status, botao.dataset.categoria);
       if (acao === 'editar') abrirModalEdicao(botao.dataset.id);
       if (acao === 'excluir') abrirModalExclusao(botao.dataset.id);
       return;
@@ -176,8 +185,12 @@ function configurarCliques() {
     }
   });
 
-  document.getElementById('btnNovaTarefa').addEventListener('click', function () {
-    abrirModalNovaTarefa('a_fazer');
+  document.getElementById('btnAdicionar').addEventListener('click', function () {
+    if (paginaAtual === 'projetos') {
+      abrirModalNovoProjeto();
+    } else {
+      abrirModalNovaTarefa('a_fazer');
+    }
   });
 }
 
@@ -185,6 +198,7 @@ function configurarCliques() {
 
 function configurarModais() {
   document.getElementById('formTarefa').addEventListener('submit', salvarFormulario);
+  document.getElementById('formProjeto').addEventListener('submit', salvarProjeto);
   document.getElementById('btnConfirmarExclusao').addEventListener('click', confirmarExclusao);
 
   // botões de fechar e cancelar
@@ -205,6 +219,7 @@ function configurarModais() {
   document.addEventListener('keydown', function (evento) {
     if (evento.key === 'Escape') {
       fecharModal('modalTarefa');
+      fecharModal('modalProjeto');
       fecharModal('modalExcluir');
     }
   });
@@ -215,7 +230,7 @@ function limparErroFormulario() {
   document.querySelectorAll('#formTarefa .input').forEach(c => c.classList.remove('invalido'));
 }
 
-function abrirModalNovaTarefa(status) {
+function abrirModalNovaTarefa(status, categoria) {
   document.getElementById('formTarefa').reset();
   limparErroFormulario();
 
@@ -228,8 +243,10 @@ function abrirModalNovaTarefa(status) {
   document.getElementById('campoStatus').value = status || 'a_fazer';
   document.getElementById('campoDataLimite').value = dataDeHoje();
 
-  // se tiver filtro de categoria, já deixa ela selecionada
-  if (filtros.categoria) {
+  // se veio de um projeto ou tem filtro de categoria, já deixa ela selecionada
+  if (categoria) {
+    document.getElementById('campoCategoria').value = categoria;
+  } else if (filtros.categoria) {
     document.getElementById('campoCategoria').value = filtros.categoria;
   }
 
@@ -301,7 +318,7 @@ async function salvarFormulario(evento) {
     }
 
     fecharModal('modalTarefa');
-    await carregarTarefas();
+    await carregarDados();
   } catch (erro) {
     console.error(erro);
     mostrarToast('Erro ao salvar a tarefa', 'erro');
@@ -327,10 +344,47 @@ async function confirmarExclusao() {
     idParaExcluir = null;
     fecharModal('modalExcluir');
     mostrarToast('Tarefa excluída');
-    await carregarTarefas();
+    await carregarDados();
   } catch (erro) {
     console.error(erro);
     mostrarToast('Erro ao excluir a tarefa', 'erro');
+  }
+}
+
+// ---------- Novo projeto ----------
+
+function abrirModalNovoProjeto() {
+  document.getElementById('formProjeto').reset();
+  document.getElementById('formProjetoErro').classList.remove('visivel');
+  document.getElementById('campoNomeProjeto').classList.remove('invalido');
+
+  abrirModal('modalProjeto');
+  document.getElementById('campoNomeProjeto').focus();
+}
+
+async function salvarProjeto(evento) {
+  evento.preventDefault();
+
+  const campoNome = document.getElementById('campoNomeProjeto');
+  const nome = campoNome.value.trim();
+  const erro = validarProjeto(nome, categorias);
+
+  if (erro) {
+    const campoErro = document.getElementById('formProjetoErro');
+    campoErro.textContent = erro;
+    campoErro.classList.add('visivel');
+    campoNome.classList.add('invalido');
+    return;
+  }
+
+  try {
+    await criarCategoria(nome);
+    fecharModal('modalProjeto');
+    mostrarToast('Projeto criado com sucesso');
+    await carregarDados();
+  } catch (erro) {
+    console.error(erro);
+    mostrarToast('Erro ao criar o projeto', 'erro');
   }
 }
 
@@ -384,7 +438,7 @@ async function moverTarefa(id, novoStatus) {
 
   try {
     await atualizarTarefa(id, { status: novoStatus });
-    await carregarTarefas();
+    await carregarDados();
     mostrarToast('Tarefa movida para "' + STATUS[novoStatus] + '"');
   } catch (erro) {
     console.error(erro);

@@ -7,33 +7,34 @@
 // trocar o que tem dentro dessas funções por chamadas fetch() para a API.
 // Como as funções já são async, o resto do código não vai precisar mudar.
 
-const CHAVE_STORAGE = 'finity_tarefas';
+const CHAVE_TAREFAS = 'finity_tarefas';
+const CHAVE_CATEGORIAS = 'finity_categorias';
 // const API_URL = 'http://localhost:3000/api';
 
-function lerStorage() {
-  const dados = localStorage.getItem(CHAVE_STORAGE);
+function lerStorage(chave) {
+  const dados = localStorage.getItem(chave);
   if (!dados) return null;
 
   try {
     return JSON.parse(dados);
   } catch (erro) {
-    console.error('Erro ao ler as tarefas salvas', erro);
+    console.error('Erro ao ler os dados salvos', erro);
     return [];
   }
 }
 
-function gravarStorage(tarefas) {
-  localStorage.setItem(CHAVE_STORAGE, JSON.stringify(tarefas));
+function gravarStorage(chave, dados) {
+  localStorage.setItem(chave, JSON.stringify(dados));
 }
 
 // GET /api/tarefas
 async function listarTarefas() {
-  let tarefas = lerStorage();
+  let tarefas = lerStorage(CHAVE_TAREFAS);
 
   // primeira vez abrindo o sistema: cria algumas tarefas de exemplo
   if (tarefas === null) {
     tarefas = tarefasDeExemplo();
-    gravarStorage(tarefas);
+    gravarStorage(CHAVE_TAREFAS, tarefas);
   }
 
   return tarefas;
@@ -55,7 +56,7 @@ async function criarTarefa(dados) {
   };
 
   tarefas.push(novaTarefa);
-  gravarStorage(tarefas);
+  gravarStorage(CHAVE_TAREFAS, tarefas);
   return novaTarefa;
 }
 
@@ -76,7 +77,7 @@ async function atualizarTarefa(id, dados) {
     dataCriacao: tarefas[indice].dataCriacao
   };
 
-  gravarStorage(tarefas);
+  gravarStorage(CHAVE_TAREFAS, tarefas);
   return tarefas[indice];
 }
 
@@ -84,7 +85,32 @@ async function atualizarTarefa(id, dados) {
 async function excluirTarefa(id) {
   const tarefas = await listarTarefas();
   const restantes = tarefas.filter(t => t.id !== id);
-  gravarStorage(restantes);
+  gravarStorage(CHAVE_TAREFAS, restantes);
+}
+
+// GET /api/categorias
+async function listarCategorias() {
+  let categorias = lerStorage(CHAVE_CATEGORIAS);
+
+  // primeira vez: começa com as categorias padrão
+  if (categorias === null) {
+    categorias = CATEGORIAS_PADRAO;
+    gravarStorage(CHAVE_CATEGORIAS, categorias);
+  }
+
+  return categorias;
+}
+
+// POST /api/categorias
+async function criarCategoria(nome) {
+  const categorias = await listarCategorias();
+
+  // projeto novo usa o ícone de pasta
+  const novaCategoria = { nome: nome, icone: 'bx-folder' };
+
+  categorias.push(novaCategoria);
+  gravarStorage(CHAVE_CATEGORIAS, categorias);
+  return novaCategoria;
 }
 
 // Exemplo de como deve ficar com o backend:

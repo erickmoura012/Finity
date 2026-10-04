@@ -1,9 +1,18 @@
 // Funções que montam o HTML na tela
 
-function preencherCategorias() {
-  const opcoes = CATEGORIAS.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+function preencherCategorias(categorias) {
+  const opcoes = categorias.map(function (c) {
+    const nome = escaparHTML(c.nome);
+    return `<option value="${nome}">${nome}</option>`;
+  }).join('');
 
-  document.getElementById('filtroCategoria').innerHTML += opcoes;
+  // guarda o que estava selecionado no filtro para não perder ao recriar as opções
+  const filtro = document.getElementById('filtroCategoria');
+  const valorAtual = filtro.value;
+
+  filtro.innerHTML = '<option value="">Todas as categorias</option>' + opcoes;
+  filtro.value = valorAtual;
+
   document.getElementById('campoCategoria').innerHTML = opcoes;
 }
 
@@ -114,23 +123,29 @@ function renderizarTabela(tarefas, idCorpo, mensagemVazia) {
 
 // ---------- Meus projetos ----------
 
-function renderizarProjetos(tarefas) {
+function renderizarProjetos(tarefas, categorias) {
   const grade = document.getElementById('gradeProjetos');
 
-  grade.innerHTML = CATEGORIAS.map(function (categoria) {
+  grade.innerHTML = categorias.map(function (categoria) {
     const tarefasDoProjeto = tarefas.filter(t => t.categoria === categoria.nome);
     const contagem = contarTarefas(tarefasDoProjeto);
     const progresso = calcularPorcentagem(contagem.concluidas, contagem.total);
     const textoTotal = contagem.total === 1 ? '1 tarefa' : contagem.total + ' tarefas';
+    const nome = escaparHTML(categoria.nome);
 
     return `
-      <div class="projeto" data-categoria="${categoria.nome}">
+      <div class="projeto" data-categoria="${nome}">
         <div class="projeto-topo">
           <div class="projeto-icone"><i class='bx ${categoria.icone}'></i></div>
-          <span class="projeto-total">${textoTotal}</span>
+          <div class="projeto-topo-direita">
+            <span class="projeto-total">${textoTotal}</span>
+            <button class="btn-icone" data-acao="nova" data-status="a_fazer" data-categoria="${nome}" title="Adicionar tarefa">
+              <i class='bx bx-plus'></i>
+            </button>
+          </div>
         </div>
 
-        <h3>${categoria.nome}</h3>
+        <h3>${nome}</h3>
 
         <div class="projeto-numeros">
           <span>${contagem.pendentes} a fazer</span>

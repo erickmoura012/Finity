@@ -69,7 +69,8 @@
           <p id="subtituloPagina">Acompanhe o andamento das suas tarefas</p>
         </div>
 
-        <button class="btn btn-primario" id="btnNovaTarefa">
+        <!-- vira "Novo projeto" na página Meus projetos -->
+        <button class="btn btn-primario" id="btnAdicionar">
           <i class='bx bx-plus'></i> <span>Nova tarefa</span>
         </button>
       </header>
@@ -295,6 +296,32 @@
           <span class="modal-info" id="infoCriacao"></span>
           <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
           <button type="submit" class="btn btn-primario" id="btnSalvar">Salvar tarefa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de novo projeto -->
+  <div class="modal-fundo" id="modalProjeto">
+    <div class="modal modal-pequeno">
+      <div class="modal-topo">
+        <h2>Novo projeto</h2>
+        <button class="btn-icone" data-fechar title="Fechar"><i class='bx bx-x'></i></button>
+      </div>
+
+      <form id="formProjeto" novalidate>
+        <div class="modal-corpo">
+          <div class="campo">
+            <label for="campoNomeProjeto">Nome do projeto</label>
+            <input type="text" class="input" id="campoNomeProjeto" placeholder="Ex: Faculdade" maxlength="40">
+          </div>
+
+          <p class="form-erro" id="formProjetoErro"></p>
+        </div>
+
+        <div class="modal-rodape">
+          <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+          <button type="submit" class="btn btn-primario">Criar projeto</button>
         </div>
       </form>
     </div>

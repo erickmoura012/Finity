@@ -11,6 +11,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - Filtrar por prioridade e por categoria
 - Indicadores com o total de tarefas, pendentes, em andamento e concluídas
 - Página "Meus projetos", com as tarefas agrupadas por categoria e o progresso de cada uma
+- Criar novos projetos (categorias) e adicionar tarefas direto neles
 - Lista com todas as tarefas e outra só com as concluídas
 - Destaque em vermelho para tarefas atrasadas
 - Layout responsivo (no celular o menu vira uma gaveta e o quadro rola para o lado)
@@ -20,7 +21,8 @@ Os dados ficam salvos no LocalStorage do navegador.
 Basta abrir o `index.html` no navegador. Também dá pra usar a extensão **Live Server** do VS Code.
 
 Na primeira vez que o sistema abre, ele cria algumas tarefas de exemplo. Para começar do zero,
-é só abrir o DevTools (F12) > Application > Local Storage e apagar a chave `finity_tarefas`.
+é só abrir o DevTools (F12) > Application > Local Storage e apagar as chaves `finity_tarefas`
+e `finity_categorias`.
 
 ## Estrutura de pastas
 
@@ -81,5 +83,7 @@ Rotas que pretendo criar:
 | POST   | /api/tarefas       | Cria uma tarefa           |
 | PUT    | /api/tarefas/:id   | Edita uma tarefa          |
 | DELETE | /api/tarefas/:id   | Exclui uma tarefa         |
+| GET    | /api/categorias    | Lista os projetos         |
+| POST   | /api/categorias    | Cria um projeto           |
 | POST   | /api/auth/login    | Login do usuário          |
 | POST   | /api/auth/cadastro | Cadastro de novo usuário  |
