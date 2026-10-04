@@ -1,0 +1,229 @@
+/* ==============================
+   Variáveis
+   ============================== */
+:root {
+  --cor-primaria: #2f6fed;
+  --cor-primaria-escura: #1f5ad6;
+  --cor-primaria-clara: #eaf1fe;
+
+  --cor-fundo: #f4f6fa;
+  --cor-branco: #ffffff;
+  --cor-borda: #e4e7ee;
+  --cor-sidebar: #141b2d;
+
+  --cor-texto: #1c2434;
+  --cor-texto-secundario: #6b7385;
+  --cor-texto-claro: #9aa1b1;
+
+  --verde: #16a34a;
+  --verde-claro: #e8f7ee;
+  --amarelo: #d97706;
+  --amarelo-claro: #fdf3e3;
+  --vermelho: #dc2626;
+  --vermelho-claro: #fdecec;
+  --cinza: #64748b;
+  --cinza-claro: #f0f2f6;
+
+  --sombra: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --sombra-media: 0 6px 16px rgba(16, 24, 40, 0.08);
+
+  --largura-sidebar: 248px;
+}
+
+/* ==============================
+   Reset
+   ============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ==============================
+   Botões
+   ============================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn i {
+  font-size: 18px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primario {
+  background-color: var(--cor-primaria);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(47, 111, 237, 0.3);
+}
+
+.btn-primario:hover {
+  background-color: var(--cor-primaria-escura);
+}
+
+.btn-secundario {
+  background-color: #fff;
+  border: 1px solid var(--cor-borda);
+}
+
+.btn-secundario:hover {
+  background-color: #f7f8fa;
+}
+
+.btn-perigo {
+  background-color: var(--vermelho);
+  color: #fff;
+}
+
+.btn-perigo:hover {
+  background-color: #b91c1c;
+}
+
+.btn-texto {
+  color: var(--cor-texto-secundario);
+  padding: 9px 10px;
+}
+
+.btn-texto:hover {
+  color: var(--cor-texto);
+}
+
+.btn-icone {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 17px;
+  color: var(--cor-texto-claro);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-icone:hover {
+  background-color: var(--cinza-claro);
+  color: var(--cor-texto);
+}
+
+.btn-icone.perigo:hover {
+  background-color: var(--vermelho-claro);
+  color: var(--vermelho);
+}
+
+/* ==============================
+   Campos de formulário
+   ============================== */
+.input {
+  width: 100%;
+  padding: 9px 12px;
+  background-color: #fff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+}
+
+.input.invalido {
+  border-color: var(--vermelho);
+}
+
+textarea.input {
+  min-height: 90px;
+  resize: vertical;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+/* ==============================
+   Tags (prioridade e categoria)
+   ============================== */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.prioridade-alta {
+  background-color: var(--vermelho-claro);
+  color: var(--vermelho);
+}
+
+.prioridade-media {
+  background-color: var(--amarelo-claro);
+  color: var(--amarelo);
+}
+
+.prioridade-baixa {
+  background-color: var(--verde-claro);
+  color: var(--verde);
+}
+
+.tag-categoria {
+  background-color: var(--cinza-claro);
+  color: var(--cor-texto-secundario);
+}
+
+/* ==============================
+   Animações
+   ============================== */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

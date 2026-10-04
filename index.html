@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finity - Gerenciador de tarefas</title>
+
+  <!-- Fonte e ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/style/base.css">
+  <link rel="stylesheet" href="css/style/layout.css">
+  <link rel="stylesheet" href="css/style/componentes.css">
+  <link rel="stylesheet" href="css/style/responsivo.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- Menu lateral -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icone">F</span>
+        <span class="logo-nome">Finity</span>
+      </div>
+
+      <nav class="menu">
+        <p class="menu-titulo">Menu</p>
+        <a href="#" class="menu-item ativo" data-pagina="dashboard">
+          <i class='bx bx-grid-alt'></i> Dashboard
+        </a>
+        <a href="#" class="menu-item" data-pagina="projetos">
+          <i class='bx bx-folder'></i> Meus projetos
+        </a>
+        <a href="#" class="menu-item" data-pagina="tarefas">
+          <i class='bx bx-task'></i> Tarefas
+        </a>
+        <a href="#" class="menu-item" data-pagina="concluidas">
+          <i class='bx bx-check-circle'></i> Concluídas
+        </a>
+      </nav>
+
+      <div class="sidebar-usuario">
+        <div class="avatar"><i class='bx bx-user'></i></div>
+        <div>
+          <p class="usuario-nome">Usuário</p>
+          <p class="usuario-info">Dados salvos no navegador</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Fundo escuro do menu no celular -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Conteúdo principal -->
+    <main class="conteudo">
+
+      <header class="topo">
+        <button class="btn-menu" id="btnMenu" title="Abrir menu">
+          <i class='bx bx-menu'></i>
+        </button>
+
+        <div class="topo-textos">
+          <h1 id="tituloPagina">Dashboard</h1>
+          <p id="subtituloPagina">Acompanhe o andamento das suas tarefas</p>
+        </div>
+
+        <button class="btn btn-primario" id="btnNovaTarefa">
+          <i class='bx bx-plus'></i> <span>Nova tarefa</span>
+        </button>
+      </header>
+
+      <!-- Pesquisa e filtros -->
+      <section class="filtros" id="filtros">
+        <div class="campo-busca">
+          <i class='bx bx-search'></i>
+          <input type="text" class="input" id="busca" placeholder="Pesquisar tarefas...">
+        </div>
+
+        <select class="input" id="filtroPrioridade">
+          <option value="">Todas as prioridades</option>
+          <option value="alta">Alta</option>
+          <option value="media">Média</option>
+          <option value="baixa">Baixa</option>
+        </select>
+
+        <select class="input" id="filtroCategoria">
+          <option value="">Todas as categorias</option>
+          <!-- preenchido pelo JavaScript -->
+        </select>
+
+        <button class="btn btn-texto" id="btnLimparFiltros">
+          <i class='bx bx-x'></i> Limpar
+        </button>
+      </section>
+
+      <!-- Página: Dashboard -->
+      <section class="pagina ativa" id="pagina-dashboard">
+
+        <div class="indicadores">
+          <div class="indicador">
+            <div>
+              <p class="indicador-titulo">Total de tarefas</p>
+              <p class="indicador-numero" id="totalTarefas">0</p>
+              <p class="indicador-info">tarefas cadastradas</p>
+            </div>
+            <div class="indicador-icone icone-azul"><i class='bx bx-layer'></i></div>
+          </div>
+
+          <div class="indicador">
+            <div>
+              <p class="indicador-titulo">Pendentes</p>
+              <p class="indicador-numero" id="totalPendentes">0</p>
+              <p class="indicador-info" id="porcentagemPendentes">0% do total</p>
+            </div>
+            <div class="indicador-icone icone-cinza"><i class='bx bx-time-five'></i></div>
+          </div>
+
+          <div class="indicador">
+            <div>
+              <p class="indicador-titulo">Em andamento</p>
+              <p class="indicador-numero" id="totalAndamento">0</p>
+              <p class="indicador-info" id="porcentagemAndamento">0% do total</p>
+            </div>
+            <div class="indicador-icone icone-amarelo"><i class='bx bx-loader-circle'></i></div>
+          </div>
+
+          <div class="indicador">
+            <div>
+              <p class="indicador-titulo">Concluídas</p>
+              <p class="indicador-numero" id="totalConcluidas">0</p>
+              <p class="indicador-info" id="porcentagemConcluidas">0% do total</p>
+            </div>
+            <div class="indicador-icone icone-verde"><i class='bx bx-check-double'></i></div>
+          </div>
+        </div>
+
+        <div class="secao-titulo">
+          <h2>Quadro de tarefas</h2>
+          <p>Arraste os cards para mudar o status</p>
+        </div>
+
+        <!-- Quadro Kanban -->
+        <div class="quadro" id="quadro">
+          <div class="coluna" data-status="a_fazer">
+            <div class="coluna-topo">
+              <span class="bolinha"></span>
+              <h3>A Fazer</h3>
+              <span class="contador" id="contador-a_fazer">0</span>
+              <button class="btn-icone btn-adicionar" data-acao="nova" data-status="a_fazer" title="Adicionar tarefa">
+                <i class='bx bx-plus'></i>
+              </button>
+            </div>
+            <div class="coluna-lista" id="lista-a_fazer"></div>
+          </div>
+
+          <div class="coluna" data-status="em_andamento">
+            <div class="coluna-topo">
+              <span class="bolinha"></span>
+              <h3>Em andamento</h3>
+              <span class="contador" id="contador-em_andamento">0</span>
+              <button class="btn-icone btn-adicionar" data-acao="nova" data-status="em_andamento" title="Adicionar tarefa">
+                <i class='bx bx-plus'></i>
+              </button>
+            </div>
+            <div class="coluna-lista" id="lista-em_andamento"></div>
+          </div>
+
+          <div class="coluna" data-status="concluido">
+            <div class="coluna-topo">
+              <span class="bolinha"></span>
+              <h3>Concluído</h3>
+              <span class="contador" id="contador-concluido">0</span>
+              <button class="btn-icone btn-adicionar" data-acao="nova" data-status="concluido" title="Adicionar tarefa">
+                <i class='bx bx-plus'></i>
+              </button>
+            </div>
+            <div class="coluna-lista" id="lista-concluido"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Página: Meus projetos -->
+      <section class="pagina" id="pagina-projetos">
+        <div class="grade-projetos" id="gradeProjetos"></div>
+      </section>
+
+      <!-- Página: Tarefas -->
+      <section class="pagina" id="pagina-tarefas">
+        <div class="tabela-container">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Tarefa</th>
+                <th>Categoria</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th>Data limite</th>
+                <th>Criada em</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="listaTarefas"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Página: Concluídas -->
+      <section class="pagina" id="pagina-concluidas">
+        <div class="tabela-container">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th>Tarefa</th>
+                <th>Categoria</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th>Data limite</th>
+                <th>Criada em</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="listaConcluidas"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal de criar/editar tarefa -->
+  <div class="modal-fundo" id="modalTarefa">
+    <div class="modal">
+      <div class="modal-topo">
+        <h2 id="modalTitulo">Nova tarefa</h2>
+        <button class="btn-icone" data-fechar title="Fechar"><i class='bx bx-x'></i></button>
+      </div>
+
+      <form id="formTarefa" novalidate>
+        <div class="modal-corpo">
+          <input type="hidden" id="campoId">
+
+          <div class="campo">
+            <label for="campoTitulo">Título</label>
+            <input type="text" class="input" id="campoTitulo" placeholder="Ex: Criar tela de login" maxlength="80">
+          </div>
+
+          <div class="campo">
+            <label for="campoDescricao">Descrição</label>
+            <textarea class="input" id="campoDescricao" placeholder="Detalhes da tarefa (opcional)"></textarea>
+          </div>
+
+          <div class="campos-linha">
+            <div class="campo">
+              <label for="campoPrioridade">Prioridade</label>
+              <select class="input" id="campoPrioridade">
+                <option value="baixa">Baixa</option>
+                <option value="media">Média</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="campoCategoria">Categoria</label>
+              <select class="input" id="campoCategoria">
+                <!-- preenchido pelo JavaScript -->
+              </select>
+            </div>
+          </div>
+
+          <div class="campos-linha">
+            <div class="campo">
+              <label for="campoDataLimite">Data limite</label>
+              <input type="date" class="input" id="campoDataLimite">
+            </div>
+
+            <div class="campo">
+              <label for="campoStatus">Status</label>
+              <select class="input" id="campoStatus">
+                <option value="a_fazer">A Fazer</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="concluido">Concluído</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="form-erro" id="formErro"></p>
+        </div>
+
+        <div class="modal-rodape">
+          <span class="modal-info" id="infoCriacao"></span>
+          <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+          <button type="submit" class="btn btn-primario" id="btnSalvar">Salvar tarefa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação de exclusão -->
+  <div class="modal-fundo" id="modalExcluir">
+    <div class="modal modal-pequeno">
+      <div class="modal-corpo modal-confirmacao">
+        <div class="confirmacao-icone"><i class='bx bx-trash'></i></div>
+        <h2>Excluir tarefa?</h2>
+        <p>A tarefa <strong id="nomeTarefaExcluir"></strong> será removida e não poderá ser recuperada.</p>
+      </div>
+      <div class="modal-rodape">
+        <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+        <button type="button" class="btn btn-perigo" id="btnConfirmarExclusao">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensagem de aviso -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts (a ordem importa) -->
+  <script src="js/script/utils.js"></script>
+  <script src="js/script/tarefas.js"></script>
+  <script src="js/script/api.js"></script>
+  <script src="js/script/interface.js"></script>
+  <script src="js/script/app.js"></script>
+</body>
+</html>
