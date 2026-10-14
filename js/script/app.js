@@ -33,6 +33,7 @@ const paginas = {
 document.addEventListener('DOMContentLoaded', iniciar);
 
 function iniciar() {
+  configurarTema();
   configurarMenu();
   configurarFiltros();
   configurarModais();
@@ -109,6 +110,25 @@ function abrirMenuCelular() {
 function fecharMenuCelular() {
   document.getElementById('sidebar').classList.remove('aberta');
   document.getElementById('overlay').classList.remove('visivel');
+}
+
+// ---------- Tema claro / escuro ----------
+
+function configurarTema() {
+  document.getElementById('btnTema').addEventListener('click', trocarTema);
+}
+
+function trocarTema() {
+  // toggle devolve true quando a classe foi adicionada
+  const escuro = document.body.classList.toggle('tema-escuro');
+  atualizarBotaoTema(escuro);
+}
+
+// no tema escuro o botão mostra o sol (para voltar ao claro) e no claro mostra a lua
+function atualizarBotaoTema(escuro) {
+  const botao = document.getElementById('btnTema');
+  botao.innerHTML = escuro ? "<i class='bx bx-sun'></i>" : "<i class='bx bx-moon'></i>";
+  botao.title = escuro ? 'Usar tema claro' : 'Usar tema escuro';
 }
 
 // ---------- Pesquisa e filtros ----------
