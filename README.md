@@ -14,6 +14,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - Criar novos projetos (categorias) e adicionar tarefas direto neles
 - Lista com todas as tarefas e outra só com as concluídas
 - Destaque em vermelho para tarefas atrasadas
+- Tema claro e escuro (a escolha fica salva no navegador)
 - Layout responsivo (no celular o menu vira uma gaveta e o quadro rola para o lado)
 
 ## Como rodar
