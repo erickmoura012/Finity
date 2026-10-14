@@ -173,7 +173,7 @@
   flex-shrink: 0;
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
-  background-color: #fff;
+  background-color: var(--cor-card);
   font-size: 22px;
 }
 

@@ -7,9 +7,14 @@
   --cor-primaria-clara: #eaf1fe;
 
   --cor-fundo: #f4f6fa;
-  --cor-branco: #ffffff;
+  --cor-card: #ffffff;
+  --cor-fundo-suave: #fafbfc;
+  --cor-coluna: #eceff4;
   --cor-borda: #e4e7ee;
+  --cor-borda-forte: #d3dae6;
+  --cor-linha: #f0f2f5;
   --cor-sidebar: #141b2d;
+  --cor-toast: #1c2434;
 
   --cor-texto: #1c2434;
   --cor-texto-secundario: #6b7385;
@@ -28,6 +33,42 @@
   --sombra-media: 0 6px 16px rgba(16, 24, 40, 0.08);
 
   --largura-sidebar: 248px;
+}
+
+/* Tema escuro: só troca as cores, o resto continua igual */
+body.tema-escuro {
+  --cor-primaria: #3b7cf5;
+  --cor-primaria-escura: #2f6fed;
+  --cor-primaria-clara: rgba(59, 124, 245, 0.16);
+
+  --cor-fundo: #0f1420;
+  --cor-card: #171e2e;
+  --cor-fundo-suave: #1c2436;
+  --cor-coluna: #131a28;
+  --cor-borda: #263043;
+  --cor-borda-forte: #34405a;
+  --cor-linha: #202a3c;
+  --cor-sidebar: #0b0f19;
+  --cor-toast: #2a3350;
+
+  --cor-texto: #e6e9f0;
+  --cor-texto-secundario: #9aa3b5;
+  --cor-texto-claro: #6b7489;
+
+  --verde: #4ade80;
+  --verde-claro: rgba(34, 197, 94, 0.15);
+  --amarelo: #fbbf24;
+  --amarelo-claro: rgba(245, 158, 11, 0.15);
+  --vermelho: #ef4444;
+  --vermelho-claro: rgba(239, 68, 68, 0.15);
+  --cinza: #94a3b8;
+  --cinza-claro: #222b3d;
+
+  --sombra: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --sombra-media: 0 6px 16px rgba(0, 0, 0, 0.35);
+
+  /* deixa os selects e o calendário do navegador escuros também */
+  color-scheme: dark;
 }
 
 /* ==============================
@@ -102,12 +143,12 @@ a {
 }
 
 .btn-secundario {
-  background-color: #fff;
+  background-color: var(--cor-card);
   border: 1px solid var(--cor-borda);
 }
 
 .btn-secundario:hover {
-  background-color: #f7f8fa;
+  background-color: var(--cor-fundo-suave);
 }
 
 .btn-perigo {
@@ -156,7 +197,7 @@ a {
 .input {
   width: 100%;
   padding: 9px 12px;
-  background-color: #fff;
+  background-color: var(--cor-card);
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   outline: none;
