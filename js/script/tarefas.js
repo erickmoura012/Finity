@@ -1,12 +1,14 @@
 // Regras das tarefas: valores possíveis, filtros, contagem e validação
 
-const STATUS = {
+import { dataDeHoje } from './utils.js';
+
+export const STATUS = {
   a_fazer: 'A Fazer',
   em_andamento: 'Em andamento',
   concluido: 'Concluído'
 };
 
-const PRIORIDADES = {
+export const PRIORIDADES = {
   alta: 'Alta',
   media: 'Média',
   baixa: 'Baixa'
@@ -14,7 +16,7 @@ const PRIORIDADES = {
 
 // As categorias aparecem como "projetos" na página Meus projetos.
 // Essas são as que já vêm no sistema, as novas são criadas pelo usuário.
-const CATEGORIAS_PADRAO = [
+export const CATEGORIAS_PADRAO = [
   { nome: 'Desenvolvimento', icone: 'bx-code-alt' },
   { nome: 'Design', icone: 'bx-palette' },
   { nome: 'Marketing', icone: 'bx-trending-up' },
@@ -22,7 +24,7 @@ const CATEGORIAS_PADRAO = [
   { nome: 'Pessoal', icone: 'bx-user' }
 ];
 
-function filtrarTarefas(tarefas, filtros) {
+export function filtrarTarefas(tarefas, filtros) {
   const busca = filtros.busca.trim().toLowerCase();
 
   return tarefas.filter(function (tarefa) {
@@ -36,7 +38,7 @@ function filtrarTarefas(tarefas, filtros) {
   });
 }
 
-function contarTarefas(tarefas) {
+export function contarTarefas(tarefas) {
   return {
     total: tarefas.length,
     pendentes: tarefas.filter(t => t.status === 'a_fazer').length,
@@ -46,14 +48,14 @@ function contarTarefas(tarefas) {
 }
 
 // Tarefa atrasada = passou da data limite e ainda não foi concluída
-function estaAtrasada(tarefa) {
+export function estaAtrasada(tarefa) {
   if (!tarefa.dataLimite || tarefa.status === 'concluido') return false;
   return tarefa.dataLimite < dataDeHoje();
 }
 
 // Retorna uma mensagem de erro, ou texto vazio se estiver tudo certo.
 // Depois essa mesma validação pode ser feita no backend também.
-function validarTarefa(dados) {
+export function validarTarefa(dados) {
   if (!dados.titulo) {
     return 'Informe o título da tarefa.';
   }
@@ -72,7 +74,7 @@ function validarTarefa(dados) {
   return '';
 }
 
-function validarProjeto(nome, categorias) {
+export function validarProjeto(nome, categorias) {
   if (!nome) {
     return 'Informe o nome do projeto.';
   }

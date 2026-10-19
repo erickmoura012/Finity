@@ -349,11 +349,7 @@
   <!-- Mensagem de aviso -->
   <div class="toast" id="toast"></div>
 
-  <!-- Scripts (a ordem importa) -->
-  <script src="js/script/utils.js"></script>
-  <script src="js/script/tarefas.js"></script>
-  <script src="js/script/api.js"></script>
-  <script src="js/script/interface.js"></script>
-  <script src="js/script/app.js"></script>
+  <!-- Só o app.js é carregado aqui, os outros arquivos ele mesmo importa -->
+  <script type="module" src="js/script/app.js"></script>
 </body>
 </html>

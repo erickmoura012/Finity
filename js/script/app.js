@@ -1,5 +1,26 @@
 // Arquivo principal: guarda o estado da página e liga os eventos
 
+import { dataDeHoje, formatarDataCriacao } from './utils.js';
+import { STATUS, filtrarTarefas, contarTarefas, validarTarefa, validarProjeto } from './tarefas.js';
+import {
+  listarTarefas,
+  criarTarefa,
+  atualizarTarefa,
+  excluirTarefa,
+  listarCategorias,
+  criarCategoria
+} from './api.js';
+import {
+  preencherCategorias,
+  renderizarIndicadores,
+  renderizarQuadro,
+  renderizarTabela,
+  renderizarProjetos,
+  abrirModal,
+  fecharModal,
+  mostrarToast
+} from './interface.js';
+
 let tarefas = [];
 let categorias = [];
 let idParaExcluir = null;

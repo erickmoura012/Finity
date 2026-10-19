@@ -7,6 +7,9 @@
 // trocar o que tem dentro dessas funções por chamadas fetch() para a API.
 // Como as funções já são async, o resto do código não vai precisar mudar.
 
+import { gerarId, somarDias } from './utils.js';
+import { CATEGORIAS_PADRAO } from './tarefas.js';
+
 const CHAVE_TAREFAS = 'finity_tarefas';
 const CHAVE_CATEGORIAS = 'finity_categorias';
 // const API_URL = 'http://localhost:3000/api';
@@ -28,7 +31,7 @@ function gravarStorage(chave, dados) {
 }
 
 // GET /api/tarefas
-async function listarTarefas() {
+export async function listarTarefas() {
   let tarefas = lerStorage(CHAVE_TAREFAS);
 
   // primeira vez abrindo o sistema: cria algumas tarefas de exemplo
@@ -41,7 +44,7 @@ async function listarTarefas() {
 }
 
 // POST /api/tarefas
-async function criarTarefa(dados) {
+export async function criarTarefa(dados) {
   const tarefas = await listarTarefas();
 
   const novaTarefa = {
@@ -61,7 +64,7 @@ async function criarTarefa(dados) {
 }
 
 // PUT /api/tarefas/:id
-async function atualizarTarefa(id, dados) {
+export async function atualizarTarefa(id, dados) {
   const tarefas = await listarTarefas();
   const indice = tarefas.findIndex(t => t.id === id);
 
@@ -82,14 +85,14 @@ async function atualizarTarefa(id, dados) {
 }
 
 // DELETE /api/tarefas/:id
-async function excluirTarefa(id) {
+export async function excluirTarefa(id) {
   const tarefas = await listarTarefas();
   const restantes = tarefas.filter(t => t.id !== id);
   gravarStorage(CHAVE_TAREFAS, restantes);
 }
 
 // GET /api/categorias
-async function listarCategorias() {
+export async function listarCategorias() {
   let categorias = lerStorage(CHAVE_CATEGORIAS);
 
   // primeira vez: começa com as categorias padrão
@@ -102,7 +105,7 @@ async function listarCategorias() {
 }
 
 // POST /api/categorias
-async function criarCategoria(nome) {
+export async function criarCategoria(nome) {
   const categorias = await listarCategorias();
 
   // projeto novo usa o ícone de pasta

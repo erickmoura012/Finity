@@ -1,6 +1,9 @@
 // Funções que montam o HTML na tela
 
-function preencherCategorias(categorias) {
+import { escaparHTML, formatarData, formatarDataCriacao, calcularPorcentagem } from './utils.js';
+import { STATUS, PRIORIDADES, contarTarefas, estaAtrasada } from './tarefas.js';
+
+export function preencherCategorias(categorias) {
   const opcoes = categorias.map(function (c) {
     const nome = escaparHTML(c.nome);
     return `<option value="${nome}">${nome}</option>`;
@@ -16,7 +19,7 @@ function preencherCategorias(categorias) {
   document.getElementById('campoCategoria').innerHTML = opcoes;
 }
 
-function renderizarIndicadores(contagem) {
+export function renderizarIndicadores(contagem) {
   document.getElementById('totalTarefas').textContent = contagem.total;
   document.getElementById('totalPendentes').textContent = contagem.pendentes;
   document.getElementById('totalAndamento').textContent = contagem.andamento;
@@ -67,7 +70,7 @@ function criarCardTarefa(tarefa) {
   `;
 }
 
-function renderizarQuadro(tarefas) {
+export function renderizarQuadro(tarefas) {
   Object.keys(STATUS).forEach(function (status) {
     const lista = document.getElementById('lista-' + status);
     const tarefasDaColuna = tarefas.filter(t => t.status === status);
@@ -110,7 +113,7 @@ function criarLinhaTabela(tarefa) {
   `;
 }
 
-function renderizarTabela(tarefas, idCorpo, mensagemVazia) {
+export function renderizarTabela(tarefas, idCorpo, mensagemVazia) {
   const corpo = document.getElementById(idCorpo);
 
   if (tarefas.length === 0) {
@@ -123,7 +126,7 @@ function renderizarTabela(tarefas, idCorpo, mensagemVazia) {
 
 // ---------- Meus projetos ----------
 
-function renderizarProjetos(tarefas, categorias) {
+export function renderizarProjetos(tarefas, categorias) {
   const grade = document.getElementById('gradeProjetos');
 
   grade.innerHTML = categorias.map(function (categoria) {
@@ -164,17 +167,17 @@ function renderizarProjetos(tarefas, categorias) {
 
 // ---------- Modais e avisos ----------
 
-function abrirModal(id) {
+export function abrirModal(id) {
   document.getElementById(id).classList.add('aberto');
 }
 
-function fecharModal(id) {
+export function fecharModal(id) {
   document.getElementById(id).classList.remove('aberto');
 }
 
 let tempoDoToast;
 
-function mostrarToast(mensagem, tipo = 'sucesso') {
+export function mostrarToast(mensagem, tipo = 'sucesso') {
   const toast = document.getElementById('toast');
   const icone = tipo === 'erro' ? 'bx-error-circle' : 'bx-check-circle';
 
