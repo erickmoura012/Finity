@@ -19,7 +19,10 @@ Os dados ficam salvos no LocalStorage do navegador.
 
 ## Como rodar
 
-Basta abrir o `index.html` no navegador. Também dá pra usar a extensão **Live Server** do VS Code.
+Abra a pasta no VS Code e rode o `index.html` com a extensão **Live Server**.
+
+Como o JavaScript usa módulos (`import`/`export`), abrir o arquivo direto no navegador não funciona:
+o navegador bloqueia os módulos quando a página não vem de um servidor.
 
 Na primeira vez que o sistema abre, ele cria algumas tarefas de exemplo. Para começar do zero,
 é só abrir o DevTools (F12) > Application > Local Storage e apagar as chaves `finity_tarefas`
@@ -42,8 +45,11 @@ Finity/
         ├── tarefas.js        status, prioridades, categorias, filtros e validação
         ├── api.js            salvar e buscar os dados (hoje usa o LocalStorage)
         ├── interface.js      funções que montam o HTML na tela
+        ├── tema.js           troca entre tema claro e escuro
         └── app.js            eventos, navegação, modais e drag and drop
 ```
+
+O `index.html` carrega só o `app.js`, e ele importa o que precisa dos outros arquivos.
 
 ## Formato de uma tarefa
 
