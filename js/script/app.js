@@ -22,6 +22,7 @@ import {
   renderizarIndicadores,
   renderizarQuadro,
   renderizarTabela,
+  renderizarResultado,
   renderizarProjetos,
   marcarColunaOrdenada,
   abrirModal,
@@ -108,6 +109,11 @@ function atualizarTela() {
   renderizarQuadro(filtradas);
   renderizarTabela(daTabela, 'listaTarefas', 'Nenhuma tarefa encontrada.');
   renderizarTabela(concluidas, 'listaConcluidas', 'Nenhuma tarefa concluída por enquanto.');
+
+  const totalConcluidas = tarefas.filter(t => t.status === 'concluido').length;
+  renderizarResultado('resultadoTarefas', daTabela.length, tarefas.length);
+  renderizarResultado('resultadoConcluidas', concluidas.length, totalConcluidas);
+
   renderizarProjetos(tarefas, categorias);
   marcarColunaOrdenada(ordem.campo, ordem.crescente);
 }

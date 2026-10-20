@@ -265,6 +265,12 @@
 /* ==============================
    Tabela (Tarefas e Concluídas)
    ============================== */
+.resultado {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--cor-texto-secundario);
+}
+
 .tabela-container {
   overflow-x: auto;
   background-color: var(--cor-card);
