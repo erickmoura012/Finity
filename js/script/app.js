@@ -1,6 +1,6 @@
 // Arquivo principal: guarda o estado da página e liga os eventos
 
-import { dataDeHoje, formatarDataCriacao } from './utils.js';
+import { dataDeHoje, formatarDataCriacao } from './utils.ts';
 import {
   STATUS,
   filtrarTarefas,
@@ -8,7 +8,7 @@ import {
   contarTarefas,
   validarTarefa,
   validarProjeto
-} from './tarefas.js';
+} from './tarefas.ts';
 import {
   listarTarefas,
   criarTarefa,

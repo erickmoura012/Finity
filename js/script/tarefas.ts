@@ -1,14 +1,60 @@
 // Regras das tarefas: valores possíveis, filtros, contagem e validação
 
-import { dataDeHoje } from './utils.js';
+import { dataDeHoje } from './utils.ts';
 
-export const STATUS = {
+export type Status = 'a_fazer' | 'em_andamento' | 'concluido';
+export type Prioridade = 'alta' | 'media' | 'baixa';
+
+export interface Tarefa {
+  id: string;
+  titulo: string;
+  descricao: string;
+  prioridade: Prioridade;
+  categoria: string;
+  dataLimite: string; // AAAA-MM-DD
+  status: Status;
+  dataCriacao: string; // data completa em ISO
+}
+
+// O que vem do formulário: os selects podem mandar qualquer texto,
+// por isso a validação confere se a prioridade e o status existem
+export interface DadosTarefa {
+  titulo: string;
+  descricao: string;
+  prioridade: string;
+  categoria: string;
+  dataLimite: string;
+  status: string;
+}
+
+export interface Categoria {
+  nome: string;
+  icone: string;
+}
+
+export interface Filtros {
+  busca: string;
+  prioridade: string;
+  categoria: string;
+}
+
+export interface Contagem {
+  total: number;
+  pendentes: number;
+  andamento: number;
+  concluidas: number;
+}
+
+// Colunas da tabela que dá pra ordenar (vazio = sem ordenação)
+export type CampoOrdem = 'titulo' | 'categoria' | 'prioridade' | 'status' | 'dataLimite' | 'dataCriacao' | '';
+
+export const STATUS: Record<Status, string> = {
   a_fazer: 'A Fazer',
   em_andamento: 'Em andamento',
   concluido: 'Concluído'
 };
 
-export const PRIORIDADES = {
+export const PRIORIDADES: Record<Prioridade, string> = {
   alta: 'Alta',
   media: 'Média',
   baixa: 'Baixa'
@@ -16,7 +62,7 @@ export const PRIORIDADES = {
 
 // As categorias aparecem como "projetos" na página Meus projetos.
 // Essas são as que já vêm no sistema, as novas são criadas pelo usuário.
-export const CATEGORIAS_PADRAO = [
+export const CATEGORIAS_PADRAO: Categoria[] = [
   { nome: 'Desenvolvimento', icone: 'bx-code-alt' },
   { nome: 'Design', icone: 'bx-palette' },
   { nome: 'Marketing', icone: 'bx-trending-up' },
@@ -24,7 +70,7 @@ export const CATEGORIAS_PADRAO = [
   { nome: 'Pessoal', icone: 'bx-user' }
 ];
 
-export function filtrarTarefas(tarefas, filtros) {
+export function filtrarTarefas(tarefas: Tarefa[], filtros: Filtros): Tarefa[] {
   const busca = filtros.busca.trim().toLowerCase();
 
   return tarefas.filter(function (tarefa) {
@@ -40,15 +86,15 @@ export function filtrarTarefas(tarefas, filtros) {
 
 // Prioridade e status não dá pra ordenar pelo texto ("Alta" viria antes de "Baixa"
 // mas "Média" ficaria por último), então cada valor ganha um número
-const ORDEM_PRIORIDADE = { alta: 1, media: 2, baixa: 3 };
-const ORDEM_STATUS = { a_fazer: 1, em_andamento: 2, concluido: 3 };
+const ORDEM_PRIORIDADE: Record<Prioridade, number> = { alta: 1, media: 2, baixa: 3 };
+const ORDEM_STATUS: Record<Status, number> = { a_fazer: 1, em_andamento: 2, concluido: 3 };
 
 // Devolve uma cópia ordenada, a lista original continua igual
-export function ordenarTarefas(tarefas, campo, crescente) {
+export function ordenarTarefas(tarefas: Tarefa[], campo: CampoOrdem, crescente: boolean): Tarefa[] {
   if (!campo) return tarefas;
 
   return [...tarefas].sort(function (a, b) {
-    let resultado;
+    let resultado: number;
 
     if (campo === 'prioridade') {
       resultado = ORDEM_PRIORIDADE[a.prioridade] - ORDEM_PRIORIDADE[b.prioridade];
@@ -63,7 +109,7 @@ export function ordenarTarefas(tarefas, campo, crescente) {
   });
 }
 
-export function contarTarefas(tarefas) {
+export function contarTarefas(tarefas: Tarefa[]): Contagem {
   return {
     total: tarefas.length,
     pendentes: tarefas.filter(t => t.status === 'a_fazer').length,
@@ -73,14 +119,14 @@ export function contarTarefas(tarefas) {
 }
 
 // Tarefa atrasada = passou da data limite e ainda não foi concluída
-export function estaAtrasada(tarefa) {
+export function estaAtrasada(tarefa: Tarefa): boolean {
   if (!tarefa.dataLimite || tarefa.status === 'concluido') return false;
   return tarefa.dataLimite < dataDeHoje();
 }
 
 // Retorna uma mensagem de erro, ou texto vazio se estiver tudo certo.
 // Depois essa mesma validação pode ser feita no backend também.
-export function validarTarefa(dados) {
+export function validarTarefa(dados: DadosTarefa): string {
   if (!dados.titulo) {
     return 'Informe o título da tarefa.';
   }
@@ -90,16 +136,16 @@ export function validarTarefa(dados) {
   if (!dados.dataLimite) {
     return 'Informe a data limite.';
   }
-  if (!PRIORIDADES[dados.prioridade]) {
+  if (!(dados.prioridade in PRIORIDADES)) {
     return 'Prioridade inválida.';
   }
-  if (!STATUS[dados.status]) {
+  if (!(dados.status in STATUS)) {
     return 'Status inválido.';
   }
   return '';
 }
 
-export function validarProjeto(nome, categorias) {
+export function validarProjeto(nome: string, categorias: Categoria[]): string {
   if (!nome) {
     return 'Informe o nome do projeto.';
   }

@@ -6,9 +6,10 @@ import {
   estaAtrasada,
   validarTarefa,
   validarProjeto
-} from './tarefas.js';
+} from './tarefas.ts';
+import type { Tarefa } from './tarefas.ts';
 
-function criarTarefa(dados) {
+function criarTarefa(dados: Partial<Tarefa> = {}): Tarefa {
   return {
     id: '1',
     titulo: 'Tarefa',
@@ -108,8 +109,8 @@ describe('validarTarefa', () => {
   });
 
   it('não aceita prioridade ou status que não existem', () => {
-    expect(validarTarefa(criarTarefa({ prioridade: 'urgente' }))).toBe('Prioridade inválida.');
-    expect(validarTarefa(criarTarefa({ status: 'parado' }))).toBe('Status inválido.');
+    expect(validarTarefa({ ...criarTarefa(), prioridade: 'urgente' })).toBe('Prioridade inválida.');
+    expect(validarTarefa({ ...criarTarefa(), status: 'parado' })).toBe('Status inválido.');
   });
 });
 

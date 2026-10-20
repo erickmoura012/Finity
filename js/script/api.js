@@ -7,8 +7,8 @@
 // trocar o que tem dentro dessas funções por chamadas fetch() para a API.
 // Como as funções já são async, o resto do código não vai precisar mudar.
 
-import { gerarId, somarDias } from './utils.js';
-import { CATEGORIAS_PADRAO } from './tarefas.js';
+import { gerarId, somarDias } from './utils.ts';
+import { CATEGORIAS_PADRAO } from './tarefas.ts';
 
 const CHAVE_TAREFAS = 'finity_tarefas';
 const CHAVE_CATEGORIAS = 'finity_categorias';

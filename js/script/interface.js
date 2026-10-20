@@ -1,7 +1,7 @@
 // Funções que montam o HTML na tela
 
-import { escaparHTML, formatarData, formatarDataCriacao, calcularPorcentagem } from './utils.js';
-import { STATUS, PRIORIDADES, contarTarefas, estaAtrasada } from './tarefas.js';
+import { escaparHTML, formatarData, formatarDataCriacao, calcularPorcentagem } from './utils.ts';
+import { STATUS, PRIORIDADES, contarTarefas, estaAtrasada } from './tarefas.ts';
 
 export function preencherCategorias(categorias) {
   const opcoes = categorias.map(function (c) {

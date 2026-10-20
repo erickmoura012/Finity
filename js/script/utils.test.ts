@@ -5,7 +5,7 @@ import {
   formatarData,
   calcularPorcentagem,
   escaparHTML
-} from './utils.js';
+} from './utils.ts';
 
 describe('datas', () => {
   // fixa o "hoje" em 20/10/2026 pra o teste não depender do dia em que roda

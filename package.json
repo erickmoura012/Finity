@@ -8,10 +8,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc"
   },
   "devDependencies": {
     "sass": "^1.105.2",
+    "typescript": "^7.0.2",
     "vite": "^8.3.4",
     "vitest": "^5.0.5"
   }
