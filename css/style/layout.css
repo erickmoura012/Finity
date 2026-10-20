@@ -206,7 +206,8 @@
   margin-bottom: 24px;
 }
 
-.filtros.escondido {
+.filtros.escondido,
+.filtros .escondido {
   display: none;
 }
 

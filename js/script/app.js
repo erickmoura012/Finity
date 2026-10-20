@@ -38,7 +38,8 @@ let paginaAtual = 'dashboard';
 const filtros = {
   busca: '',
   prioridade: '',
-  categoria: ''
+  categoria: '',
+  status: ''
 };
 
 // coluna que está ordenando as tabelas (vazio = ordem em que foram criadas)
@@ -97,9 +98,15 @@ function atualizarTela() {
   const ordenadas = ordenarTarefas(filtradas, ordem.campo, ordem.crescente);
   const concluidas = ordenadas.filter(t => t.status === 'concluido');
 
+  // o filtro de status só vale para a tabela da página Tarefas
+  let daTabela = ordenadas;
+  if (filtros.status) {
+    daTabela = ordenadas.filter(t => t.status === filtros.status);
+  }
+
   renderizarIndicadores(contarTarefas(tarefas));
   renderizarQuadro(filtradas);
-  renderizarTabela(ordenadas, 'listaTarefas', 'Nenhuma tarefa encontrada.');
+  renderizarTabela(daTabela, 'listaTarefas', 'Nenhuma tarefa encontrada.');
   renderizarTabela(concluidas, 'listaConcluidas', 'Nenhuma tarefa concluída por enquanto.');
   renderizarProjetos(tarefas, categorias);
   marcarColunaOrdenada(ordem.campo, ordem.crescente);
@@ -135,6 +142,7 @@ function mudarPagina(nome) {
 
   // na página de projetos os filtros não fazem sentido
   document.getElementById('filtros').classList.toggle('escondido', nome === 'projetos');
+  document.getElementById('filtroStatus').classList.toggle('escondido', nome !== 'tarefas');
 
   // o botão do topo cria projeto na página de projetos e tarefa nas outras
   document.querySelector('#btnAdicionar span').textContent =
@@ -157,6 +165,7 @@ function configurarFiltros() {
   const campoBusca = document.getElementById('busca');
   const selectPrioridade = document.getElementById('filtroPrioridade');
   const selectCategoria = document.getElementById('filtroCategoria');
+  const selectStatus = document.getElementById('filtroStatus');
 
   campoBusca.addEventListener('input', function () {
     filtros.busca = campoBusca.value;
@@ -173,6 +182,11 @@ function configurarFiltros() {
     atualizarTela();
   });
 
+  selectStatus.addEventListener('change', function () {
+    filtros.status = selectStatus.value;
+    atualizarTela();
+  });
+
   document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
 }
 
@@ -180,10 +194,12 @@ function limparFiltros() {
   filtros.busca = '';
   filtros.prioridade = '';
   filtros.categoria = '';
+  filtros.status = '';
 
   document.getElementById('busca').value = '';
   document.getElementById('filtroPrioridade').value = '';
   document.getElementById('filtroCategoria').value = '';
+  document.getElementById('filtroStatus').value = '';
 
   atualizarTela();
 }
