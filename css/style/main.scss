@@ -1,0 +1,6 @@
+// Arquivo principal do SASS: junta os partials na ordem certa
+
+@use 'base';
+@use 'layout';
+@use 'componentes';
+@use 'responsivo';
