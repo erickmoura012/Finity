@@ -174,20 +174,24 @@
   cursor: grab;
   animation: aparecer 0.25s ease;
   transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-}
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--sombra-media);
-}
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
 
-.card:active {
-  cursor: grabbing;
-}
+    .card-acoes {
+      opacity: 1;
+    }
+  }
 
-.card.arrastando {
-  opacity: 0.45;
-  transform: rotate(2deg);
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.arrastando {
+    opacity: 0.45;
+    transform: rotate(2deg);
+  }
 }
 
 .card-topo {
@@ -204,20 +208,16 @@
   transition: opacity 0.2s;
 }
 
-.card:hover .card-acoes {
-  opacity: 1;
-}
-
 .card-titulo {
   margin-bottom: 4px;
   font-size: 14px;
   font-weight: 600;
   word-break: break-word;
-}
 
-.coluna[data-status="concluido"] .card-titulo {
-  color: var(--cor-texto-secundario);
-  text-decoration: line-through;
+  .coluna[data-status="concluido"] & {
+    color: var(--cor-texto-secundario);
+    text-decoration: line-through;
+  }
 }
 
 .card-descricao {
@@ -245,15 +245,15 @@
   gap: 4px;
   font-size: 12px;
   color: var(--cor-texto-secundario);
-}
 
-.card-data i {
-  font-size: 15px;
-}
+  i {
+    font-size: 15px;
+  }
 
-.card-data.atrasada {
-  color: var(--vermelho);
-  font-weight: 500;
+  &.atrasada {
+    color: var(--vermelho);
+    font-weight: 500;
+  }
 }
 
 .card-criacao {
@@ -283,60 +283,60 @@
   width: 100%;
   min-width: 820px;
   border-collapse: collapse;
-}
 
-.tabela th {
-  padding: 12px 16px;
-  background-color: var(--cor-fundo-suave);
-  border-bottom: 1px solid var(--cor-borda);
-  text-align: left;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--cor-texto-secundario);
-}
+  th {
+    padding: 12px 16px;
+    background-color: var(--cor-fundo-suave);
+    border-bottom: 1px solid var(--cor-borda);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--cor-texto-secundario);
 
-/* cabeçalhos que ordenam a tabela ao clicar */
-.tabela th[data-ordem] {
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.2s;
-}
+    // cabeçalhos que ordenam a tabela ao clicar
+    &[data-ordem] {
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
 
-.tabela th[data-ordem]:hover {
-  color: var(--cor-texto);
-}
+      &:hover {
+        color: var(--cor-texto);
+      }
+    }
 
-.tabela th.crescente,
-.tabela th.decrescente {
-  color: var(--cor-primaria);
-}
+    &.crescente,
+    &.decrescente {
+      color: var(--cor-primaria);
+    }
 
-.tabela th.crescente::after {
-  content: ' ↑';
-}
+    &.crescente::after {
+      content: ' ↑';
+    }
 
-.tabela th.decrescente::after {
-  content: ' ↓';
-}
+    &.decrescente::after {
+      content: ' ↓';
+    }
+  }
 
-.tabela td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--cor-linha);
-  vertical-align: middle;
-}
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cor-linha);
+    vertical-align: middle;
+  }
 
-.tabela tbody tr {
-  transition: background-color 0.15s;
-}
+  tbody tr {
+    transition: background-color 0.15s;
 
-.tabela tbody tr:hover {
-  background-color: var(--cor-fundo-suave);
-}
+    &:hover {
+      background-color: var(--cor-fundo-suave);
+    }
 
-.tabela tbody tr:last-child td {
-  border-bottom: none;
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
 }
 
 .tabela-titulo {
