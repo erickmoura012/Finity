@@ -1,0 +1,23 @@
+// Tamanhos de tela usados no layout responsivo
+$tela-media: 1100px;
+$tablet: 900px;
+$celular: 600px;
+
+// Uso: @include celular { ... }
+@mixin tela-media {
+  @media (max-width: $tela-media) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin celular {
+  @media (max-width: $celular) {
+    @content;
+  }
+}
