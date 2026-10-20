@@ -124,6 +124,17 @@ export function renderizarTabela(tarefas, idCorpo, mensagemVazia) {
   corpo.innerHTML = tarefas.map(criarLinhaTabela).join('');
 }
 
+// coloca a setinha na coluna que está ordenando a tabela
+export function marcarColunaOrdenada(campo, crescente) {
+  document.querySelectorAll('.tabela th[data-ordem]').forEach(function (th) {
+    th.classList.remove('crescente', 'decrescente');
+
+    if (th.dataset.ordem === campo) {
+      th.classList.add(crescente ? 'crescente' : 'decrescente');
+    }
+  });
+}
+
 // ---------- Meus projetos ----------
 
 export function renderizarProjetos(tarefas, categorias) {

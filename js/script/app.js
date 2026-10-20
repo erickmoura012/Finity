@@ -1,7 +1,14 @@
 // Arquivo principal: guarda o estado da página e liga os eventos
 
 import { dataDeHoje, formatarDataCriacao } from './utils.js';
-import { STATUS, filtrarTarefas, contarTarefas, validarTarefa, validarProjeto } from './tarefas.js';
+import {
+  STATUS,
+  filtrarTarefas,
+  ordenarTarefas,
+  contarTarefas,
+  validarTarefa,
+  validarProjeto
+} from './tarefas.js';
 import {
   listarTarefas,
   criarTarefa,
@@ -16,6 +23,7 @@ import {
   renderizarQuadro,
   renderizarTabela,
   renderizarProjetos,
+  marcarColunaOrdenada,
   abrirModal,
   fecharModal,
   mostrarToast
@@ -31,6 +39,12 @@ const filtros = {
   busca: '',
   prioridade: '',
   categoria: ''
+};
+
+// coluna que está ordenando as tabelas (vazio = ordem em que foram criadas)
+const ordem = {
+  campo: '',
+  crescente: true
 };
 
 const paginas = {
@@ -58,6 +72,7 @@ function iniciar() {
   configurarTema();
   configurarMenu();
   configurarFiltros();
+  configurarOrdenacao();
   configurarModais();
   configurarCliques();
   configurarDragAndDrop();
@@ -79,13 +94,15 @@ async function carregarDados() {
 // Redesenha tudo com base na lista de tarefas e nos filtros
 function atualizarTela() {
   const filtradas = filtrarTarefas(tarefas, filtros);
-  const concluidas = filtradas.filter(t => t.status === 'concluido');
+  const ordenadas = ordenarTarefas(filtradas, ordem.campo, ordem.crescente);
+  const concluidas = ordenadas.filter(t => t.status === 'concluido');
 
   renderizarIndicadores(contarTarefas(tarefas));
   renderizarQuadro(filtradas);
-  renderizarTabela(filtradas, 'listaTarefas', 'Nenhuma tarefa encontrada.');
+  renderizarTabela(ordenadas, 'listaTarefas', 'Nenhuma tarefa encontrada.');
   renderizarTabela(concluidas, 'listaConcluidas', 'Nenhuma tarefa concluída por enquanto.');
   renderizarProjetos(tarefas, categorias);
+  marcarColunaOrdenada(ordem.campo, ordem.crescente);
 }
 
 // ---------- Navegação ----------
@@ -178,6 +195,24 @@ function abrirProjeto(categoria) {
   document.getElementById('filtroCategoria').value = categoria;
   atualizarTela();
   mudarPagina('tarefas');
+}
+
+// ---------- Ordenação das tabelas ----------
+
+function configurarOrdenacao() {
+  document.querySelectorAll('.tabela th[data-ordem]').forEach(function (th) {
+    th.addEventListener('click', function () {
+      // clicar de novo na mesma coluna inverte a ordem
+      if (ordem.campo === th.dataset.ordem) {
+        ordem.crescente = !ordem.crescente;
+      } else {
+        ordem.campo = th.dataset.ordem;
+        ordem.crescente = true;
+      }
+
+      atualizarTela();
+    });
+  });
 }
 
 // ---------- Cliques nos cards, tabelas e projetos ----------

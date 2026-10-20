@@ -38,6 +38,31 @@ export function filtrarTarefas(tarefas, filtros) {
   });
 }
 
+// Prioridade e status não dá pra ordenar pelo texto ("Alta" viria antes de "Baixa"
+// mas "Média" ficaria por último), então cada valor ganha um número
+const ORDEM_PRIORIDADE = { alta: 1, media: 2, baixa: 3 };
+const ORDEM_STATUS = { a_fazer: 1, em_andamento: 2, concluido: 3 };
+
+// Devolve uma cópia ordenada, a lista original continua igual
+export function ordenarTarefas(tarefas, campo, crescente) {
+  if (!campo) return tarefas;
+
+  return [...tarefas].sort(function (a, b) {
+    let resultado;
+
+    if (campo === 'prioridade') {
+      resultado = ORDEM_PRIORIDADE[a.prioridade] - ORDEM_PRIORIDADE[b.prioridade];
+    } else if (campo === 'status') {
+      resultado = ORDEM_STATUS[a.status] - ORDEM_STATUS[b.status];
+    } else {
+      // título, categoria e as datas são texto (as datas ficam no formato AAAA-MM-DD)
+      resultado = a[campo].localeCompare(b[campo], 'pt-BR');
+    }
+
+    return crescente ? resultado : -resultado;
+  });
+}
+
 export function contarTarefas(tarefas) {
   return {
     total: tarefas.length,
