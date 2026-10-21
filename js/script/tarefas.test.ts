@@ -5,7 +5,8 @@ import {
   contarTarefas,
   estaAtrasada,
   validarTarefa,
-  validarProjeto
+  validarProjeto,
+  validarBackup
 } from './tarefas.ts';
 import type { Tarefa } from './tarefas.ts';
 
@@ -112,6 +113,11 @@ describe('validarTarefa', () => {
     expect(validarTarefa({ ...criarTarefa(), prioridade: 'urgente' })).toBe('Prioridade inválida.');
     expect(validarTarefa({ ...criarTarefa(), status: 'parado' })).toBe('Status inválido.');
   });
+
+  it('não aceita nomes que todo objeto tem, tipo constructor', () => {
+    expect(validarTarefa({ ...criarTarefa(), prioridade: 'constructor' })).toBe('Prioridade inválida.');
+    expect(validarTarefa({ ...criarTarefa(), status: 'toString' })).toBe('Status inválido.');
+  });
 });
 
 describe('validarProjeto', () => {
@@ -123,5 +129,49 @@ describe('validarProjeto', () => {
 
   it('aceita um nome novo', () => {
     expect(validarProjeto('Faculdade', categorias)).toBe('');
+  });
+});
+
+describe('validarBackup', () => {
+  const categorias = [
+    { nome: 'Estudos', icone: 'bx-book-open' },
+    { nome: 'Design', icone: 'bx-palette' },
+    { nome: 'Pessoal', icone: 'bx-user' }
+  ];
+
+  it('aceita um backup certo', () => {
+    expect(validarBackup({ tarefas, categorias })).toBe('');
+  });
+
+  it('aceita backup sem nenhuma tarefa', () => {
+    expect(validarBackup({ tarefas: [], categorias })).toBe('');
+  });
+
+  it('recusa arquivo que não é do Finity', () => {
+    const erro = 'Esse arquivo não é um backup do Finity.';
+    expect(validarBackup(null)).toBe(erro);
+    expect(validarBackup([1, 2, 3])).toBe(erro);
+    expect(validarBackup({ tarefas: 'texto', categorias })).toBe(erro);
+  });
+
+  it('recusa tarefa que não passa na validação', () => {
+    const comErro = [...tarefas, criarTarefa({ id: '9', titulo: 'ab' })];
+    expect(validarBackup({ tarefas: comErro, categorias })).toBe('O arquivo tem tarefas com dados inválidos.');
+  });
+
+  it('recusa tarefa de um projeto que não está no arquivo', () => {
+    const outra = [criarTarefa({ categoria: 'Faculdade' })];
+    expect(validarBackup({ tarefas: outra, categorias })).toBe('O arquivo tem tarefas de um projeto que não existe.');
+  });
+
+  // esses campos vão direto no HTML, então não podem ter código escondido
+  it('recusa id, data ou ícone com HTML dentro', () => {
+    const idComHTML = [criarTarefa({ id: '1"><img src=x onerror=alert(1)>' })];
+    const dataComHTML = [criarTarefa({ dataLimite: '<script>alert(1)</script>' })];
+    const iconeComHTML = [{ nome: 'Estudos', icone: "bx-user'><img src=x onerror=alert(1)>" }];
+
+    expect(validarBackup({ tarefas: idComHTML, categorias })).toBe('O arquivo tem tarefas com dados inválidos.');
+    expect(validarBackup({ tarefas: dataComHTML, categorias })).toBe('O arquivo tem tarefas com dados inválidos.');
+    expect(validarBackup({ tarefas: [], categorias: iconeComHTML })).toBe('O arquivo tem projetos com dados inválidos.');
   });
 });

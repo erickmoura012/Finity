@@ -7,7 +7,8 @@ import {
   ordenarTarefas,
   contarTarefas,
   validarTarefa,
-  validarProjeto
+  validarProjeto,
+  validarBackup
 } from './tarefas.ts';
 import {
   listarTarefas,
@@ -15,7 +16,8 @@ import {
   atualizarTarefa,
   excluirTarefa,
   listarCategorias,
-  criarCategoria
+  criarCategoria,
+  importarBackup
 } from './api.js';
 import {
   preencherCategorias,
@@ -243,7 +245,22 @@ function configurarOrdenacao() {
 // ---------- Exportar e importar ----------
 
 function configurarBackup() {
+  const campoArquivo = document.getElementById('arquivoImportar');
+
   document.getElementById('btnExportar').addEventListener('click', exportarTarefas);
+
+  // o input de arquivo fica escondido, o botão só abre a janela dele
+  document.getElementById('btnImportar').addEventListener('click', function () {
+    campoArquivo.click();
+  });
+
+  campoArquivo.addEventListener('change', function () {
+    const arquivo = campoArquivo.files[0];
+    if (arquivo) importarTarefas(arquivo);
+
+    // limpa pra conseguir escolher o mesmo arquivo de novo depois
+    campoArquivo.value = '';
+  });
 }
 
 // Baixa um arquivo com todas as tarefas e projetos, pra guardar ou levar pra outro navegador
@@ -255,6 +272,38 @@ function exportarTarefas() {
 
   baixarArquivoJSON('finity-' + dataDeHoje() + '.json', backup);
   mostrarToast('Tarefas exportadas');
+}
+
+async function importarTarefas(arquivo) {
+  let dados;
+
+  try {
+    dados = JSON.parse(await arquivo.text());
+  } catch (erro) {
+    mostrarToast('Não foi possível ler o arquivo', 'erro');
+    return;
+  }
+
+  const erro = validarBackup(dados);
+  if (erro) {
+    mostrarToast(erro, 'erro');
+    return;
+  }
+
+  const total = dados.tarefas.length;
+  const confirmou = confirm(
+    'As tarefas e projetos atuais vão ser trocados pelos do arquivo (' + total + ' tarefas). Continuar?'
+  );
+  if (!confirmou) return;
+
+  try {
+    await importarBackup(dados);
+    await carregarDados();
+    mostrarToast('Tarefas importadas');
+  } catch (erro) {
+    console.error(erro);
+    mostrarToast('Erro ao importar as tarefas', 'erro');
+  }
 }
 
 // ---------- Atalhos de teclado ----------

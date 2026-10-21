@@ -116,6 +116,13 @@ export async function criarCategoria(nome) {
   return novaCategoria;
 }
 
+// POST /api/importar
+// Troca todas as tarefas e projetos pelos do arquivo importado
+export async function importarBackup(backup) {
+  gravarStorage(CHAVE_TAREFAS, backup.tarefas);
+  gravarStorage(CHAVE_CATEGORIAS, backup.categorias);
+}
+
 // Exemplo de como deve ficar com o backend:
 //
 // async function listarTarefas() {

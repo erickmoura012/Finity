@@ -45,6 +45,12 @@ export interface Contagem {
   concluidas: number;
 }
 
+// Formato do arquivo de exportar/importar
+export interface Backup {
+  tarefas: Tarefa[];
+  categorias: Categoria[];
+}
+
 // Colunas da tabela que dá pra ordenar (vazio = sem ordenação)
 export type CampoOrdem = 'titulo' | 'categoria' | 'prioridade' | 'status' | 'dataLimite' | 'dataCriacao' | '';
 
@@ -136,10 +142,10 @@ export function validarTarefa(dados: DadosTarefa): string {
   if (!dados.dataLimite) {
     return 'Informe a data limite.';
   }
-  if (!(dados.prioridade in PRIORIDADES)) {
+  if (!Object.keys(PRIORIDADES).includes(dados.prioridade)) {
     return 'Prioridade inválida.';
   }
-  if (!(dados.status in STATUS)) {
+  if (!Object.keys(STATUS).includes(dados.status)) {
     return 'Status inválido.';
   }
   return '';
@@ -157,5 +163,41 @@ export function validarProjeto(nome: string, categorias: Categoria[]): string {
   if (jaExiste) {
     return 'Já existe um projeto com esse nome.';
   }
+  return '';
+}
+
+// O arquivo importado pode ter qualquer coisa dentro, então antes de usar
+// confiro se tem as listas certas e se cada tarefa passa na validação
+export function validarBackup(dados: unknown): string {
+  const backup = dados as Partial<Backup> | null;
+
+  if (!backup || !Array.isArray(backup.tarefas) || !Array.isArray(backup.categorias)) {
+    return 'Esse arquivo não é um backup do Finity.';
+  }
+
+  const categorias = backup.categorias;
+  // o ícone vai dentro do class do HTML, então só aceito nomes do Boxicons (bx-alguma-coisa)
+  const categoriaInvalida = categorias.some(c => !c || !c.nome || !/^bx-[a-z0-9-]+$/.test(c.icone));
+  if (categoriaInvalida) {
+    return 'O arquivo tem projetos com dados inválidos.';
+  }
+
+  // o id e a data também vão direto no HTML, então confiro o formato deles
+  const tarefaInvalida = backup.tarefas.some(function (t) {
+    if (!t || validarTarefa(t) !== '') return true;
+    if (!/^[a-zA-Z0-9-]+$/.test(t.id)) return true;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(t.dataLimite)) return true;
+    return false;
+  });
+  if (tarefaInvalida) {
+    return 'O arquivo tem tarefas com dados inválidos.';
+  }
+
+  // toda tarefa precisa estar num projeto que existe no arquivo
+  const semProjeto = backup.tarefas.some(t => !categorias.some(c => c.nome === t.categoria));
+  if (semProjeto) {
+    return 'O arquivo tem tarefas de um projeto que não existe.';
+  }
+
   return '';
 }
