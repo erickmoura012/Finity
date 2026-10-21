@@ -76,6 +76,7 @@ function iniciar() {
   configurarFiltros();
   configurarOrdenacao();
   configurarModais();
+  configurarAtalhos();
   configurarCliques();
   configurarDragAndDrop();
   carregarDados();
@@ -234,6 +235,30 @@ function configurarOrdenacao() {
 
       atualizarTela();
     });
+  });
+}
+
+// ---------- Atalhos de teclado ----------
+
+function configurarAtalhos() {
+  document.addEventListener('keydown', function (evento) {
+    if (evento.key !== 'n' && evento.key !== 'N') return;
+
+    // deixa o Ctrl+N, Cmd+N etc. com o navegador
+    if (evento.ctrlKey || evento.metaKey || evento.altKey) return;
+
+    // não atrapalha quem está digitando em algum campo
+    const campo = evento.target.closest('input, textarea, select');
+    if (campo) return;
+
+    // nem quando já tem um modal aberto
+    if (document.querySelector('.modal-fundo.aberto')) return;
+
+    // sem isso o "n" acaba sendo digitado no campo de título do modal
+    evento.preventDefault();
+
+    // faz o mesmo que o botão do topo (nova tarefa, ou novo projeto na página de projetos)
+    document.getElementById('btnAdicionar').click();
   });
 }
 
