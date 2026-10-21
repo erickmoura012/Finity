@@ -96,6 +96,16 @@
   color: #7ea6ff;
 }
 
+// os botões de exportar e importar usam o mesmo visual dos links
+button.menu-item {
+  width: 100%;
+  text-align: left;
+}
+
+.menu-titulo-dados {
+  margin-top: 20px;
+}
+
 .sidebar-usuario {
   display: flex;
   align-items: center;

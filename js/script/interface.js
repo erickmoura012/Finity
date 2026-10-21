@@ -194,6 +194,22 @@ export function renderizarProjetos(tarefas, categorias) {
   }).join('');
 }
 
+// ---------- Arquivos ----------
+
+// Cria um link temporário pra baixar os dados como arquivo .json
+export function baixarArquivoJSON(nomeArquivo, dados) {
+  const conteudo = JSON.stringify(dados, null, 2);
+  const arquivo = new Blob([conteudo], { type: 'application/json' });
+  const url = URL.createObjectURL(arquivo);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = nomeArquivo;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
 // ---------- Modais e avisos ----------
 
 export function abrirModal(id) {

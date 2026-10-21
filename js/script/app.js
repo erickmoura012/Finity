@@ -27,7 +27,8 @@ import {
   marcarColunaOrdenada,
   abrirModal,
   fecharModal,
-  mostrarToast
+  mostrarToast,
+  baixarArquivoJSON
 } from './interface.js';
 import { configurarTema } from './tema.js';
 
@@ -77,6 +78,7 @@ function iniciar() {
   configurarOrdenacao();
   configurarModais();
   configurarAtalhos();
+  configurarBackup();
   configurarCliques();
   configurarDragAndDrop();
   carregarDados();
@@ -122,7 +124,7 @@ function atualizarTela() {
 // ---------- Navegação ----------
 
 function configurarMenu() {
-  document.querySelectorAll('.menu-item').forEach(function (item) {
+  document.querySelectorAll('.menu-item[data-pagina]').forEach(function (item) {
     item.addEventListener('click', function (evento) {
       evento.preventDefault();
       mudarPagina(item.dataset.pagina);
@@ -140,7 +142,7 @@ function mudarPagina(nome) {
   document.querySelectorAll('.pagina').forEach(p => p.classList.remove('ativa'));
   document.getElementById('pagina-' + nome).classList.add('ativa');
 
-  document.querySelectorAll('.menu-item').forEach(function (item) {
+  document.querySelectorAll('.menu-item[data-pagina]').forEach(function (item) {
     item.classList.toggle('ativo', item.dataset.pagina === nome);
   });
 
@@ -236,6 +238,23 @@ function configurarOrdenacao() {
       atualizarTela();
     });
   });
+}
+
+// ---------- Exportar e importar ----------
+
+function configurarBackup() {
+  document.getElementById('btnExportar').addEventListener('click', exportarTarefas);
+}
+
+// Baixa um arquivo com todas as tarefas e projetos, pra guardar ou levar pra outro navegador
+function exportarTarefas() {
+  const backup = {
+    tarefas: tarefas,
+    categorias: categorias
+  };
+
+  baixarArquivoJSON('finity-' + dataDeHoje() + '.json', backup);
+  mostrarToast('Tarefas exportadas');
 }
 
 // ---------- Atalhos de teclado ----------
