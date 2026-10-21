@@ -13,7 +13,8 @@ sem nenhum framework. Os dados ficam salvos no LocalStorage do navegador.
 
 ## Funcionalidades
 
-- Criar, editar e excluir tarefas
+- Criar, editar, duplicar e excluir tarefas
+- Atalho `N` para criar uma tarefa nova
 - Mover as tarefas entre as colunas (A Fazer, Em andamento e Concluído) arrastando os cards
 - Pesquisar por título ou descrição
 - Filtrar por prioridade, categoria e status
@@ -24,6 +25,7 @@ sem nenhum framework. Os dados ficam salvos no LocalStorage do navegador.
 - Lista com todas as tarefas e outra só com as concluídas
 - Destaque em vermelho para tarefas atrasadas
 - Tema claro e escuro (a escolha fica salva no navegador)
+- Exportar as tarefas para um arquivo JSON e importar de volta (serve de backup)
 - Layout responsivo (no celular o menu vira uma gaveta e o quadro rola para o lado)
 
 ## Como rodar
