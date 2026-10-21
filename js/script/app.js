@@ -249,6 +249,7 @@ function configurarCliques() {
 
       if (acao === 'nova') abrirModalNovaTarefa(botao.dataset.status, botao.dataset.categoria);
       if (acao === 'editar') abrirModalEdicao(botao.dataset.id);
+      if (acao === 'duplicar') duplicarTarefa(botao.dataset.id);
       if (acao === 'excluir') abrirModalExclusao(botao.dataset.id);
       return;
     }
@@ -402,6 +403,33 @@ async function salvarFormulario(evento) {
   } catch (erro) {
     console.error(erro);
     mostrarToast('Erro ao salvar a tarefa', 'erro');
+  }
+}
+
+// ---------- Duplicar ----------
+
+async function duplicarTarefa(id) {
+  const tarefa = tarefas.find(t => t.id === id);
+  if (!tarefa) return;
+
+  // a cópia ganha id e data de criação novos (o criarTarefa já faz isso)
+  // e sempre começa em "A Fazer"
+  const copia = {
+    titulo: tarefa.titulo + ' (cópia)',
+    descricao: tarefa.descricao,
+    prioridade: tarefa.prioridade,
+    categoria: tarefa.categoria,
+    dataLimite: tarefa.dataLimite,
+    status: 'a_fazer'
+  };
+
+  try {
+    await criarTarefa(copia);
+    mostrarToast('Tarefa duplicada');
+    await carregarDados();
+  } catch (erro) {
+    console.error(erro);
+    mostrarToast('Erro ao duplicar a tarefa', 'erro');
   }
 }
 

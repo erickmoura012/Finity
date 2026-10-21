@@ -49,6 +49,9 @@ function criarCardTarefa(tarefa) {
           <button class="btn-icone" data-acao="editar" data-id="${tarefa.id}" title="Editar">
             <i class='bx bx-edit-alt'></i>
           </button>
+          <button class="btn-icone" data-acao="duplicar" data-id="${tarefa.id}" title="Duplicar">
+            <i class='bx bx-copy'></i>
+          </button>
           <button class="btn-icone perigo" data-acao="excluir" data-id="${tarefa.id}" title="Excluir">
             <i class='bx bx-trash'></i>
           </button>
@@ -104,6 +107,9 @@ function criarLinhaTabela(tarefa) {
       <td class="tabela-acoes">
         <button class="btn-icone" data-acao="editar" data-id="${tarefa.id}" title="Editar">
           <i class='bx bx-edit-alt'></i>
+        </button>
+        <button class="btn-icone" data-acao="duplicar" data-id="${tarefa.id}" title="Duplicar">
+          <i class='bx bx-copy'></i>
         </button>
         <button class="btn-icone perigo" data-acao="excluir" data-id="${tarefa.id}" title="Excluir">
           <i class='bx bx-trash'></i>
