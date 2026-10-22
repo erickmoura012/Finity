@@ -107,10 +107,21 @@ O `index.html` carrega só o `app.js`, e ele importa o que precisa dos outros ar
 - `prioridade`: `alta`, `media` ou `baixa`
 - `status`: `a_fazer`, `em_andamento` ou `concluido`
 
+## Migração para React (em andamento)
+
+A versão em React + TypeScript está sendo feita aos poucos na pasta `src/`, do lado da versão atual,
+pra o projeto não ficar quebrado durante a migração. Ela usa o mesmo SASS e as mesmas regras do
+`tarefas.ts`.
+
+- Versão atual: `http://localhost:5173/`
+- Versão em React: `http://localhost:5173/react.html`
+
+Quando a versão em React estiver completa, ela vai substituir a atual. A versão sem framework ficou
+marcada na tag [`v1.0.0`](https://github.com/erickmoura012/Finity/tree/v1.0.0).
+
 ## Próximos passos
 
-- [ ] Terminar a migração dos arquivos para TypeScript
-- [ ] Migrar a interface para React
+- [ ] Terminar a migração para React
 
 Depois, a ideia é transformar o projeto em full stack:
 
