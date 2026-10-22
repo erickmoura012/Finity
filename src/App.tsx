@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
+import { useTema } from './hooks/useTema';
 import { PAGINAS, type Pagina } from './paginas';
 
 function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
   const [menuAberto, setMenuAberto] = useState(false);
+  const { escuro, trocarTema } = useTema();
 
   function mudarPagina(pagina: Pagina) {
     setPaginaAtual(pagina);
@@ -26,7 +28,9 @@ function App() {
           titulo={pagina.titulo}
           subtitulo={pagina.subtitulo}
           textoBotao={paginaAtual === 'projetos' ? 'Novo projeto' : 'Nova tarefa'}
+          temaEscuro={escuro}
           aoAbrirMenu={() => setMenuAberto(true)}
+          aoTrocarTema={trocarTema}
         />
 
         {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
