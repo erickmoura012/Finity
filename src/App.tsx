@@ -2,12 +2,14 @@ import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import { useTema } from './hooks/useTema';
+import { useTarefas } from './hooks/useTarefas';
 import { PAGINAS, type Pagina } from './paginas';
 
 function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
   const [menuAberto, setMenuAberto] = useState(false);
   const { escuro, trocarTema } = useTema();
+  const { tarefas, carregando, erro } = useTarefas();
 
   function mudarPagina(pagina: Pagina) {
     setPaginaAtual(pagina);
@@ -35,7 +37,12 @@ function App() {
 
         {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
         <section className="pagina ativa" key={paginaAtual}>
-          <p className="resultado">Página em construção</p>
+          {carregando && <p className="resultado">Carregando tarefas...</p>}
+          {erro && <p className="resultado">{erro}</p>}
+
+          {!carregando && !erro && (
+            <p className="resultado">Página em construção ({tarefas.length} tarefas carregadas)</p>
+          )}
         </section>
       </main>
     </div>
