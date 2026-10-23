@@ -9,12 +9,17 @@
 
 import { gerarId, somarDias } from './utils.ts';
 import { CATEGORIAS_PADRAO } from './tarefas.ts';
+import type { Tarefa, Categoria, Backup } from './tarefas.ts';
+
+// Dados de uma tarefa nova: o id e a data de criação são gerados aqui
+export type NovaTarefa = Omit<Tarefa, 'id' | 'dataCriacao'>;
 
 const CHAVE_TAREFAS = 'finity_tarefas';
 const CHAVE_CATEGORIAS = 'finity_categorias';
 // const API_URL = 'http://localhost:3000/api';
 
-function lerStorage(chave) {
+// <T> deixa quem chama dizer o tipo da lista salva (Tarefa, Categoria...)
+function lerStorage<T>(chave: string): T[] | null {
   const dados = localStorage.getItem(chave);
   if (!dados) return null;
 
@@ -26,13 +31,13 @@ function lerStorage(chave) {
   }
 }
 
-function gravarStorage(chave, dados) {
+function gravarStorage(chave: string, dados: unknown): void {
   localStorage.setItem(chave, JSON.stringify(dados));
 }
 
 // GET /api/tarefas
-export async function listarTarefas() {
-  let tarefas = lerStorage(CHAVE_TAREFAS);
+export async function listarTarefas(): Promise<Tarefa[]> {
+  let tarefas = lerStorage<Tarefa>(CHAVE_TAREFAS);
 
   // primeira vez abrindo o sistema: cria algumas tarefas de exemplo
   if (tarefas === null) {
@@ -44,10 +49,10 @@ export async function listarTarefas() {
 }
 
 // POST /api/tarefas
-export async function criarTarefa(dados) {
+export async function criarTarefa(dados: NovaTarefa): Promise<Tarefa> {
   const tarefas = await listarTarefas();
 
-  const novaTarefa = {
+  const novaTarefa: Tarefa = {
     id: gerarId(),
     titulo: dados.titulo,
     descricao: dados.descricao,
@@ -64,7 +69,7 @@ export async function criarTarefa(dados) {
 }
 
 // PUT /api/tarefas/:id
-export async function atualizarTarefa(id, dados) {
+export async function atualizarTarefa(id: string, dados: Partial<Tarefa>): Promise<Tarefa> {
   const tarefas = await listarTarefas();
   const indice = tarefas.findIndex(t => t.id === id);
 
@@ -85,19 +90,20 @@ export async function atualizarTarefa(id, dados) {
 }
 
 // DELETE /api/tarefas/:id
-export async function excluirTarefa(id) {
+export async function excluirTarefa(id: string): Promise<void> {
   const tarefas = await listarTarefas();
   const restantes = tarefas.filter(t => t.id !== id);
   gravarStorage(CHAVE_TAREFAS, restantes);
 }
 
 // GET /api/categorias
-export async function listarCategorias() {
-  let categorias = lerStorage(CHAVE_CATEGORIAS);
+export async function listarCategorias(): Promise<Categoria[]> {
+  let categorias = lerStorage<Categoria>(CHAVE_CATEGORIAS);
 
   // primeira vez: começa com as categorias padrão
   if (categorias === null) {
-    categorias = CATEGORIAS_PADRAO;
+    // uso uma cópia pra não alterar a constante quando um projeto novo for criado
+    categorias = [...CATEGORIAS_PADRAO];
     gravarStorage(CHAVE_CATEGORIAS, categorias);
   }
 
@@ -105,11 +111,11 @@ export async function listarCategorias() {
 }
 
 // POST /api/categorias
-export async function criarCategoria(nome) {
+export async function criarCategoria(nome: string): Promise<Categoria> {
   const categorias = await listarCategorias();
 
   // projeto novo usa o ícone de pasta
-  const novaCategoria = { nome: nome, icone: 'bx-folder' };
+  const novaCategoria: Categoria = { nome: nome, icone: 'bx-folder' };
 
   categorias.push(novaCategoria);
   gravarStorage(CHAVE_CATEGORIAS, categorias);
@@ -118,7 +124,7 @@ export async function criarCategoria(nome) {
 
 // POST /api/importar
 // Troca todas as tarefas e projetos pelos do arquivo importado
-export async function importarBackup(backup) {
+export async function importarBackup(backup: Backup): Promise<void> {
   gravarStorage(CHAVE_TAREFAS, backup.tarefas);
   gravarStorage(CHAVE_CATEGORIAS, backup.categorias);
 }
@@ -132,8 +138,8 @@ export async function importarBackup(backup) {
 //   return resposta.json();
 // }
 
-function tarefasDeExemplo() {
-  const diasAtras = (dias) => new Date(Date.now() - dias * 24 * 60 * 60 * 1000).toISOString();
+function tarefasDeExemplo(): Tarefa[] {
+  const diasAtras = (dias: number) => new Date(Date.now() - dias * 24 * 60 * 60 * 1000).toISOString();
 
   return [
     {

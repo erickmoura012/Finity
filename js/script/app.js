@@ -18,7 +18,7 @@ import {
   listarCategorias,
   criarCategoria,
   importarBackup
-} from './api.js';
+} from './api.ts';
 import {
   preencherCategorias,
   renderizarIndicadores,
