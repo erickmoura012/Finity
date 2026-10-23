@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
+import Indicadores from './components/Indicadores';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { PAGINAS, type Pagina } from './paginas';
@@ -40,7 +41,11 @@ function App() {
           {carregando && <p className="resultado">Carregando tarefas...</p>}
           {erro && <p className="resultado">{erro}</p>}
 
-          {!carregando && !erro && (
+          {!carregando && !erro && paginaAtual === 'dashboard' && (
+            <Indicadores tarefas={tarefas} />
+          )}
+
+          {!carregando && !erro && paginaAtual !== 'dashboard' && (
             <p className="resultado">Página em construção ({tarefas.length} tarefas carregadas)</p>
           )}
         </section>
