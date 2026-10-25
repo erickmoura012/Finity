@@ -504,12 +504,16 @@
   z-index: 50;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
+  // ao fechar, só esconde depois que a animação da opacidade terminar
+  transition: opacity 0.2s, visibility 0s 0.2s;
 }
 
 .modal-fundo.aberto {
   opacity: 1;
   visibility: visible;
+  // ao abrir, fica visível na hora: senão o campo ainda está escondido
+  // quando o foco é colocado nele, e o foco não funciona
+  transition: opacity 0.2s, visibility 0s;
 }
 
 .modal {
