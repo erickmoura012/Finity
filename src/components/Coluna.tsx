@@ -6,9 +6,10 @@ interface ColunaProps {
   status: Status;
   tarefas: Tarefa[];
   aoSoltarTarefa: (id: string, status: Status) => void;
+  aoAdicionar: (status: Status) => void;
 }
 
-function Coluna({ status, tarefas, aoSoltarTarefa }: ColunaProps) {
+function Coluna({ status, tarefas, aoSoltarTarefa, aoAdicionar }: ColunaProps) {
   // destaque = tem um card sendo arrastado em cima da coluna
   const [destaque, setDestaque] = useState(false);
 
@@ -36,6 +37,9 @@ function Coluna({ status, tarefas, aoSoltarTarefa }: ColunaProps) {
         <span className="bolinha"></span>
         <h3>{STATUS[status]}</h3>
         <span className="contador">{tarefas.length}</span>
+        <button className="btn-icone btn-adicionar" title="Adicionar tarefa" onClick={() => aoAdicionar(status)}>
+          <i className="bx bx-plus"></i>
+        </button>
       </div>
 
       <div className="coluna-lista">

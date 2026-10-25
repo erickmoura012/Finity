@@ -4,19 +4,45 @@ import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
 import Quadro from './components/Quadro';
 import Toast from './components/Toast';
+import Modal from './components/Modal';
+import FormTarefa from './components/FormTarefa';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { PAGINAS, type Pagina } from './paginas';
-import { atualizarTarefa } from '../js/script/api';
-import { STATUS, type Status } from '../js/script/tarefas';
+import { atualizarTarefa, criarTarefa, type NovaTarefa } from '../js/script/api';
+import { STATUS, type Status, type DadosTarefa } from '../js/script/tarefas';
+import { dataDeHoje } from '../js/script/utils';
+
+// Guarda se o modal de tarefa está aberto e com quais valores o formulário começa.
+// A "vez" muda a cada abertura: ela é a key do FormTarefa, então o formulário
+// é criado de novo e começa limpo toda vez que o modal abre.
+interface ModalTarefaInfo {
+  aberto: boolean;
+  valores: DadosTarefa;
+  vez: number;
+}
+
+const FORMULARIO_VAZIO: DadosTarefa = {
+  titulo: '',
+  descricao: '',
+  prioridade: 'media',
+  categoria: '',
+  dataLimite: '',
+  status: 'a_fazer'
+};
 
 function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
   const [menuAberto, setMenuAberto] = useState(false);
   const { escuro, trocarTema } = useTema();
-  const { tarefas, carregando, erro, recarregar } = useTarefas();
+  const { tarefas, categorias, carregando, erro, recarregar } = useTarefas();
   const { toast, mostrarToast } = useToast();
+  const [modalTarefa, setModalTarefa] = useState<ModalTarefaInfo>({
+    aberto: false,
+    valores: FORMULARIO_VAZIO,
+    vez: 0
+  });
 
   function mudarPagina(pagina: Pagina) {
     setPaginaAtual(pagina);
@@ -37,6 +63,37 @@ function App() {
     }
   }
 
+  function abrirNovaTarefa(status: Status = 'a_fazer') {
+    setModalTarefa(atual => ({
+      aberto: true,
+      vez: atual.vez + 1,
+      valores: {
+        ...FORMULARIO_VAZIO,
+        status: status,
+        categoria: categorias[0]?.nome || '',
+        dataLimite: dataDeHoje()
+      }
+    }));
+  }
+
+  function fecharModalTarefa() {
+    // só fecha, os valores ficam pra o formulário não sumir no meio da animação
+    setModalTarefa(atual => ({ ...atual, aberto: false }));
+  }
+
+  async function salvarTarefa(dados: DadosTarefa) {
+    try {
+      // a validação do formulário já garantiu que a prioridade e o status são válidos
+      await criarTarefa(dados as NovaTarefa);
+      fecharModalTarefa();
+      await recarregar();
+      mostrarToast('Tarefa criada com sucesso');
+    } catch (e) {
+      console.error(e);
+      mostrarToast('Erro ao salvar a tarefa', 'erro');
+    }
+  }
+
   const pagina = PAGINAS[paginaAtual];
 
   return (
@@ -54,6 +111,10 @@ function App() {
           temaEscuro={escuro}
           aoAbrirMenu={() => setMenuAberto(true)}
           aoTrocarTema={trocarTema}
+          aoClicarAdicionar={() => {
+            // o modal de novo projeto vem junto com a página de projetos
+            if (paginaAtual !== 'projetos') abrirNovaTarefa();
+          }}
         />
 
         {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
@@ -64,7 +125,7 @@ function App() {
           {!carregando && !erro && paginaAtual === 'dashboard' && (
             <>
               <Indicadores tarefas={tarefas} />
-              <Quadro tarefas={tarefas} aoMoverTarefa={moverTarefa} />
+              <Quadro tarefas={tarefas} aoMoverTarefa={moverTarefa} aoNovaTarefa={abrirNovaTarefa} />
             </>
           )}
 
@@ -73,6 +134,16 @@ function App() {
           )}
         </section>
       </main>
+
+      <Modal aberto={modalTarefa.aberto}>
+        <FormTarefa
+          key={modalTarefa.vez}
+          valoresIniciais={modalTarefa.valores}
+          categorias={categorias}
+          aoCancelar={fecharModalTarefa}
+          aoSalvar={salvarTarefa}
+        />
+      </Modal>
 
       <Toast toast={toast} />
     </div>

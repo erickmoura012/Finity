@@ -5,9 +5,10 @@ interface TopoProps {
   temaEscuro: boolean;
   aoAbrirMenu: () => void;
   aoTrocarTema: () => void;
+  aoClicarAdicionar: () => void;
 }
 
-function Topo({ titulo, subtitulo, textoBotao, temaEscuro, aoAbrirMenu, aoTrocarTema }: TopoProps) {
+function Topo({ titulo, subtitulo, textoBotao, temaEscuro, aoAbrirMenu, aoTrocarTema, aoClicarAdicionar }: TopoProps) {
   return (
     <header className="topo">
       <button className="btn-menu" title="Abrir menu" onClick={aoAbrirMenu}>
@@ -29,7 +30,7 @@ function Topo({ titulo, subtitulo, textoBotao, temaEscuro, aoAbrirMenu, aoTrocar
       </button>
 
       {/* o id é usado no CSS do celular pra esconder o texto do botão */}
-      <button className="btn btn-primario" id="btnAdicionar" title="Atalho: N">
+      <button className="btn btn-primario" id="btnAdicionar" title="Atalho: N" onClick={aoClicarAdicionar}>
         <i className="bx bx-plus"></i> <span>{textoBotao}</span>
       </button>
     </header>
