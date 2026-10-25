@@ -5,10 +5,11 @@ import { formatarData, formatarDataCriacao } from '../../js/script/utils';
 interface CardProps {
   tarefa: Tarefa;
   aoEditar: (tarefa: Tarefa) => void;
+  aoDuplicar: (tarefa: Tarefa) => void;
   aoExcluir: (tarefa: Tarefa) => void;
 }
 
-function Card({ tarefa, aoEditar, aoExcluir }: CardProps) {
+function Card({ tarefa, aoEditar, aoDuplicar, aoExcluir }: CardProps) {
   const atrasada = estaAtrasada(tarefa);
   const [arrastando, setArrastando] = useState(false);
 
@@ -40,6 +41,17 @@ function Card({ tarefa, aoEditar, aoExcluir }: CardProps) {
             }}
           >
             <i className="bx bx-edit-alt"></i>
+          </button>
+
+          <button
+            className="btn-icone"
+            title="Duplicar"
+            onClick={evento => {
+              evento.stopPropagation();
+              aoDuplicar(tarefa);
+            }}
+          >
+            <i className="bx bx-copy"></i>
           </button>
 
           <button

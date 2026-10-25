@@ -127,6 +127,26 @@ function App() {
     }
   }
 
+  async function duplicarTarefa(tarefa: Tarefa) {
+    // a cópia ganha id e data de criação novos (o criarTarefa já faz isso)
+    // e sempre começa em "A Fazer"
+    try {
+      await criarTarefa({
+        titulo: tarefa.titulo + ' (cópia)',
+        descricao: tarefa.descricao,
+        prioridade: tarefa.prioridade,
+        categoria: tarefa.categoria,
+        dataLimite: tarefa.dataLimite,
+        status: 'a_fazer'
+      });
+      await recarregar();
+      mostrarToast('Tarefa duplicada');
+    } catch (e) {
+      console.error(e);
+      mostrarToast('Erro ao duplicar a tarefa', 'erro');
+    }
+  }
+
   function fecharExclusao() {
     setExclusao(atual => ({ ...atual, aberto: false }));
   }
@@ -181,6 +201,7 @@ function App() {
                 aoMoverTarefa={moverTarefa}
                 aoNovaTarefa={abrirNovaTarefa}
                 aoEditarTarefa={abrirEdicao}
+                aoDuplicarTarefa={duplicarTarefa}
                 aoExcluirTarefa={tarefa => setExclusao({ aberto: true, tarefa: tarefa })}
               />
             </>

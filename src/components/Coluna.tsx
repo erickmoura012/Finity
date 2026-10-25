@@ -8,10 +8,11 @@ interface ColunaProps {
   aoSoltarTarefa: (id: string, status: Status) => void;
   aoAdicionar: (status: Status) => void;
   aoEditar: (tarefa: Tarefa) => void;
+  aoDuplicar: (tarefa: Tarefa) => void;
   aoExcluir: (tarefa: Tarefa) => void;
 }
 
-function Coluna({ status, tarefas, aoSoltarTarefa, aoAdicionar, aoEditar, aoExcluir }: ColunaProps) {
+function Coluna({ status, tarefas, aoSoltarTarefa, aoAdicionar, aoEditar, aoDuplicar, aoExcluir }: ColunaProps) {
   // destaque = tem um card sendo arrastado em cima da coluna
   const [destaque, setDestaque] = useState(false);
 
@@ -48,7 +49,13 @@ function Coluna({ status, tarefas, aoSoltarTarefa, aoAdicionar, aoEditar, aoExcl
         {tarefas.length === 0 && <div className="coluna-vazia">Nenhuma tarefa por aqui</div>}
 
         {tarefas.map(tarefa => (
-          <Card key={tarefa.id} tarefa={tarefa} aoEditar={aoEditar} aoExcluir={aoExcluir} />
+          <Card
+            key={tarefa.id}
+            tarefa={tarefa}
+            aoEditar={aoEditar}
+            aoDuplicar={aoDuplicar}
+            aoExcluir={aoExcluir}
+          />
         ))}
       </div>
     </div>
