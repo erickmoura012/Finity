@@ -6,11 +6,12 @@ import Quadro from './components/Quadro';
 import Toast from './components/Toast';
 import Modal from './components/Modal';
 import FormTarefa from './components/FormTarefa';
+import ModalExcluir from './components/ModalExcluir';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { PAGINAS, type Pagina } from './paginas';
-import { atualizarTarefa, criarTarefa, type NovaTarefa } from '../js/script/api';
+import { atualizarTarefa, criarTarefa, excluirTarefa, type NovaTarefa } from '../js/script/api';
 import { STATUS, type Status, type DadosTarefa, type Tarefa } from '../js/script/tarefas';
 import { dataDeHoje } from '../js/script/utils';
 
@@ -44,6 +45,11 @@ function App() {
     tarefa: null,
     valores: FORMULARIO_VAZIO,
     vez: 0
+  });
+  // a tarefa continua guardada depois de fechar, pra o nome não sumir durante a animação
+  const [exclusao, setExclusao] = useState<{ aberto: boolean; tarefa: Tarefa | null }>({
+    aberto: false,
+    tarefa: null
   });
 
   function mudarPagina(pagina: Pagina) {
@@ -121,6 +127,24 @@ function App() {
     }
   }
 
+  function fecharExclusao() {
+    setExclusao(atual => ({ ...atual, aberto: false }));
+  }
+
+  async function confirmarExclusao() {
+    if (!exclusao.tarefa) return;
+
+    try {
+      await excluirTarefa(exclusao.tarefa.id);
+      fecharExclusao();
+      await recarregar();
+      mostrarToast('Tarefa excluída');
+    } catch (e) {
+      console.error(e);
+      mostrarToast('Erro ao excluir a tarefa', 'erro');
+    }
+  }
+
   const pagina = PAGINAS[paginaAtual];
 
   return (
@@ -157,6 +181,7 @@ function App() {
                 aoMoverTarefa={moverTarefa}
                 aoNovaTarefa={abrirNovaTarefa}
                 aoEditarTarefa={abrirEdicao}
+                aoExcluirTarefa={tarefa => setExclusao({ aberto: true, tarefa: tarefa })}
               />
             </>
           )}
@@ -177,6 +202,13 @@ function App() {
           aoSalvar={salvarTarefa}
         />
       </Modal>
+
+      <ModalExcluir
+        aberto={exclusao.aberto}
+        tarefa={exclusao.tarefa}
+        aoCancelar={fecharExclusao}
+        aoConfirmar={confirmarExclusao}
+      />
 
       <Toast toast={toast} />
     </div>
