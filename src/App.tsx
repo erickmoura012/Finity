@@ -167,7 +167,7 @@ function App() {
         </section>
       </main>
 
-      <Modal aberto={modalTarefa.aberto}>
+      <Modal aberto={modalTarefa.aberto} aoFechar={fecharModalTarefa}>
         <FormTarefa
           key={modalTarefa.vez}
           valoresIniciais={modalTarefa.valores}
