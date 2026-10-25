@@ -11,7 +11,7 @@ import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { PAGINAS, type Pagina } from './paginas';
 import { atualizarTarefa, criarTarefa, type NovaTarefa } from '../js/script/api';
-import { STATUS, type Status, type DadosTarefa } from '../js/script/tarefas';
+import { STATUS, type Status, type DadosTarefa, type Tarefa } from '../js/script/tarefas';
 import { dataDeHoje } from '../js/script/utils';
 
 // Guarda se o modal de tarefa está aberto e com quais valores o formulário começa.
@@ -19,6 +19,7 @@ import { dataDeHoje } from '../js/script/utils';
 // é criado de novo e começa limpo toda vez que o modal abre.
 interface ModalTarefaInfo {
   aberto: boolean;
+  tarefa: Tarefa | null; // a tarefa sendo editada, ou null se for uma nova
   valores: DadosTarefa;
   vez: number;
 }
@@ -40,6 +41,7 @@ function App() {
   const { toast, mostrarToast } = useToast();
   const [modalTarefa, setModalTarefa] = useState<ModalTarefaInfo>({
     aberto: false,
+    tarefa: null,
     valores: FORMULARIO_VAZIO,
     vez: 0
   });
@@ -66,6 +68,7 @@ function App() {
   function abrirNovaTarefa(status: Status = 'a_fazer') {
     setModalTarefa(atual => ({
       aberto: true,
+      tarefa: null,
       vez: atual.vez + 1,
       valores: {
         ...FORMULARIO_VAZIO,
@@ -76,18 +79,42 @@ function App() {
     }));
   }
 
+  function abrirEdicao(tarefa: Tarefa) {
+    setModalTarefa(atual => ({
+      aberto: true,
+      tarefa: tarefa,
+      vez: atual.vez + 1,
+      valores: {
+        titulo: tarefa.titulo,
+        descricao: tarefa.descricao,
+        prioridade: tarefa.prioridade,
+        categoria: tarefa.categoria,
+        dataLimite: tarefa.dataLimite,
+        status: tarefa.status
+      }
+    }));
+  }
+
   function fecharModalTarefa() {
     // só fecha, os valores ficam pra o formulário não sumir no meio da animação
     setModalTarefa(atual => ({ ...atual, aberto: false }));
   }
 
   async function salvarTarefa(dados: DadosTarefa) {
+    // a validação do formulário já garantiu que a prioridade e o status são válidos
+    const dadosValidos = dados as NovaTarefa;
+
     try {
-      // a validação do formulário já garantiu que a prioridade e o status são válidos
-      await criarTarefa(dados as NovaTarefa);
+      if (modalTarefa.tarefa) {
+        await atualizarTarefa(modalTarefa.tarefa.id, dadosValidos);
+        mostrarToast('Tarefa atualizada');
+      } else {
+        await criarTarefa(dadosValidos);
+        mostrarToast('Tarefa criada com sucesso');
+      }
+
       fecharModalTarefa();
       await recarregar();
-      mostrarToast('Tarefa criada com sucesso');
     } catch (e) {
       console.error(e);
       mostrarToast('Erro ao salvar a tarefa', 'erro');
@@ -125,7 +152,12 @@ function App() {
           {!carregando && !erro && paginaAtual === 'dashboard' && (
             <>
               <Indicadores tarefas={tarefas} />
-              <Quadro tarefas={tarefas} aoMoverTarefa={moverTarefa} aoNovaTarefa={abrirNovaTarefa} />
+              <Quadro
+                tarefas={tarefas}
+                aoMoverTarefa={moverTarefa}
+                aoNovaTarefa={abrirNovaTarefa}
+                aoEditarTarefa={abrirEdicao}
+              />
             </>
           )}
 
@@ -140,6 +172,7 @@ function App() {
           key={modalTarefa.vez}
           valoresIniciais={modalTarefa.valores}
           categorias={categorias}
+          tarefaEditando={modalTarefa.tarefa}
           aoCancelar={fecharModalTarefa}
           aoSalvar={salvarTarefa}
         />

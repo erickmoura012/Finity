@@ -4,9 +4,10 @@ import { formatarData, formatarDataCriacao } from '../../js/script/utils';
 
 interface CardProps {
   tarefa: Tarefa;
+  aoEditar: (tarefa: Tarefa) => void;
 }
 
-function Card({ tarefa }: CardProps) {
+function Card({ tarefa, aoEditar }: CardProps) {
   const atrasada = estaAtrasada(tarefa);
   const [arrastando, setArrastando] = useState(false);
 
@@ -22,9 +23,24 @@ function Card({ tarefa }: CardProps) {
         setArrastando(true);
       }}
       onDragEnd={() => setArrastando(false)}
+      onClick={() => aoEditar(tarefa)}
     >
       <div className="card-topo">
         <span className={'tag prioridade-' + tarefa.prioridade}>{PRIORIDADES[tarefa.prioridade]}</span>
+
+        <div className="card-acoes">
+          <button
+            className="btn-icone"
+            title="Editar"
+            onClick={evento => {
+              // sem isso o clique "sobe" pro card e abre a edição duas vezes
+              evento.stopPropagation();
+              aoEditar(tarefa);
+            }}
+          >
+            <i className="bx bx-edit-alt"></i>
+          </button>
+        </div>
       </div>
 
       <h4 className="card-titulo">{tarefa.titulo}</h4>

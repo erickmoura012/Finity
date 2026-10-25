@@ -1,14 +1,16 @@
 import { useState, type FormEvent } from 'react';
-import { validarTarefa, type Categoria, type DadosTarefa } from '../../js/script/tarefas';
+import { validarTarefa, type Categoria, type DadosTarefa, type Tarefa } from '../../js/script/tarefas';
+import { formatarDataCriacao } from '../../js/script/utils';
 
 interface FormTarefaProps {
   valoresIniciais: DadosTarefa;
   categorias: Categoria[];
+  tarefaEditando: Tarefa | null; // null = tarefa nova
   aoCancelar: () => void;
   aoSalvar: (dados: DadosTarefa) => void;
 }
 
-function FormTarefa({ valoresIniciais, categorias, aoCancelar, aoSalvar }: FormTarefaProps) {
+function FormTarefa({ valoresIniciais, categorias, tarefaEditando, aoCancelar, aoSalvar }: FormTarefaProps) {
   // um objeto só com todos os campos do formulário
   const [dados, setDados] = useState<DadosTarefa>(valoresIniciais);
   const [erro, setErro] = useState('');
@@ -38,7 +40,7 @@ function FormTarefa({ valoresIniciais, categorias, aoCancelar, aoSalvar }: FormT
   return (
     <>
       <div className="modal-topo">
-        <h2>Nova tarefa</h2>
+        <h2>{tarefaEditando ? 'Editar tarefa' : 'Nova tarefa'}</h2>
         <button className="btn-icone" title="Fechar" onClick={aoCancelar}>
           <i className="bx bx-x"></i>
         </button>
@@ -54,7 +56,7 @@ function FormTarefa({ valoresIniciais, categorias, aoCancelar, aoSalvar }: FormT
               className={tituloInvalido ? 'input invalido' : 'input'}
               placeholder="Ex: Criar tela de login"
               maxLength={80}
-              autoFocus
+              autoFocus={!tarefaEditando}
               value={dados.titulo}
               onChange={evento => mudarCampo('titulo', evento.target.value)}
             />
@@ -132,8 +134,13 @@ function FormTarefa({ valoresIniciais, categorias, aoCancelar, aoSalvar }: FormT
         </div>
 
         <div className="modal-rodape">
+          <span className="modal-info">
+            {tarefaEditando && 'Criada em ' + formatarDataCriacao(tarefaEditando.dataCriacao)}
+          </span>
           <button type="button" className="btn btn-secundario" onClick={aoCancelar}>Cancelar</button>
-          <button type="submit" className="btn btn-primario">Criar tarefa</button>
+          <button type="submit" className="btn btn-primario">
+            {tarefaEditando ? 'Salvar alterações' : 'Criar tarefa'}
+          </button>
         </div>
       </form>
     </>
