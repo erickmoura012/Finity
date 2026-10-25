@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
@@ -10,6 +10,7 @@ import ModalExcluir from './components/ModalExcluir';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
+import { useAtalho } from './hooks/useAtalho';
 import { PAGINAS, type Pagina } from './paginas';
 import { atualizarTarefa, criarTarefa, excluirTarefa, type NovaTarefa } from '../js/script/api';
 import { STATUS, type Status, type DadosTarefa, type Tarefa } from '../js/script/tarefas';
@@ -71,7 +72,10 @@ function App() {
     }
   }
 
-  function abrirNovaTarefa(status: Status = 'a_fazer') {
+  // o useCallback mantém a mesma função entre as renderizações (só cria
+  // outra quando as categorias mudam), assim o useAtalho não precisa
+  // tirar e colocar o evento de teclado de novo a cada renderização
+  const abrirNovaTarefa = useCallback((status: Status = 'a_fazer') => {
     setModalTarefa(atual => ({
       aberto: true,
       tarefa: null,
@@ -83,7 +87,12 @@ function App() {
         dataLimite: dataDeHoje()
       }
     }));
-  }
+  }, [categorias]);
+
+  // N abre uma tarefa nova, menos com algum modal aberto
+  // (na página de projetos o botão do topo vai ser "Novo projeto")
+  const algumModalAberto = modalTarefa.aberto || exclusao.aberto;
+  useAtalho('n', abrirNovaTarefa, !algumModalAberto && paginaAtual !== 'projetos');
 
   function abrirEdicao(tarefa: Tarefa) {
     setModalTarefa(atual => ({
