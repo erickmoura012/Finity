@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { PRIORIDADES, estaAtrasada, type Tarefa } from '../../js/script/tarefas';
 import { formatarData, formatarDataCriacao } from '../../js/script/utils';
 
@@ -7,10 +8,21 @@ interface CardProps {
 
 function Card({ tarefa }: CardProps) {
   const atrasada = estaAtrasada(tarefa);
+  const [arrastando, setArrastando] = useState(false);
 
   // no React não precisa do escaparHTML: o texto entre {} já é escapado
   return (
-    <article className="card">
+    <article
+      className={arrastando ? 'card arrastando' : 'card'}
+      draggable
+      onDragStart={evento => {
+        // guarda o id da tarefa pra coluna saber qual card foi solto nela
+        evento.dataTransfer.setData('text/plain', tarefa.id);
+        evento.dataTransfer.effectAllowed = 'move';
+        setArrastando(true);
+      }}
+      onDragEnd={() => setArrastando(false)}
+    >
       <div className="card-topo">
         <span className={'tag prioridade-' + tarefa.prioridade}>{PRIORIDADES[tarefa.prioridade]}</span>
       </div>

@@ -6,16 +6,30 @@ import Quadro from './components/Quadro';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { PAGINAS, type Pagina } from './paginas';
+import { atualizarTarefa } from '../js/script/api';
+import type { Status } from '../js/script/tarefas';
 
 function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
   const [menuAberto, setMenuAberto] = useState(false);
   const { escuro, trocarTema } = useTema();
-  const { tarefas, carregando, erro } = useTarefas();
+  const { tarefas, carregando, erro, recarregar } = useTarefas();
 
   function mudarPagina(pagina: Pagina) {
     setPaginaAtual(pagina);
     setMenuAberto(false); // no celular, fecha o menu depois de escolher
+  }
+
+  async function moverTarefa(id: string, novoStatus: Status) {
+    const tarefa = tarefas.find(t => t.id === id);
+    if (!tarefa || tarefa.status === novoStatus) return;
+
+    try {
+      await atualizarTarefa(id, { status: novoStatus });
+      await recarregar();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   const pagina = PAGINAS[paginaAtual];
@@ -45,7 +59,7 @@ function App() {
           {!carregando && !erro && paginaAtual === 'dashboard' && (
             <>
               <Indicadores tarefas={tarefas} />
-              <Quadro tarefas={tarefas} />
+              <Quadro tarefas={tarefas} aoMoverTarefa={moverTarefa} />
             </>
           )}
 

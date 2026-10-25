@@ -1,14 +1,37 @@
+import { useState } from 'react';
 import Card from './Card';
 import { STATUS, type Status, type Tarefa } from '../../js/script/tarefas';
 
 interface ColunaProps {
   status: Status;
   tarefas: Tarefa[];
+  aoSoltarTarefa: (id: string, status: Status) => void;
 }
 
-function Coluna({ status, tarefas }: ColunaProps) {
+function Coluna({ status, tarefas, aoSoltarTarefa }: ColunaProps) {
+  // destaque = tem um card sendo arrastado em cima da coluna
+  const [destaque, setDestaque] = useState(false);
+
   return (
-    <div className="coluna" data-status={status}>
+    <div
+      className={destaque ? 'coluna destaque' : 'coluna'}
+      data-status={status}
+      onDragOver={evento => {
+        evento.preventDefault(); // sem isso o drop não funciona
+        setDestaque(true);
+      }}
+      onDragLeave={evento => {
+        // só tira o destaque quando sai da coluna de verdade (e não de um card dentro dela)
+        if (!evento.currentTarget.contains(evento.relatedTarget as Node)) {
+          setDestaque(false);
+        }
+      }}
+      onDrop={evento => {
+        evento.preventDefault();
+        setDestaque(false);
+        aoSoltarTarefa(evento.dataTransfer.getData('text/plain'), status);
+      }}
+    >
       <div className="coluna-topo">
         <span className="bolinha"></span>
         <h3>{STATUS[status]}</h3>
