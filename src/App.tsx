@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
+import Quadro from './components/Quadro';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { PAGINAS, type Pagina } from './paginas';
@@ -42,7 +43,10 @@ function App() {
           {erro && <p className="resultado">{erro}</p>}
 
           {!carregando && !erro && paginaAtual === 'dashboard' && (
-            <Indicadores tarefas={tarefas} />
+            <>
+              <Indicadores tarefas={tarefas} />
+              <Quadro tarefas={tarefas} />
+            </>
           )}
 
           {!carregando && !erro && paginaAtual !== 'dashboard' && (

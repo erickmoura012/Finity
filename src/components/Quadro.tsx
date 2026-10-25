@@ -1,0 +1,31 @@
+import Coluna from './Coluna';
+import { STATUS, type Status, type Tarefa } from '../../js/script/tarefas';
+
+interface QuadroProps {
+  tarefas: Tarefa[];
+}
+
+function Quadro({ tarefas }: QuadroProps) {
+  // uma coluna pra cada status, na mesma ordem do objeto STATUS
+  const colunas = Object.keys(STATUS) as Status[];
+
+  return (
+    <>
+      <div className="secao-titulo">
+        <h2>Quadro de tarefas</h2>
+      </div>
+
+      <div className="quadro">
+        {colunas.map(status => (
+          <Coluna
+            key={status}
+            status={status}
+            tarefas={tarefas.filter(t => t.status === status)}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+export default Quadro;
