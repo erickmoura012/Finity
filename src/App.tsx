@@ -3,17 +3,20 @@ import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
 import Quadro from './components/Quadro';
+import Toast from './components/Toast';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
+import { useToast } from './hooks/useToast';
 import { PAGINAS, type Pagina } from './paginas';
 import { atualizarTarefa } from '../js/script/api';
-import type { Status } from '../js/script/tarefas';
+import { STATUS, type Status } from '../js/script/tarefas';
 
 function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
   const [menuAberto, setMenuAberto] = useState(false);
   const { escuro, trocarTema } = useTema();
   const { tarefas, carregando, erro, recarregar } = useTarefas();
+  const { toast, mostrarToast } = useToast();
 
   function mudarPagina(pagina: Pagina) {
     setPaginaAtual(pagina);
@@ -27,8 +30,10 @@ function App() {
     try {
       await atualizarTarefa(id, { status: novoStatus });
       await recarregar();
+      mostrarToast('Tarefa movida para "' + STATUS[novoStatus] + '"');
     } catch (e) {
       console.error(e);
+      mostrarToast('Erro ao mover a tarefa', 'erro');
     }
   }
 
@@ -68,6 +73,8 @@ function App() {
           )}
         </section>
       </main>
+
+      <Toast toast={toast} />
     </div>
   );
 }
