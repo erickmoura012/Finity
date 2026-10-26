@@ -7,13 +7,21 @@ import Toast from './components/Toast';
 import Modal from './components/Modal';
 import FormTarefa from './components/FormTarefa';
 import ModalExcluir from './components/ModalExcluir';
+import Filtros from './components/Filtros';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { useAtalho } from './hooks/useAtalho';
 import { PAGINAS, type Pagina } from './paginas';
 import { atualizarTarefa, criarTarefa, excluirTarefa, type NovaTarefa } from '../js/script/api';
-import { STATUS, type Status, type DadosTarefa, type Tarefa } from '../js/script/tarefas';
+import {
+  STATUS,
+  filtrarTarefas,
+  type Status,
+  type DadosTarefa,
+  type Tarefa,
+  type Filtros as FiltrosTarefas
+} from '../js/script/tarefas';
 import { dataDeHoje } from '../js/script/utils';
 
 // Guarda se o modal de tarefa está aberto e com quais valores o formulário começa.
@@ -35,6 +43,12 @@ const FORMULARIO_VAZIO: DadosTarefa = {
   status: 'a_fazer'
 };
 
+const SEM_FILTROS: FiltrosTarefas = {
+  busca: '',
+  prioridade: '',
+  categoria: ''
+};
+
 function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
   const [menuAberto, setMenuAberto] = useState(false);
@@ -52,6 +66,11 @@ function App() {
     aberto: false,
     tarefa: null
   });
+  const [filtros, setFiltros] = useState<FiltrosTarefas>(SEM_FILTROS);
+
+  // não precisa de useState pra isso: a lista filtrada é calculada
+  // de novo a cada renderização, a partir das tarefas e dos filtros
+  const tarefasFiltradas = filtrarTarefas(tarefas, filtros);
 
   function mudarPagina(pagina: Pagina) {
     setPaginaAtual(pagina);
@@ -72,8 +91,8 @@ function App() {
     }
   }
 
-  // o useCallback mantém a mesma função entre as renderizações (só cria
-  // outra quando as categorias mudam), assim o useAtalho não precisa
+  // o useCallback mantém a mesma função entre as renderizações (só cria outra
+  // quando as categorias ou o filtro de categoria mudam), assim o useAtalho não precisa
   // tirar e colocar o evento de teclado de novo a cada renderização
   const abrirNovaTarefa = useCallback((status: Status = 'a_fazer') => {
     setModalTarefa(atual => ({
@@ -83,11 +102,12 @@ function App() {
       valores: {
         ...FORMULARIO_VAZIO,
         status: status,
-        categoria: categorias[0]?.nome || '',
+        // se tiver filtro de categoria, a tarefa nova já começa nela
+        categoria: filtros.categoria || categorias[0]?.nome || '',
         dataLimite: dataDeHoje()
       }
     }));
-  }, [categorias]);
+  }, [categorias, filtros.categoria]);
 
   // N abre uma tarefa nova, menos com algum modal aberto
   // (na página de projetos o botão do topo vai ser "Novo projeto")
@@ -197,6 +217,16 @@ function App() {
           }}
         />
 
+        {/* na página de projetos os filtros não fazem sentido */}
+        {paginaAtual !== 'projetos' && (
+          <Filtros
+            filtros={filtros}
+            categorias={categorias}
+            aoMudar={setFiltros}
+            aoLimpar={() => setFiltros(SEM_FILTROS)}
+          />
+        )}
+
         {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
         <section className="pagina ativa" key={paginaAtual}>
           {carregando && <p className="resultado">Carregando tarefas...</p>}
@@ -206,7 +236,7 @@ function App() {
             <>
               <Indicadores tarefas={tarefas} />
               <Quadro
-                tarefas={tarefas}
+                tarefas={tarefasFiltradas}
                 aoMoverTarefa={moverTarefa}
                 aoNovaTarefa={abrirNovaTarefa}
                 aoEditarTarefa={abrirEdicao}
