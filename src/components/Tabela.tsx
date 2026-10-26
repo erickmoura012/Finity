@@ -1,27 +1,54 @@
-import { PRIORIDADES, STATUS, estaAtrasada, type Tarefa } from '../../js/script/tarefas';
+import { PRIORIDADES, STATUS, estaAtrasada, type CampoOrdem, type Tarefa } from '../../js/script/tarefas';
 import { formatarData, formatarDataCriacao } from '../../js/script/utils';
+
+export interface Ordem {
+  campo: CampoOrdem;
+  crescente: boolean;
+}
+
+// colunas que dá pra ordenar clicando no nome
+const COLUNAS: { campo: CampoOrdem; nome: string }[] = [
+  { campo: 'titulo', nome: 'Tarefa' },
+  { campo: 'categoria', nome: 'Categoria' },
+  { campo: 'prioridade', nome: 'Prioridade' },
+  { campo: 'status', nome: 'Status' },
+  { campo: 'dataLimite', nome: 'Data limite' },
+  { campo: 'dataCriacao', nome: 'Criada em' }
+];
 
 interface TabelaProps {
   tarefas: Tarefa[];
   mensagemVazia: string;
+  ordem: Ordem;
+  aoOrdenar: (campo: CampoOrdem) => void;
   aoEditar: (tarefa: Tarefa) => void;
   aoDuplicar: (tarefa: Tarefa) => void;
   aoExcluir: (tarefa: Tarefa) => void;
 }
 
 // Usada nas páginas Tarefas e Concluídas
-function Tabela({ tarefas, mensagemVazia, aoEditar, aoDuplicar, aoExcluir }: TabelaProps) {
+function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar, aoEditar, aoDuplicar, aoExcluir }: TabelaProps) {
+  // a classe coloca a setinha (↑ ou ↓) na coluna que está ordenando
+  function classeDaColuna(campo: CampoOrdem) {
+    if (ordem.campo !== campo) return undefined;
+    return ordem.crescente ? 'crescente' : 'decrescente';
+  }
+
   return (
     <div className="tabela-container">
       <table className="tabela">
         <thead>
           <tr>
-            <th>Tarefa</th>
-            <th>Categoria</th>
-            <th>Prioridade</th>
-            <th>Status</th>
-            <th>Data limite</th>
-            <th>Criada em</th>
+            {COLUNAS.map(coluna => (
+              <th
+                key={coluna.campo}
+                data-ordem={coluna.campo}
+                className={classeDaColuna(coluna.campo)}
+                onClick={() => aoOrdenar(coluna.campo)}
+              >
+                {coluna.nome}
+              </th>
+            ))}
             <th></th>
           </tr>
         </thead>

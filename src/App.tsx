@@ -8,7 +8,7 @@ import Modal from './components/Modal';
 import FormTarefa from './components/FormTarefa';
 import ModalExcluir from './components/ModalExcluir';
 import Filtros from './components/Filtros';
-import Tabela from './components/Tabela';
+import Tabela, { type Ordem } from './components/Tabela';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
@@ -18,7 +18,9 @@ import { atualizarTarefa, criarTarefa, excluirTarefa, type NovaTarefa } from '..
 import {
   STATUS,
   filtrarTarefas,
+  ordenarTarefas,
   textoResultado,
+  type CampoOrdem,
   type Status,
   type DadosTarefa,
   type Tarefa,
@@ -69,13 +71,18 @@ function App() {
     tarefa: null
   });
   const [filtros, setFiltros] = useState<FiltrosTarefas>(SEM_FILTROS);
+  // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
+  const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
 
   // não precisa de useState pra isso: a lista filtrada é calculada
   // de novo a cada renderização, a partir das tarefas e dos filtros
   const tarefasFiltradas = filtrarTarefas(tarefas, filtros);
 
+  // o quadro usa só a filtrada, as tabelas usam a ordenada
+  const tarefasOrdenadas = ordenarTarefas(tarefasFiltradas, ordem.campo, ordem.crescente);
+
   // a página Concluídas mostra "X de Y", onde Y é o total de concluídas
-  const concluidasFiltradas = tarefasFiltradas.filter(t => t.status === 'concluido');
+  const concluidasFiltradas = tarefasOrdenadas.filter(t => t.status === 'concluido');
   const totalConcluidas = tarefas.filter(t => t.status === 'concluido').length;
 
   function mudarPagina(pagina: Pagina) {
@@ -182,6 +189,16 @@ function App() {
     }
   }
 
+  function ordenarPor(campo: CampoOrdem) {
+    setOrdem(atual => {
+      // clicar de novo na mesma coluna inverte a ordem
+      if (atual.campo === campo) {
+        return { campo: campo, crescente: !atual.crescente };
+      }
+      return { campo: campo, crescente: true };
+    });
+  }
+
   function abrirExclusao(tarefa: Tarefa) {
     setExclusao({ aberto: true, tarefa: tarefa });
   }
@@ -258,10 +275,12 @@ function App() {
 
           {!carregando && !erro && paginaAtual === 'tarefas' && (
             <>
-              <p className="resultado">{textoResultado(tarefasFiltradas.length, tarefas.length)}</p>
+              <p className="resultado">{textoResultado(tarefasOrdenadas.length, tarefas.length)}</p>
               <Tabela
-                tarefas={tarefasFiltradas}
+                tarefas={tarefasOrdenadas}
                 mensagemVazia="Nenhuma tarefa encontrada."
+                ordem={ordem}
+                aoOrdenar={ordenarPor}
                 aoEditar={abrirEdicao}
                 aoDuplicar={duplicarTarefa}
                 aoExcluir={abrirExclusao}
@@ -275,6 +294,8 @@ function App() {
               <Tabela
                 tarefas={concluidasFiltradas}
                 mensagemVazia="Nenhuma tarefa concluída por enquanto."
+                ordem={ordem}
+                aoOrdenar={ordenarPor}
                 aoEditar={abrirEdicao}
                 aoDuplicar={duplicarTarefa}
                 aoExcluir={abrirExclusao}
