@@ -3,6 +3,7 @@ import {
   filtrarTarefas,
   ordenarTarefas,
   contarTarefas,
+  textoResultado,
   estaAtrasada,
   validarTarefa,
   validarProjeto,
@@ -67,6 +68,21 @@ describe('ordenarTarefas', () => {
   it('não muda a lista original', () => {
     ordenarTarefas(tarefas, 'titulo', true);
     expect(tarefas.map(t => t.id)).toEqual(['1', '2', '3']);
+  });
+});
+
+describe('textoResultado', () => {
+  it('sem filtro mostra só o total', () => {
+    expect(textoResultado(7, 7)).toBe('7 tarefas');
+  });
+
+  it('com filtro mostra quantas apareceram', () => {
+    expect(textoResultado(2, 7)).toBe('Mostrando 2 de 7 tarefas');
+  });
+
+  it('usa o singular quando é uma tarefa só', () => {
+    expect(textoResultado(1, 1)).toBe('1 tarefa');
+    expect(textoResultado(0, 0)).toBe('0 tarefas');
   });
 });
 

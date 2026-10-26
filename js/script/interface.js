@@ -1,7 +1,7 @@
 // Funções que montam o HTML na tela
 
 import { escaparHTML, formatarData, formatarDataCriacao, calcularPorcentagem } from './utils.ts';
-import { STATUS, PRIORIDADES, contarTarefas, estaAtrasada } from './tarefas.ts';
+import { STATUS, PRIORIDADES, contarTarefas, estaAtrasada, textoResultado } from './tarefas.ts';
 
 export function preencherCategorias(categorias) {
   const opcoes = categorias.map(function (c) {
@@ -130,16 +130,8 @@ export function renderizarTabela(tarefas, idCorpo, mensagemVazia) {
   corpo.innerHTML = tarefas.map(criarLinhaTabela).join('');
 }
 
-// "7 tarefas" ou, quando tem filtro, "Mostrando 2 de 7 tarefas"
 export function renderizarResultado(id, mostrando, total) {
-  const palavra = total === 1 ? 'tarefa' : 'tarefas';
-  let texto = total + ' ' + palavra;
-
-  if (mostrando !== total) {
-    texto = 'Mostrando ' + mostrando + ' de ' + total + ' ' + palavra;
-  }
-
-  document.getElementById(id).textContent = texto;
+  document.getElementById(id).textContent = textoResultado(mostrando, total);
 }
 
 // coloca a setinha na coluna que está ordenando a tabela

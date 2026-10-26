@@ -1,0 +1,68 @@
+import { PRIORIDADES, STATUS, estaAtrasada, type Tarefa } from '../../js/script/tarefas';
+import { formatarData, formatarDataCriacao } from '../../js/script/utils';
+
+interface TabelaProps {
+  tarefas: Tarefa[];
+  mensagemVazia: string;
+  aoEditar: (tarefa: Tarefa) => void;
+  aoDuplicar: (tarefa: Tarefa) => void;
+  aoExcluir: (tarefa: Tarefa) => void;
+}
+
+// Usada nas páginas Tarefas e Concluídas
+function Tabela({ tarefas, mensagemVazia, aoEditar, aoDuplicar, aoExcluir }: TabelaProps) {
+  return (
+    <div className="tabela-container">
+      <table className="tabela">
+        <thead>
+          <tr>
+            <th>Tarefa</th>
+            <th>Categoria</th>
+            <th>Prioridade</th>
+            <th>Status</th>
+            <th>Data limite</th>
+            <th>Criada em</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {tarefas.length === 0 && (
+            <tr>
+              <td colSpan={7} className="tabela-vazia">{mensagemVazia}</td>
+            </tr>
+          )}
+
+          {tarefas.map(tarefa => (
+            <tr key={tarefa.id}>
+              <td>
+                <div className="tabela-titulo">{tarefa.titulo}</div>
+                <div className="tabela-descricao">{tarefa.descricao || '-'}</div>
+              </td>
+              <td><span className="tag tag-categoria">{tarefa.categoria}</span></td>
+              <td>
+                <span className={'tag prioridade-' + tarefa.prioridade}>{PRIORIDADES[tarefa.prioridade]}</span>
+              </td>
+              <td><span className={'status status-' + tarefa.status}>{STATUS[tarefa.status]}</span></td>
+              <td className={estaAtrasada(tarefa) ? 'texto-atrasado' : ''}>{formatarData(tarefa.dataLimite)}</td>
+              <td>{formatarDataCriacao(tarefa.dataCriacao)}</td>
+              <td className="tabela-acoes">
+                <button className="btn-icone" title="Editar" onClick={() => aoEditar(tarefa)}>
+                  <i className="bx bx-edit-alt"></i>
+                </button>
+                <button className="btn-icone" title="Duplicar" onClick={() => aoDuplicar(tarefa)}>
+                  <i className="bx bx-copy"></i>
+                </button>
+                <button className="btn-icone perigo" title="Excluir" onClick={() => aoExcluir(tarefa)}>
+                  <i className="bx bx-trash"></i>
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default Tabela;

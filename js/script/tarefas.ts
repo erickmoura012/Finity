@@ -115,6 +115,16 @@ export function ordenarTarefas(tarefas: Tarefa[], campo: CampoOrdem, crescente: 
   });
 }
 
+// "7 tarefas" ou, quando tem filtro, "Mostrando 2 de 7 tarefas"
+export function textoResultado(mostrando: number, total: number): string {
+  const palavra = total === 1 ? 'tarefa' : 'tarefas';
+
+  if (mostrando === total) {
+    return total + ' ' + palavra;
+  }
+  return 'Mostrando ' + mostrando + ' de ' + total + ' ' + palavra;
+}
+
 export function contarTarefas(tarefas: Tarefa[]): Contagem {
   return {
     total: tarefas.length,
