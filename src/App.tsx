@@ -7,7 +7,7 @@ import Toast from './components/Toast';
 import Modal from './components/Modal';
 import FormTarefa from './components/FormTarefa';
 import ModalExcluir from './components/ModalExcluir';
-import Filtros from './components/Filtros';
+import Filtros, { type FiltrosTela } from './components/Filtros';
 import Tabela, { type Ordem } from './components/Tabela';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
@@ -23,8 +23,7 @@ import {
   type CampoOrdem,
   type Status,
   type DadosTarefa,
-  type Tarefa,
-  type Filtros as FiltrosTarefas
+  type Tarefa
 } from '../js/script/tarefas';
 import { dataDeHoje } from '../js/script/utils';
 
@@ -47,10 +46,11 @@ const FORMULARIO_VAZIO: DadosTarefa = {
   status: 'a_fazer'
 };
 
-const SEM_FILTROS: FiltrosTarefas = {
+const SEM_FILTROS: FiltrosTela = {
   busca: '',
   prioridade: '',
-  categoria: ''
+  categoria: '',
+  status: ''
 };
 
 function App() {
@@ -70,7 +70,7 @@ function App() {
     aberto: false,
     tarefa: null
   });
-  const [filtros, setFiltros] = useState<FiltrosTarefas>(SEM_FILTROS);
+  const [filtros, setFiltros] = useState<FiltrosTela>(SEM_FILTROS);
   // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
   const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
 
@@ -80,6 +80,13 @@ function App() {
 
   // o quadro usa só a filtrada, as tabelas usam a ordenada
   const tarefasOrdenadas = ordenarTarefas(tarefasFiltradas, ordem.campo, ordem.crescente);
+
+  // o filtro de status só vale pra tabela da página Tarefas (no quadro as
+  // colunas já separam por status, e Concluídas só tem um status)
+  let tabelaTarefas = tarefasOrdenadas;
+  if (filtros.status) {
+    tabelaTarefas = tarefasOrdenadas.filter(t => t.status === filtros.status);
+  }
 
   // a página Concluídas mostra "X de Y", onde Y é o total de concluídas
   const concluidasFiltradas = tarefasOrdenadas.filter(t => t.status === 'concluido');
@@ -249,6 +256,7 @@ function App() {
           <Filtros
             filtros={filtros}
             categorias={categorias}
+            mostrarStatus={paginaAtual === 'tarefas'}
             aoMudar={setFiltros}
             aoLimpar={() => setFiltros(SEM_FILTROS)}
           />
@@ -275,9 +283,9 @@ function App() {
 
           {!carregando && !erro && paginaAtual === 'tarefas' && (
             <>
-              <p className="resultado">{textoResultado(tarefasOrdenadas.length, tarefas.length)}</p>
+              <p className="resultado">{textoResultado(tabelaTarefas.length, tarefas.length)}</p>
               <Tabela
-                tarefas={tarefasOrdenadas}
+                tarefas={tabelaTarefas}
                 mensagemVazia="Nenhuma tarefa encontrada."
                 ordem={ordem}
                 aoOrdenar={ordenarPor}

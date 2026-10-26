@@ -1,15 +1,21 @@
 import type { Categoria, Filtros as FiltrosTarefas } from '../../js/script/tarefas';
 
+// os filtros das tarefas + o status, que só é usado na página Tarefas
+export interface FiltrosTela extends FiltrosTarefas {
+  status: string;
+}
+
 interface FiltrosProps {
-  filtros: FiltrosTarefas;
+  filtros: FiltrosTela;
   categorias: Categoria[];
-  aoMudar: (filtros: FiltrosTarefas) => void;
+  mostrarStatus: boolean;
+  aoMudar: (filtros: FiltrosTela) => void;
   aoLimpar: () => void;
 }
 
-function Filtros({ filtros, categorias, aoMudar, aoLimpar }: FiltrosProps) {
+function Filtros({ filtros, categorias, mostrarStatus, aoMudar, aoLimpar }: FiltrosProps) {
   // troca só um campo e mantém os outros
-  function mudar(campo: keyof FiltrosTarefas, valor: string) {
+  function mudar(campo: keyof FiltrosTela, valor: string) {
     aoMudar({ ...filtros, [campo]: valor });
   }
 
@@ -47,6 +53,19 @@ function Filtros({ filtros, categorias, aoMudar, aoLimpar }: FiltrosProps) {
           <option key={categoria.nome} value={categoria.nome}>{categoria.nome}</option>
         ))}
       </select>
+
+      {mostrarStatus && (
+        <select
+          className="input"
+          value={filtros.status}
+          onChange={evento => mudar('status', evento.target.value)}
+        >
+          <option value="">Todos os status</option>
+          <option value="a_fazer">A Fazer</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="concluido">Concluído</option>
+        </select>
+      )}
 
       <button className="btn btn-texto" onClick={aoLimpar}>
         <i className="bx bx-x"></i> Limpar
