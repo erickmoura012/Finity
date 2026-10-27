@@ -16,6 +16,7 @@ import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { useAtalho } from './hooks/useAtalho';
 import { PAGINAS, type Pagina } from './paginas';
+import { baixarArquivoJSON } from './arquivos';
 import {
   atualizarTarefa,
   criarTarefa,
@@ -227,6 +228,12 @@ function App() {
     }
   }
 
+  // baixa um arquivo com todas as tarefas e projetos, pra guardar ou levar pra outro navegador
+  function exportarTarefas() {
+    baixarArquivoJSON('finity-' + dataDeHoje() + '.json', { tarefas, categorias });
+    mostrarToast('Tarefas exportadas');
+  }
+
   // clicar num projeto mostra as tarefas dele na página Tarefas
   function abrirProjeto(categoria: string) {
     setFiltros({ ...SEM_FILTROS, categoria: categoria });
@@ -269,7 +276,12 @@ function App() {
 
   return (
     <div className="app">
-      <Sidebar paginaAtual={paginaAtual} aberta={menuAberto} aoMudarPagina={mudarPagina} />
+      <Sidebar
+        paginaAtual={paginaAtual}
+        aberta={menuAberto}
+        aoMudarPagina={mudarPagina}
+        aoExportar={exportarTarefas}
+      />
 
       {/* fundo escuro atrás do menu no celular */}
       <div className={menuAberto ? 'overlay visivel' : 'overlay'} onClick={() => setMenuAberto(false)}></div>

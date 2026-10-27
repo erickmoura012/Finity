@@ -4,9 +4,10 @@ interface SidebarProps {
   paginaAtual: Pagina;
   aberta: boolean;
   aoMudarPagina: (pagina: Pagina) => void;
+  aoExportar: () => void;
 }
 
-function Sidebar({ paginaAtual, aberta, aoMudarPagina }: SidebarProps) {
+function Sidebar({ paginaAtual, aberta, aoMudarPagina, aoExportar }: SidebarProps) {
   const paginas = Object.keys(PAGINAS) as Pagina[];
 
   return (
@@ -32,6 +33,11 @@ function Sidebar({ paginaAtual, aberta, aoMudarPagina }: SidebarProps) {
             <i className={'bx ' + PAGINAS[pagina].icone}></i> {PAGINAS[pagina].titulo}
           </a>
         ))}
+
+        <p className="menu-titulo menu-titulo-dados">Dados</p>
+        <button className="menu-item" onClick={aoExportar}>
+          <i className="bx bx-download"></i> Exportar tarefas
+        </button>
       </nav>
 
       <div className="sidebar-usuario">
