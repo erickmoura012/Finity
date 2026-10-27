@@ -3,11 +3,9 @@ import { STATUS, type Status, type Tarefa } from '../../js/script/tarefas';
 
 interface QuadroProps {
   tarefas: Tarefa[];
-  aoMoverTarefa: (id: string, status: Status) => void;
-  aoNovaTarefa: (status: Status) => void;
 }
 
-function Quadro({ tarefas, aoMoverTarefa, aoNovaTarefa }: QuadroProps) {
+function Quadro({ tarefas }: QuadroProps) {
   // uma coluna pra cada status, na mesma ordem do objeto STATUS
   const colunas = Object.keys(STATUS) as Status[];
 
@@ -24,8 +22,6 @@ function Quadro({ tarefas, aoMoverTarefa, aoNovaTarefa }: QuadroProps) {
             key={status}
             status={status}
             tarefas={tarefas.filter(t => t.status === status)}
-            aoSoltarTarefa={aoMoverTarefa}
-            aoAdicionar={aoNovaTarefa}
           />
         ))}
       </div>

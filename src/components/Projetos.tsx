@@ -1,14 +1,16 @@
 import { contarTarefas, type Categoria, type Tarefa } from '../../js/script/tarefas';
 import { calcularPorcentagem } from '../../js/script/utils';
+import { useAcoesTarefa } from '../contexts/AcoesTarefaContext';
 
 interface ProjetosProps {
   tarefas: Tarefa[];
   categorias: Categoria[];
   aoAbrirProjeto: (categoria: string) => void;
-  aoNovaTarefa: (categoria: string) => void;
 }
 
-function Projetos({ tarefas, categorias, aoAbrirProjeto, aoNovaTarefa }: ProjetosProps) {
+function Projetos({ tarefas, categorias, aoAbrirProjeto }: ProjetosProps) {
+  const acoes = useAcoesTarefa();
+
   return (
     <div className="grade-projetos">
       {categorias.map(categoria => {
@@ -30,7 +32,7 @@ function Projetos({ tarefas, categorias, aoAbrirProjeto, aoNovaTarefa }: Projeto
                   onClick={evento => {
                     // sem isso o clique também abriria o projeto
                     evento.stopPropagation();
-                    aoNovaTarefa(categoria.nome);
+                    acoes.novaTarefa('a_fazer', categoria.nome);
                   }}
                 >
                   <i className="bx bx-plus"></i>

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import Card from './Card';
+import { useAcoesTarefa } from '../contexts/AcoesTarefaContext';
 import { STATUS, type Status, type Tarefa } from '../../js/script/tarefas';
 
 interface ColunaProps {
   status: Status;
   tarefas: Tarefa[];
-  aoSoltarTarefa: (id: string, status: Status) => void;
-  aoAdicionar: (status: Status) => void;
 }
 
-function Coluna({ status, tarefas, aoSoltarTarefa, aoAdicionar }: ColunaProps) {
+function Coluna({ status, tarefas }: ColunaProps) {
+  const acoes = useAcoesTarefa();
   // destaque = tem um card sendo arrastado em cima da coluna
   const [destaque, setDestaque] = useState(false);
 
@@ -30,14 +30,14 @@ function Coluna({ status, tarefas, aoSoltarTarefa, aoAdicionar }: ColunaProps) {
       onDrop={evento => {
         evento.preventDefault();
         setDestaque(false);
-        aoSoltarTarefa(evento.dataTransfer.getData('text/plain'), status);
+        acoes.mover(evento.dataTransfer.getData('text/plain'), status);
       }}
     >
       <div className="coluna-topo">
         <span className="bolinha"></span>
         <h3>{STATUS[status]}</h3>
         <span className="contador">{tarefas.length}</span>
-        <button className="btn-icone btn-adicionar" title="Adicionar tarefa" onClick={() => aoAdicionar(status)}>
+        <button className="btn-icone btn-adicionar" title="Adicionar tarefa" onClick={() => acoes.novaTarefa(status)}>
           <i className="bx bx-plus"></i>
         </button>
       </div>

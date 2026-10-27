@@ -1,5 +1,6 @@
 import { PRIORIDADES, STATUS, estaAtrasada, type CampoOrdem, type Tarefa } from '../../js/script/tarefas';
 import { formatarData, formatarDataCriacao } from '../../js/script/utils';
+import { useAcoesTarefa } from '../contexts/AcoesTarefaContext';
 
 export interface Ordem {
   campo: CampoOrdem;
@@ -21,13 +22,12 @@ interface TabelaProps {
   mensagemVazia: string;
   ordem: Ordem;
   aoOrdenar: (campo: CampoOrdem) => void;
-  aoEditar: (tarefa: Tarefa) => void;
-  aoDuplicar: (tarefa: Tarefa) => void;
-  aoExcluir: (tarefa: Tarefa) => void;
 }
 
 // Usada nas páginas Tarefas e Concluídas
-function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar, aoEditar, aoDuplicar, aoExcluir }: TabelaProps) {
+function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar }: TabelaProps) {
+  const acoes = useAcoesTarefa();
+
   // a classe coloca a setinha (↑ ou ↓) na coluna que está ordenando
   function classeDaColuna(campo: CampoOrdem) {
     if (ordem.campo !== campo) return undefined;
@@ -74,13 +74,13 @@ function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar, aoEditar, aoDuplicar
               <td className={estaAtrasada(tarefa) ? 'texto-atrasado' : ''}>{formatarData(tarefa.dataLimite)}</td>
               <td>{formatarDataCriacao(tarefa.dataCriacao)}</td>
               <td className="tabela-acoes">
-                <button className="btn-icone" title="Editar" onClick={() => aoEditar(tarefa)}>
+                <button className="btn-icone" title="Editar" onClick={() => acoes.editar(tarefa)}>
                   <i className="bx bx-edit-alt"></i>
                 </button>
-                <button className="btn-icone" title="Duplicar" onClick={() => aoDuplicar(tarefa)}>
+                <button className="btn-icone" title="Duplicar" onClick={() => acoes.duplicar(tarefa)}>
                   <i className="bx bx-copy"></i>
                 </button>
-                <button className="btn-icone perigo" title="Excluir" onClick={() => aoExcluir(tarefa)}>
+                <button className="btn-icone perigo" title="Excluir" onClick={() => acoes.excluir(tarefa)}>
                   <i className="bx bx-trash"></i>
                 </button>
               </td>

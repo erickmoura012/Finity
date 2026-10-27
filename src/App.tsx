@@ -371,11 +371,7 @@ function App() {
             {!carregando && !erro && paginaAtual === 'dashboard' && (
               <>
                 <Indicadores tarefas={tarefas} />
-                <Quadro
-                  tarefas={tarefasFiltradas}
-                  aoMoverTarefa={moverTarefa}
-                  aoNovaTarefa={abrirNovaTarefa}
-                />
+                <Quadro tarefas={tarefasFiltradas} />
               </>
             )}
 
@@ -387,9 +383,6 @@ function App() {
                   mensagemVazia="Nenhuma tarefa encontrada."
                   ordem={ordem}
                   aoOrdenar={ordenarPor}
-                  aoEditar={abrirEdicao}
-                  aoDuplicar={duplicarTarefa}
-                  aoExcluir={abrirExclusao}
                 />
               </>
             )}
@@ -402,9 +395,6 @@ function App() {
                   mensagemVazia="Nenhuma tarefa concluída por enquanto."
                   ordem={ordem}
                   aoOrdenar={ordenarPor}
-                  aoEditar={abrirEdicao}
-                  aoDuplicar={duplicarTarefa}
-                  aoExcluir={abrirExclusao}
                 />
               </>
             )}
@@ -414,7 +404,6 @@ function App() {
                 tarefas={tarefas}
                 categorias={categorias}
                 aoAbrirProjeto={abrirProjeto}
-                aoNovaTarefa={categoria => abrirNovaTarefa('a_fazer', categoria)}
               />
             )}
           </section>
