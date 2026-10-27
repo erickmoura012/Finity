@@ -1,11 +1,12 @@
 # Finity
 
-Sistema de gerenciamento de tarefas no estilo Kanban, feito com HTML, SASS, JavaScript e TypeScript,
-sem nenhum framework. Os dados ficam salvos no LocalStorage do navegador.
+Sistema de gerenciamento de tarefas no estilo Kanban, feito com React e TypeScript.
+Os dados ficam salvos no LocalStorage do navegador.
 
 ## Tecnologias
 
-- **HTML, JavaScript e TypeScript** (módulos ES, migrando para TypeScript aos poucos)
+- **React 19** com componentes, hooks próprios e Context API
+- **TypeScript**
 - **SASS** (partials, variáveis, mixins e aninhamento)
 - **Vite** para o servidor de desenvolvimento e o build
 - **Vitest** para os testes
@@ -67,27 +68,39 @@ O site fica em `http://localhost:8080`.
 Finity/
 ├── index.html
 ├── Dockerfile
-├── css/
-│   └── style/
-│       ├── main.scss           junta todos os partials
-│       ├── _mixins.scss        tamanhos de tela e mixins do responsivo
-│       ├── _base.scss          variáveis de cores, tema escuro, reset, botões, campos e tags
-│       ├── _layout.scss        menu lateral, topo, filtros e páginas
-│       ├── _componentes.scss   indicadores, quadro, cards, tabela, projetos, modal e toast
-│       └── _responsivo.scss    ajustes para tablet e celular
-└── js/
-    └── script/
-        ├── utils.ts            funções de ajuda (datas, porcentagem, escapar HTML)
-        ├── tarefas.ts          tipos, status, prioridades, filtros, ordenação e validação
-        ├── api.js              salvar e buscar os dados (hoje usa o LocalStorage)
-        ├── interface.js        funções que montam o HTML na tela
-        ├── tema.js             troca entre tema claro e escuro
-        ├── app.js              eventos, navegação, modais e drag and drop
-        ├── utils.test.ts       testes do utils
-        └── tarefas.test.ts     testes das regras das tarefas
+├── src/
+│   ├── main.tsx                 ponto de entrada do React
+│   ├── App.tsx                  estado da página, modais e ações das tarefas
+│   ├── paginas.ts               títulos e ícones de cada página
+│   ├── arquivos.ts              baixar o arquivo do exportar
+│   ├── components/              Sidebar, Topo, Filtros, Indicadores, Quadro, Coluna, Card,
+│   │                            Tabela, Projetos, Modal, FormTarefa, FormProjeto, ModalExcluir, Toast
+│   ├── hooks/
+│   │   ├── useTarefas.ts        carrega as tarefas e os projetos
+│   │   ├── useTema.ts           tema claro e escuro
+│   │   ├── useToast.ts          mensagens de aviso
+│   │   └── useAtalho.ts         atalhos de teclado
+│   └── contexts/
+│       └── AcoesTarefaContext.ts   ações das tarefas (editar, duplicar, excluir, mover...)
+├── js/
+│   └── script/
+│       ├── tarefas.ts           tipos, filtros, ordenação e validações (sem React)
+│       ├── utils.ts             funções de ajuda (datas, porcentagem...)
+│       ├── api.ts               salvar e buscar os dados (hoje usa o LocalStorage)
+│       ├── tarefas.test.ts      testes das regras das tarefas
+│       └── utils.test.ts        testes do utils
+└── css/
+    └── style/
+        ├── main.scss            junta todos os partials
+        ├── _mixins.scss         tamanhos de tela e mixins do responsivo
+        ├── _base.scss           variáveis de cores, tema escuro, reset, botões, campos e tags
+        ├── _layout.scss         menu lateral, topo, filtros e páginas
+        ├── _componentes.scss    indicadores, quadro, cards, tabela, projetos, modal e toast
+        └── _responsivo.scss     ajustes para tablet e celular
 ```
 
-O `index.html` carrega só o `app.js`, e ele importa o que precisa dos outros arquivos.
+As regras das tarefas ficaram separadas do React (em `js/script`), por isso dá pra testar
+elas sem precisar montar nenhum componente.
 
 ## Formato de uma tarefa
 
@@ -107,21 +120,18 @@ O `index.html` carrega só o `app.js`, e ele importa o que precisa dos outros ar
 - `prioridade`: `alta`, `media` ou `baixa`
 - `status`: `a_fazer`, `em_andamento` ou `concluido`
 
-## Migração para React (em andamento)
+## Histórico
 
-A versão em React + TypeScript está sendo feita aos poucos na pasta `src/`, do lado da versão atual,
-pra o projeto não ficar quebrado durante a migração. Ela usa o mesmo SASS e as mesmas regras do
-`tarefas.ts`.
+O Finity começou em HTML, CSS e JavaScript puro. Depois ganhou módulos ES, SASS, TypeScript e
+testes, e por último foi migrado para React. A migração foi feita aos poucos, com a versão em
+React crescendo do lado da antiga até fazer tudo que ela fazia.
 
-- Versão atual: `http://localhost:5173/`
-- Versão em React: `http://localhost:5173/react.html`
-
-Quando a versão em React estiver completa, ela vai substituir a atual. A versão sem framework ficou
-marcada na tag [`v1.0.0`](https://github.com/erickmoura012/Finity/tree/v1.0.0).
+A versão sem framework ficou guardada na tag [`v1.0.0`](https://github.com/erickmoura012/Finity/tree/v1.0.0).
 
 ## Próximos passos
 
-- [ ] Terminar a migração para React
+- [ ] ESLint
+- [ ] Publicar na Vercel
 
 Depois, a ideia é transformar o projeto em full stack:
 
@@ -130,7 +140,7 @@ Depois, a ideia é transformar o projeto em full stack:
 - [ ] Banco de dados PostgreSQL
 - [ ] Cadastro e login de usuários
 
-Toda a parte de dados está no `js/script/api.js` (`listarTarefas`, `criarTarefa`,
+Toda a parte de dados está no `js/script/api.ts` (`listarTarefas`, `criarTarefa`,
 `atualizarTarefa` e `excluirTarefa`). Essas funções já são `async`, então quando a API existir é só
 trocar o LocalStorage por `fetch` dentro delas, sem mexer no resto do código.
 
