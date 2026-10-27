@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { PAGINAS, type Pagina } from '../paginas';
 
 interface SidebarProps {
@@ -5,10 +6,14 @@ interface SidebarProps {
   aberta: boolean;
   aoMudarPagina: (pagina: Pagina) => void;
   aoExportar: () => void;
+  aoImportar: (arquivo: File) => void;
 }
 
-function Sidebar({ paginaAtual, aberta, aoMudarPagina, aoExportar }: SidebarProps) {
+function Sidebar({ paginaAtual, aberta, aoMudarPagina, aoExportar, aoImportar }: SidebarProps) {
   const paginas = Object.keys(PAGINAS) as Pagina[];
+
+  // o input de arquivo fica escondido, o botão Importar é que abre a janela dele
+  const campoArquivo = useRef<HTMLInputElement>(null);
 
   return (
     <aside className={aberta ? 'sidebar aberta' : 'sidebar'}>
@@ -38,6 +43,22 @@ function Sidebar({ paginaAtual, aberta, aoMudarPagina, aoExportar }: SidebarProp
         <button className="menu-item" onClick={aoExportar}>
           <i className="bx bx-download"></i> Exportar tarefas
         </button>
+        <button className="menu-item" onClick={() => campoArquivo.current?.click()}>
+          <i className="bx bx-upload"></i> Importar tarefas
+        </button>
+        <input
+          ref={campoArquivo}
+          type="file"
+          accept=".json,application/json"
+          hidden
+          onChange={evento => {
+            const arquivo = evento.target.files?.[0];
+            if (arquivo) aoImportar(arquivo);
+
+            // limpa pra conseguir escolher o mesmo arquivo de novo depois
+            evento.target.value = '';
+          }}
+        />
       </nav>
 
       <div className="sidebar-usuario">

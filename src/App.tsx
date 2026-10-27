@@ -22,6 +22,7 @@ import {
   criarTarefa,
   excluirTarefa,
   criarCategoria,
+  importarBackup,
   type NovaTarefa
 } from '../js/script/api';
 import {
@@ -29,6 +30,8 @@ import {
   filtrarTarefas,
   ordenarTarefas,
   textoResultado,
+  validarBackup,
+  type Backup,
   type CampoOrdem,
   type Status,
   type DadosTarefa,
@@ -234,6 +237,39 @@ function App() {
     mostrarToast('Tarefas exportadas');
   }
 
+  async function importarTarefas(arquivo: File) {
+    let dados: unknown;
+
+    try {
+      dados = JSON.parse(await arquivo.text());
+    } catch {
+      mostrarToast('Não foi possível ler o arquivo', 'erro');
+      return;
+    }
+
+    // o arquivo pode ter qualquer coisa dentro, então confere tudo antes de usar
+    const mensagem = validarBackup(dados);
+    if (mensagem) {
+      mostrarToast(mensagem, 'erro');
+      return;
+    }
+
+    const backup = dados as Backup;
+    const confirmou = confirm(
+      'As tarefas e projetos atuais vão ser trocados pelos do arquivo (' + backup.tarefas.length + ' tarefas). Continuar?'
+    );
+    if (!confirmou) return;
+
+    try {
+      await importarBackup(backup);
+      await recarregar();
+      mostrarToast('Tarefas importadas');
+    } catch (e) {
+      console.error(e);
+      mostrarToast('Erro ao importar as tarefas', 'erro');
+    }
+  }
+
   // clicar num projeto mostra as tarefas dele na página Tarefas
   function abrirProjeto(categoria: string) {
     setFiltros({ ...SEM_FILTROS, categoria: categoria });
@@ -281,6 +317,7 @@ function App() {
         aberta={menuAberto}
         aoMudarPagina={mudarPagina}
         aoExportar={exportarTarefas}
+        aoImportar={importarTarefas}
       />
 
       {/* fundo escuro atrás do menu no celular */}
