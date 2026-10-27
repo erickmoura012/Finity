@@ -10,12 +10,19 @@ import ModalExcluir from './components/ModalExcluir';
 import Filtros, { type FiltrosTela } from './components/Filtros';
 import Tabela, { type Ordem } from './components/Tabela';
 import Projetos from './components/Projetos';
+import FormProjeto from './components/FormProjeto';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { useAtalho } from './hooks/useAtalho';
 import { PAGINAS, type Pagina } from './paginas';
-import { atualizarTarefa, criarTarefa, excluirTarefa, type NovaTarefa } from '../js/script/api';
+import {
+  atualizarTarefa,
+  criarTarefa,
+  excluirTarefa,
+  criarCategoria,
+  type NovaTarefa
+} from '../js/script/api';
 import {
   STATUS,
   filtrarTarefas,
@@ -71,6 +78,8 @@ function App() {
     aberto: false,
     tarefa: null
   });
+  // mesma ideia do modal de tarefa: a vez faz o formulário começar limpo
+  const [modalProjeto, setModalProjeto] = useState({ aberto: false, vez: 0 });
   const [filtros, setFiltros] = useState<FiltrosTela>(SEM_FILTROS);
   // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
   const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
@@ -130,10 +139,31 @@ function App() {
     }));
   }, [categorias, filtros.categoria]);
 
-  // N abre uma tarefa nova, menos com algum modal aberto
-  // (na página de projetos o botão do topo vai ser "Novo projeto")
-  const algumModalAberto = modalTarefa.aberto || exclusao.aberto;
-  useAtalho('n', abrirNovaTarefa, !algumModalAberto && paginaAtual !== 'projetos');
+  // não depende de nada de fora, então o useCallback cria ela uma vez só
+  const abrirNovoProjeto = useCallback(() => {
+    setModalProjeto(atual => ({ aberto: true, vez: atual.vez + 1 }));
+  }, []);
+
+  function fecharModalProjeto() {
+    setModalProjeto(atual => ({ ...atual, aberto: false }));
+  }
+
+  async function salvarProjeto(nome: string) {
+    try {
+      await criarCategoria(nome);
+      fecharModalProjeto();
+      await recarregar();
+      mostrarToast('Projeto criado com sucesso');
+    } catch (e) {
+      console.error(e);
+      mostrarToast('Erro ao criar o projeto', 'erro');
+    }
+  }
+
+  // N faz o mesmo que o botão do topo: novo projeto na página de projetos
+  // e nova tarefa nas outras. Não funciona com algum modal aberto.
+  const algumModalAberto = modalTarefa.aberto || exclusao.aberto || modalProjeto.aberto;
+  useAtalho('n', paginaAtual === 'projetos' ? abrirNovoProjeto : abrirNovaTarefa, !algumModalAberto);
 
   function abrirEdicao(tarefa: Tarefa) {
     setModalTarefa(atual => ({
@@ -253,8 +283,11 @@ function App() {
           aoAbrirMenu={() => setMenuAberto(true)}
           aoTrocarTema={trocarTema}
           aoClicarAdicionar={() => {
-            // o modal de novo projeto vem junto com a página de projetos
-            if (paginaAtual !== 'projetos') abrirNovaTarefa();
+            if (paginaAtual === 'projetos') {
+              abrirNovoProjeto();
+            } else {
+              abrirNovaTarefa();
+            }
           }}
         />
 
@@ -337,6 +370,15 @@ function App() {
           tarefaEditando={modalTarefa.tarefa}
           aoCancelar={fecharModalTarefa}
           aoSalvar={salvarTarefa}
+        />
+      </Modal>
+
+      <Modal aberto={modalProjeto.aberto} pequeno aoFechar={fecharModalProjeto}>
+        <FormProjeto
+          key={modalProjeto.vez}
+          categorias={categorias}
+          aoCancelar={fecharModalProjeto}
+          aoSalvar={salvarProjeto}
         />
       </Modal>
 
