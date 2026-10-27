@@ -5,19 +5,9 @@ interface QuadroProps {
   tarefas: Tarefa[];
   aoMoverTarefa: (id: string, status: Status) => void;
   aoNovaTarefa: (status: Status) => void;
-  aoEditarTarefa: (tarefa: Tarefa) => void;
-  aoDuplicarTarefa: (tarefa: Tarefa) => void;
-  aoExcluirTarefa: (tarefa: Tarefa) => void;
 }
 
-function Quadro({
-  tarefas,
-  aoMoverTarefa,
-  aoNovaTarefa,
-  aoEditarTarefa,
-  aoDuplicarTarefa,
-  aoExcluirTarefa
-}: QuadroProps) {
+function Quadro({ tarefas, aoMoverTarefa, aoNovaTarefa }: QuadroProps) {
   // uma coluna pra cada status, na mesma ordem do objeto STATUS
   const colunas = Object.keys(STATUS) as Status[];
 
@@ -36,9 +26,6 @@ function Quadro({
             tarefas={tarefas.filter(t => t.status === status)}
             aoSoltarTarefa={aoMoverTarefa}
             aoAdicionar={aoNovaTarefa}
-            aoEditar={aoEditarTarefa}
-            aoDuplicar={aoDuplicarTarefa}
-            aoExcluir={aoExcluirTarefa}
           />
         ))}
       </div>

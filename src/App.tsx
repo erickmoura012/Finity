@@ -17,6 +17,7 @@ import { useToast } from './hooks/useToast';
 import { useAtalho } from './hooks/useAtalho';
 import { PAGINAS, type Pagina } from './paginas';
 import { baixarArquivoJSON } from './arquivos';
+import { AcoesTarefaContext, type AcoesTarefa } from './contexts/AcoesTarefaContext';
 import {
   atualizarTarefa,
   criarTarefa,
@@ -310,6 +311,15 @@ function App() {
 
   const pagina = PAGINAS[paginaAtual];
 
+  // o que os componentes de tarefa vão pegar pelo useAcoesTarefa
+  const acoes: AcoesTarefa = {
+    editar: abrirEdicao,
+    duplicar: duplicarTarefa,
+    excluir: abrirExclusao,
+    mover: moverTarefa,
+    novaTarefa: abrirNovaTarefa
+  };
+
   return (
     <div className="app">
       <Sidebar
@@ -323,93 +333,93 @@ function App() {
       {/* fundo escuro atrás do menu no celular */}
       <div className={menuAberto ? 'overlay visivel' : 'overlay'} onClick={() => setMenuAberto(false)}></div>
 
-      <main className="conteudo">
-        <Topo
-          titulo={pagina.titulo}
-          subtitulo={pagina.subtitulo}
-          textoBotao={paginaAtual === 'projetos' ? 'Novo projeto' : 'Nova tarefa'}
-          temaEscuro={escuro}
-          aoAbrirMenu={() => setMenuAberto(true)}
-          aoTrocarTema={trocarTema}
-          aoClicarAdicionar={() => {
-            if (paginaAtual === 'projetos') {
-              abrirNovoProjeto();
-            } else {
-              abrirNovaTarefa();
-            }
-          }}
-        />
-
-        {/* na página de projetos os filtros não fazem sentido */}
-        {paginaAtual !== 'projetos' && (
-          <Filtros
-            filtros={filtros}
-            categorias={categorias}
-            mostrarStatus={paginaAtual === 'tarefas'}
-            aoMudar={setFiltros}
-            aoLimpar={() => setFiltros(SEM_FILTROS)}
+      {/* no React 19 o próprio contexto funciona como Provider */}
+      <AcoesTarefaContext value={acoes}>
+        <main className="conteudo">
+          <Topo
+            titulo={pagina.titulo}
+            subtitulo={pagina.subtitulo}
+            textoBotao={paginaAtual === 'projetos' ? 'Novo projeto' : 'Nova tarefa'}
+            temaEscuro={escuro}
+            aoAbrirMenu={() => setMenuAberto(true)}
+            aoTrocarTema={trocarTema}
+            aoClicarAdicionar={() => {
+              if (paginaAtual === 'projetos') {
+                abrirNovoProjeto();
+              } else {
+                abrirNovaTarefa();
+              }
+            }}
           />
-        )}
 
-        {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
-        <section className="pagina ativa" key={paginaAtual}>
-          {carregando && <p className="resultado">Carregando tarefas...</p>}
-          {erro && <p className="resultado">{erro}</p>}
-
-          {!carregando && !erro && paginaAtual === 'dashboard' && (
-            <>
-              <Indicadores tarefas={tarefas} />
-              <Quadro
-                tarefas={tarefasFiltradas}
-                aoMoverTarefa={moverTarefa}
-                aoNovaTarefa={abrirNovaTarefa}
-                aoEditarTarefa={abrirEdicao}
-                aoDuplicarTarefa={duplicarTarefa}
-                aoExcluirTarefa={abrirExclusao}
-              />
-            </>
-          )}
-
-          {!carregando && !erro && paginaAtual === 'tarefas' && (
-            <>
-              <p className="resultado">{textoResultado(tabelaTarefas.length, tarefas.length)}</p>
-              <Tabela
-                tarefas={tabelaTarefas}
-                mensagemVazia="Nenhuma tarefa encontrada."
-                ordem={ordem}
-                aoOrdenar={ordenarPor}
-                aoEditar={abrirEdicao}
-                aoDuplicar={duplicarTarefa}
-                aoExcluir={abrirExclusao}
-              />
-            </>
-          )}
-
-          {!carregando && !erro && paginaAtual === 'concluidas' && (
-            <>
-              <p className="resultado">{textoResultado(concluidasFiltradas.length, totalConcluidas)}</p>
-              <Tabela
-                tarefas={concluidasFiltradas}
-                mensagemVazia="Nenhuma tarefa concluída por enquanto."
-                ordem={ordem}
-                aoOrdenar={ordenarPor}
-                aoEditar={abrirEdicao}
-                aoDuplicar={duplicarTarefa}
-                aoExcluir={abrirExclusao}
-              />
-            </>
-          )}
-
-          {!carregando && !erro && paginaAtual === 'projetos' && (
-            <Projetos
-              tarefas={tarefas}
+          {/* na página de projetos os filtros não fazem sentido */}
+          {paginaAtual !== 'projetos' && (
+            <Filtros
+              filtros={filtros}
               categorias={categorias}
-              aoAbrirProjeto={abrirProjeto}
-              aoNovaTarefa={categoria => abrirNovaTarefa('a_fazer', categoria)}
+              mostrarStatus={paginaAtual === 'tarefas'}
+              aoMudar={setFiltros}
+              aoLimpar={() => setFiltros(SEM_FILTROS)}
             />
           )}
-        </section>
-      </main>
+
+          {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
+          <section className="pagina ativa" key={paginaAtual}>
+            {carregando && <p className="resultado">Carregando tarefas...</p>}
+            {erro && <p className="resultado">{erro}</p>}
+
+            {!carregando && !erro && paginaAtual === 'dashboard' && (
+              <>
+                <Indicadores tarefas={tarefas} />
+                <Quadro
+                  tarefas={tarefasFiltradas}
+                  aoMoverTarefa={moverTarefa}
+                  aoNovaTarefa={abrirNovaTarefa}
+                />
+              </>
+            )}
+
+            {!carregando && !erro && paginaAtual === 'tarefas' && (
+              <>
+                <p className="resultado">{textoResultado(tabelaTarefas.length, tarefas.length)}</p>
+                <Tabela
+                  tarefas={tabelaTarefas}
+                  mensagemVazia="Nenhuma tarefa encontrada."
+                  ordem={ordem}
+                  aoOrdenar={ordenarPor}
+                  aoEditar={abrirEdicao}
+                  aoDuplicar={duplicarTarefa}
+                  aoExcluir={abrirExclusao}
+                />
+              </>
+            )}
+
+            {!carregando && !erro && paginaAtual === 'concluidas' && (
+              <>
+                <p className="resultado">{textoResultado(concluidasFiltradas.length, totalConcluidas)}</p>
+                <Tabela
+                  tarefas={concluidasFiltradas}
+                  mensagemVazia="Nenhuma tarefa concluída por enquanto."
+                  ordem={ordem}
+                  aoOrdenar={ordenarPor}
+                  aoEditar={abrirEdicao}
+                  aoDuplicar={duplicarTarefa}
+                  aoExcluir={abrirExclusao}
+                />
+              </>
+            )}
+
+            {!carregando && !erro && paginaAtual === 'projetos' && (
+              <Projetos
+                tarefas={tarefas}
+                categorias={categorias}
+                aoAbrirProjeto={abrirProjeto}
+                aoNovaTarefa={categoria => abrirNovaTarefa('a_fazer', categoria)}
+              />
+            )}
+          </section>
+        </main>
+      </AcoesTarefaContext>
 
       <Modal aberto={modalTarefa.aberto} aoFechar={fecharModalTarefa}>
         <FormTarefa

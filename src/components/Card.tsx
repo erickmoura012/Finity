@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { PRIORIDADES, estaAtrasada, type Tarefa } from '../../js/script/tarefas';
 import { formatarData, formatarDataCriacao } from '../../js/script/utils';
+import { useAcoesTarefa } from '../contexts/AcoesTarefaContext';
 
 interface CardProps {
   tarefa: Tarefa;
-  aoEditar: (tarefa: Tarefa) => void;
-  aoDuplicar: (tarefa: Tarefa) => void;
-  aoExcluir: (tarefa: Tarefa) => void;
 }
 
-function Card({ tarefa, aoEditar, aoDuplicar, aoExcluir }: CardProps) {
+function Card({ tarefa }: CardProps) {
+  // as ações vêm do contexto, não precisam mais descer pelo Quadro e pela Coluna
+  const acoes = useAcoesTarefa();
   const atrasada = estaAtrasada(tarefa);
   const [arrastando, setArrastando] = useState(false);
 
@@ -25,7 +25,7 @@ function Card({ tarefa, aoEditar, aoDuplicar, aoExcluir }: CardProps) {
         setArrastando(true);
       }}
       onDragEnd={() => setArrastando(false)}
-      onClick={() => aoEditar(tarefa)}
+      onClick={() => acoes.editar(tarefa)}
     >
       <div className="card-topo">
         <span className={'tag prioridade-' + tarefa.prioridade}>{PRIORIDADES[tarefa.prioridade]}</span>
@@ -37,7 +37,7 @@ function Card({ tarefa, aoEditar, aoDuplicar, aoExcluir }: CardProps) {
             onClick={evento => {
               // sem isso o clique "sobe" pro card e abre a edição duas vezes
               evento.stopPropagation();
-              aoEditar(tarefa);
+              acoes.editar(tarefa);
             }}
           >
             <i className="bx bx-edit-alt"></i>
@@ -48,7 +48,7 @@ function Card({ tarefa, aoEditar, aoDuplicar, aoExcluir }: CardProps) {
             title="Duplicar"
             onClick={evento => {
               evento.stopPropagation();
-              aoDuplicar(tarefa);
+              acoes.duplicar(tarefa);
             }}
           >
             <i className="bx bx-copy"></i>
@@ -59,7 +59,7 @@ function Card({ tarefa, aoEditar, aoDuplicar, aoExcluir }: CardProps) {
             title="Excluir"
             onClick={evento => {
               evento.stopPropagation();
-              aoExcluir(tarefa);
+              acoes.excluir(tarefa);
             }}
           >
             <i className="bx bx-trash"></i>
