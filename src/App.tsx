@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
@@ -89,12 +89,20 @@ function App() {
   // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
   const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
 
-  // não precisa de useState pra isso: a lista filtrada é calculada
-  // de novo a cada renderização, a partir das tarefas e dos filtros
-  const tarefasFiltradas = filtrarTarefas(tarefas, filtros);
+  // Não precisa de useState pra isso: a lista filtrada sai das tarefas e dos filtros.
+  // O useMemo guarda o resultado e só filtra de novo quando um dos dois muda.
+  // Sem ele, abrir um modal ou mostrar um toast (que também renderizam o App)
+  // fariam filtrar e ordenar tudo de novo sem necessidade.
+  const tarefasFiltradas = useMemo(
+    () => filtrarTarefas(tarefas, filtros),
+    [tarefas, filtros]
+  );
 
   // o quadro usa só a filtrada, as tabelas usam a ordenada
-  const tarefasOrdenadas = ordenarTarefas(tarefasFiltradas, ordem.campo, ordem.crescente);
+  const tarefasOrdenadas = useMemo(
+    () => ordenarTarefas(tarefasFiltradas, ordem.campo, ordem.crescente),
+    [tarefasFiltradas, ordem]
+  );
 
   // o filtro de status só vale pra tabela da página Tarefas (no quadro as
   // colunas já separam por status, e Concluídas só tem um status)
