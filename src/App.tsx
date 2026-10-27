@@ -9,6 +9,7 @@ import FormTarefa from './components/FormTarefa';
 import ModalExcluir from './components/ModalExcluir';
 import Filtros, { type FiltrosTela } from './components/Filtros';
 import Tabela, { type Ordem } from './components/Tabela';
+import Projetos from './components/Projetos';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
@@ -114,7 +115,7 @@ function App() {
   // o useCallback mantém a mesma função entre as renderizações (só cria outra
   // quando as categorias ou o filtro de categoria mudam), assim o useAtalho não precisa
   // tirar e colocar o evento de teclado de novo a cada renderização
-  const abrirNovaTarefa = useCallback((status: Status = 'a_fazer') => {
+  const abrirNovaTarefa = useCallback((status: Status = 'a_fazer', categoria?: string) => {
     setModalTarefa(atual => ({
       aberto: true,
       tarefa: null,
@@ -122,8 +123,8 @@ function App() {
       valores: {
         ...FORMULARIO_VAZIO,
         status: status,
-        // se tiver filtro de categoria, a tarefa nova já começa nela
-        categoria: filtros.categoria || categorias[0]?.nome || '',
+        // a categoria vem do projeto clicado, ou do filtro de categoria, ou é a primeira
+        categoria: categoria || filtros.categoria || categorias[0]?.nome || '',
         dataLimite: dataDeHoje()
       }
     }));
@@ -194,6 +195,12 @@ function App() {
       console.error(e);
       mostrarToast('Erro ao duplicar a tarefa', 'erro');
     }
+  }
+
+  // clicar num projeto mostra as tarefas dele na página Tarefas
+  function abrirProjeto(categoria: string) {
+    setFiltros({ ...SEM_FILTROS, categoria: categoria });
+    mudarPagina('tarefas');
   }
 
   function ordenarPor(campo: CampoOrdem) {
@@ -312,7 +319,12 @@ function App() {
           )}
 
           {!carregando && !erro && paginaAtual === 'projetos' && (
-            <p className="resultado">Página em construção</p>
+            <Projetos
+              tarefas={tarefas}
+              categorias={categorias}
+              aoAbrirProjeto={abrirProjeto}
+              aoNovaTarefa={categoria => abrirNovaTarefa('a_fazer', categoria)}
+            />
           )}
         </section>
       </main>
