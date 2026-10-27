@@ -10,6 +10,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - **SASS** (partials, variáveis, mixins e aninhamento)
 - **Vite** para o servidor de desenvolvimento e o build
 - **Vitest** para os testes
+- **ESLint** com as regras do TypeScript e dos hooks do React
 - **Docker** com Nginx para rodar o build em container
 
 ## Funcionalidades
@@ -48,6 +49,7 @@ Outros comandos:
 | `npm run preview`   | Abre a versão da pasta `dist` para conferir     |
 | `npm test`          | Roda os testes                                  |
 | `npm run typecheck` | Confere os tipos do TypeScript                  |
+| `npm run lint`      | Procura problemas no código com o ESLint        |
 
 Na primeira vez que o sistema abre, ele cria algumas tarefas de exemplo. Para começar do zero,
 é só abrir o DevTools (F12) > Application > Local Storage e apagar as chaves `finity_tarefas`
@@ -130,7 +132,6 @@ A versão sem framework ficou guardada na tag [`v1.0.0`](https://github.com/eric
 
 ## Próximos passos
 
-- [ ] ESLint
 - [ ] Publicar na Vercel
 
 Depois, a ideia é transformar o projeto em full stack:
