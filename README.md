@@ -1,5 +1,7 @@
 # Finity
 
+![CI](https://github.com/erickmoura012/Finity/actions/workflows/ci.yml/badge.svg)
+
 Sistema de gerenciamento de tarefas no estilo Kanban, feito com React e TypeScript.
 Os dados ficam salvos no LocalStorage do navegador.
 
@@ -12,6 +14,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - **Vitest** para os testes
 - **ESLint** com as regras do TypeScript e dos hooks do React
 - **Docker** com Nginx para rodar o build em container
+- **GitHub Actions** rodando o lint, os tipos, os testes e o build a cada push
 
 ## Funcionalidades
 
