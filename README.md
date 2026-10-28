@@ -5,6 +5,8 @@
 Sistema de gerenciamento de tarefas no estilo Kanban, feito com React e TypeScript.
 Os dados ficam salvos no LocalStorage do navegador.
 
+**Acesse:** [finity-erick.vercel.app](https://finity-erick.vercel.app)
+
 ## Tecnologias
 
 - **React 19** com componentes, hooks próprios e Context API
@@ -15,6 +17,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - **ESLint** com as regras do TypeScript e dos hooks do React
 - **Docker** com Nginx para rodar o build em container
 - **GitHub Actions** rodando o lint, os tipos, os testes e o build a cada push
+- **Vercel** para publicar o site (cada push na main atualiza ele sozinho)
 
 ## Funcionalidades
 
@@ -135,9 +138,7 @@ A versão sem framework ficou guardada na tag [`v1.0.0`](https://github.com/eric
 
 ## Próximos passos
 
-- [ ] Publicar na Vercel
-
-Depois, a ideia é transformar o projeto em full stack:
+A ideia é transformar o projeto em full stack:
 
 - [ ] Backend com Node.js e Express
 - [ ] API REST
