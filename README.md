@@ -10,7 +10,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 ## Tecnologias
 
 - **React 19** com componentes, hooks próprios e Context API
-- **TypeScript**
+- **TypeScript 7**
 - **SASS** (partials, variáveis, mixins e aninhamento)
 - **Vite** para o servidor de desenvolvimento e o build
 - **Vitest** para os testes
