@@ -37,7 +37,12 @@ function Coluna({ status, tarefas }: ColunaProps) {
         <span className="bolinha"></span>
         <h3>{STATUS[status]}</h3>
         <span className="contador">{tarefas.length}</span>
-        <button className="btn-icone btn-adicionar" title="Adicionar tarefa" onClick={() => acoes.novaTarefa(status)}>
+        <button
+          className="btn-icone btn-adicionar"
+          title="Adicionar tarefa"
+          aria-label={'Adicionar tarefa em ' + STATUS[status]}
+          onClick={() => acoes.novaTarefa(status)}
+        >
           <i className="bx bx-plus"></i>
         </button>
       </div>

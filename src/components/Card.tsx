@@ -34,6 +34,7 @@ function Card({ tarefa }: CardProps) {
           <button
             className="btn-icone"
             title="Editar"
+            aria-label={'Editar tarefa ' + tarefa.titulo}
             onClick={evento => {
               // sem isso o clique "sobe" pro card e abre a edição duas vezes
               evento.stopPropagation();
@@ -46,6 +47,7 @@ function Card({ tarefa }: CardProps) {
           <button
             className="btn-icone"
             title="Duplicar"
+            aria-label={'Duplicar tarefa ' + tarefa.titulo}
             onClick={evento => {
               evento.stopPropagation();
               acoes.duplicar(tarefa);
@@ -57,6 +59,7 @@ function Card({ tarefa }: CardProps) {
           <button
             className="btn-icone perigo"
             title="Excluir"
+            aria-label={'Excluir tarefa ' + tarefa.titulo}
             onClick={evento => {
               evento.stopPropagation();
               acoes.excluir(tarefa);

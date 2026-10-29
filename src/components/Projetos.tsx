@@ -29,6 +29,7 @@ function Projetos({ tarefas, categorias, aoAbrirProjeto }: ProjetosProps) {
                 <button
                   className="btn-icone"
                   title="Adicionar tarefa"
+                  aria-label={'Adicionar tarefa no projeto ' + categoria.nome}
                   onClick={evento => {
                     // sem isso o clique também abriria o projeto
                     evento.stopPropagation();

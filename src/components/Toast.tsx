@@ -9,7 +9,8 @@ function Toast({ toast }: ToastProps) {
 
   // fica sempre na tela, a classe visivel é que faz aparecer com animação
   return (
-    <div className={'toast ' + toast.tipo + (toast.visivel ? ' visivel' : '')}>
+    // role="status" faz o leitor de tela ler a mensagem quando ela muda
+    <div className={'toast ' + toast.tipo + (toast.visivel ? ' visivel' : '')} role="status">
       <i className={'bx ' + icone}></i> {toast.mensagem}
     </div>
   );

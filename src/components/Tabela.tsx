@@ -74,13 +74,28 @@ function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar }: TabelaProps) {
               <td className={estaAtrasada(tarefa) ? 'texto-atrasado' : ''}>{formatarData(tarefa.dataLimite)}</td>
               <td>{formatarDataCriacao(tarefa.dataCriacao)}</td>
               <td className="tabela-acoes">
-                <button className="btn-icone" title="Editar" onClick={() => acoes.editar(tarefa)}>
+                <button
+                  className="btn-icone"
+                  title="Editar"
+                  aria-label={'Editar tarefa ' + tarefa.titulo}
+                  onClick={() => acoes.editar(tarefa)}
+                >
                   <i className="bx bx-edit-alt"></i>
                 </button>
-                <button className="btn-icone" title="Duplicar" onClick={() => acoes.duplicar(tarefa)}>
+                <button
+                  className="btn-icone"
+                  title="Duplicar"
+                  aria-label={'Duplicar tarefa ' + tarefa.titulo}
+                  onClick={() => acoes.duplicar(tarefa)}
+                >
                   <i className="bx bx-copy"></i>
                 </button>
-                <button className="btn-icone perigo" title="Excluir" onClick={() => acoes.excluir(tarefa)}>
+                <button
+                  className="btn-icone perigo"
+                  title="Excluir"
+                  aria-label={'Excluir tarefa ' + tarefa.titulo}
+                  onClick={() => acoes.excluir(tarefa)}
+                >
                   <i className="bx bx-trash"></i>
                 </button>
               </td>

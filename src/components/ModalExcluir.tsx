@@ -10,10 +10,10 @@ interface ModalExcluirProps {
 
 function ModalExcluir({ aberto, tarefa, aoCancelar, aoConfirmar }: ModalExcluirProps) {
   return (
-    <Modal aberto={aberto} pequeno aoFechar={aoCancelar}>
+    <Modal aberto={aberto} pequeno idTitulo="tituloModalExcluir" aoFechar={aoCancelar}>
       <div className="modal-corpo modal-confirmacao">
         <div className="confirmacao-icone"><i className="bx bx-trash"></i></div>
-        <h2>Excluir tarefa?</h2>
+        <h2 id="tituloModalExcluir">Excluir tarefa?</h2>
         <p>
           A tarefa <strong>"{tarefa?.titulo}"</strong> será removida e não poderá ser recuperada.
         </p>

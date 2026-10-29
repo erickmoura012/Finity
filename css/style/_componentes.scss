@@ -184,6 +184,11 @@
     }
   }
 
+  // quem navega com Tab também precisa ver os botões quando eles ganham foco
+  &:focus-within .card-acoes {
+    opacity: 1;
+  }
+
   &:active {
     cursor: grabbing;
   }

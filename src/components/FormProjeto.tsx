@@ -29,7 +29,7 @@ function FormProjeto({ categorias, aoCancelar, aoSalvar }: FormProjetoProps) {
   return (
     <>
       <div className="modal-topo">
-        <h2>Novo projeto</h2>
+        <h2 id="tituloModalProjeto">Novo projeto</h2>
         <button className="btn-icone" title="Fechar" onClick={aoCancelar}>
           <i className="bx bx-x"></i>
         </button>

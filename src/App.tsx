@@ -418,7 +418,7 @@ function App() {
         </main>
       </AcoesTarefaContext>
 
-      <Modal aberto={modalTarefa.aberto} aoFechar={fecharModalTarefa}>
+      <Modal aberto={modalTarefa.aberto} idTitulo="tituloModalTarefa" aoFechar={fecharModalTarefa}>
         <FormTarefa
           key={modalTarefa.vez}
           valoresIniciais={modalTarefa.valores}
@@ -429,7 +429,7 @@ function App() {
         />
       </Modal>
 
-      <Modal aberto={modalProjeto.aberto} pequeno aoFechar={fecharModalProjeto}>
+      <Modal aberto={modalProjeto.aberto} pequeno idTitulo="tituloModalProjeto" aoFechar={fecharModalProjeto}>
         <FormProjeto
           key={modalProjeto.vez}
           categorias={categorias}

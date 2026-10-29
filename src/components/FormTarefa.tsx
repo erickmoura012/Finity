@@ -40,7 +40,7 @@ function FormTarefa({ valoresIniciais, categorias, tarefaEditando, aoCancelar, a
   return (
     <>
       <div className="modal-topo">
-        <h2>{tarefaEditando ? 'Editar tarefa' : 'Nova tarefa'}</h2>
+        <h2 id="tituloModalTarefa">{tarefaEditando ? 'Editar tarefa' : 'Nova tarefa'}</h2>
         <button className="btn-icone" title="Fechar" onClick={aoCancelar}>
           <i className="bx bx-x"></i>
         </button>

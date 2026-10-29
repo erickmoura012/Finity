@@ -61,6 +61,14 @@ describe('Card', () => {
     expect(screen.getByText('Estudos')).toBeTruthy();
   });
 
+  it('os botões dizem de qual tarefa são (pra quem usa leitor de tela)', () => {
+    montar();
+
+    expect(screen.getByRole('button', { name: 'Editar tarefa Estudar React' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Duplicar tarefa Estudar React' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Excluir tarefa Estudar React' })).toBeTruthy();
+  });
+
   it('marca a data em vermelho quando a tarefa está atrasada', () => {
     montar();
     expect(screen.getByTitle('Atrasada').className).toContain('atrasada');
