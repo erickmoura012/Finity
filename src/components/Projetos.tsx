@@ -6,9 +6,10 @@ interface ProjetosProps {
   tarefas: Tarefa[];
   categorias: Categoria[];
   aoAbrirProjeto: (categoria: string) => void;
+  aoRenomear: (categoria: Categoria) => void;
 }
 
-function Projetos({ tarefas, categorias, aoAbrirProjeto }: ProjetosProps) {
+function Projetos({ tarefas, categorias, aoAbrirProjeto, aoRenomear }: ProjetosProps) {
   const acoes = useAcoesTarefa();
 
   return (
@@ -37,6 +38,17 @@ function Projetos({ tarefas, categorias, aoAbrirProjeto }: ProjetosProps) {
                   }}
                 >
                   <i className="bx bx-plus"></i>
+                </button>
+                <button
+                  className="btn-icone"
+                  title="Renomear"
+                  aria-label={'Renomear projeto ' + categoria.nome}
+                  onClick={evento => {
+                    evento.stopPropagation();
+                    aoRenomear(categoria);
+                  }}
+                >
+                  <i className="bx bx-edit-alt"></i>
                 </button>
               </div>
             </div>

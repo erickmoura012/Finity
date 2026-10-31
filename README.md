@@ -29,7 +29,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - Ordenar as tabelas clicando no nome da coluna
 - Indicadores com o total de tarefas, pendentes, em andamento e concluídas
 - Página "Meus projetos", com as tarefas agrupadas por categoria e o progresso de cada uma
-- Criar novos projetos (categorias) e adicionar tarefas direto neles
+- Criar e renomear projetos (categorias) e adicionar tarefas direto neles
 - Lista com todas as tarefas e outra só com as concluídas
 - Destaque em vermelho para tarefas atrasadas
 - Tema claro e escuro (a escolha fica salva no navegador)
@@ -151,13 +151,14 @@ trocar o LocalStorage por `fetch` dentro delas, sem mexer no resto do código.
 
 Rotas que pretendo criar:
 
-| Método | Rota               | O que faz                 |
-| ------ | ------------------ | ------------------------- |
-| GET    | /api/tarefas       | Lista as tarefas          |
-| POST   | /api/tarefas       | Cria uma tarefa           |
-| PUT    | /api/tarefas/:id   | Edita uma tarefa          |
-| DELETE | /api/tarefas/:id   | Exclui uma tarefa         |
-| GET    | /api/categorias    | Lista os projetos         |
-| POST   | /api/categorias    | Cria um projeto           |
-| POST   | /api/auth/login    | Login do usuário          |
-| POST   | /api/auth/cadastro | Cadastro de novo usuário  |
+| Método | Rota                  | O que faz                 |
+| ------ | --------------------- | ------------------------- |
+| GET    | /api/tarefas          | Lista as tarefas          |
+| POST   | /api/tarefas          | Cria uma tarefa           |
+| PUT    | /api/tarefas/:id      | Edita uma tarefa          |
+| DELETE | /api/tarefas/:id      | Exclui uma tarefa         |
+| GET    | /api/categorias       | Lista os projetos         |
+| POST   | /api/categorias       | Cria um projeto           |
+| PUT    | /api/categorias/:nome | Renomeia um projeto       |
+| POST   | /api/auth/login       | Login do usuário          |
+| POST   | /api/auth/cadastro    | Cadastro de novo usuário  |

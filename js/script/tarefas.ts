@@ -161,7 +161,8 @@ export function validarTarefa(dados: DadosTarefa): string {
   return '';
 }
 
-export function validarProjeto(nome: string, categorias: Categoria[]): string {
+// Ao renomear, o nomeAtual é o do próprio projeto, que não conta como repetido
+export function validarProjeto(nome: string, categorias: Categoria[], nomeAtual = ''): string {
   if (!nome) {
     return 'Informe o nome do projeto.';
   }
@@ -169,7 +170,9 @@ export function validarProjeto(nome: string, categorias: Categoria[]): string {
     return 'O nome precisa ter pelo menos 2 caracteres.';
   }
 
-  const jaExiste = categorias.some(c => c.nome.toLowerCase() === nome.toLowerCase());
+  const jaExiste = categorias.some(
+    c => c.nome !== nomeAtual && c.nome.toLowerCase() === nome.toLowerCase()
+  );
   if (jaExiste) {
     return 'Já existe um projeto com esse nome.';
   }

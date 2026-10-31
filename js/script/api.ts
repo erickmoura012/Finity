@@ -122,6 +122,28 @@ export async function criarCategoria(nome: string): Promise<Categoria> {
   return novaCategoria;
 }
 
+// PUT /api/categorias/:nome
+// As tarefas guardam o nome do projeto, então elas também precisam mudar
+export async function renomearCategoria(nomeAtual: string, novoNome: string): Promise<Categoria> {
+  const categorias = await listarCategorias();
+  const categoria = categorias.find(c => c.nome === nomeAtual);
+
+  if (!categoria) {
+    throw new Error('Projeto não encontrado');
+  }
+
+  categoria.nome = novoNome;
+  gravarStorage(CHAVE_CATEGORIAS, categorias);
+
+  const tarefas = await listarTarefas();
+  for (const tarefa of tarefas) {
+    if (tarefa.categoria === nomeAtual) tarefa.categoria = novoNome;
+  }
+  gravarStorage(CHAVE_TAREFAS, tarefas);
+
+  return categoria;
+}
+
 // POST /api/importar
 // Troca todas as tarefas e projetos pelos do arquivo importado
 export async function importarBackup(backup: Backup): Promise<void> {

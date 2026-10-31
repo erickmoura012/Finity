@@ -23,6 +23,7 @@ import {
   criarTarefa,
   excluirTarefa,
   criarCategoria,
+  renomearCategoria,
   importarBackup,
   type NovaTarefa
 } from '../js/script/api';
@@ -34,6 +35,7 @@ import {
   validarBackup,
   type Backup,
   type CampoOrdem,
+  type Categoria,
   type Status,
   type DadosTarefa,
   type Tarefa
@@ -84,7 +86,12 @@ function App() {
     tarefa: null
   });
   // mesma ideia do modal de tarefa: a vez faz o formulário começar limpo
-  const [modalProjeto, setModalProjeto] = useState({ aberto: false, vez: 0 });
+  // e o projeto é o que está sendo renomeado (null = projeto novo)
+  const [modalProjeto, setModalProjeto] = useState<{ aberto: boolean; projeto: Categoria | null; vez: number }>({
+    aberto: false,
+    projeto: null,
+    vez: 0
+  });
   const [filtros, setFiltros] = useState<FiltrosTela>(SEM_FILTROS);
   // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
   const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
@@ -154,22 +161,38 @@ function App() {
 
   // não depende de nada de fora, então o useCallback cria ela uma vez só
   const abrirNovoProjeto = useCallback(() => {
-    setModalProjeto(atual => ({ aberto: true, vez: atual.vez + 1 }));
+    setModalProjeto(atual => ({ aberto: true, projeto: null, vez: atual.vez + 1 }));
   }, []);
+
+  function abrirRenomearProjeto(categoria: Categoria) {
+    setModalProjeto(atual => ({ aberto: true, projeto: categoria, vez: atual.vez + 1 }));
+  }
 
   function fecharModalProjeto() {
     setModalProjeto(atual => ({ ...atual, aberto: false }));
   }
 
   async function salvarProjeto(nome: string) {
+    const projeto = modalProjeto.projeto;
+
     try {
-      await criarCategoria(nome);
+      if (projeto) {
+        await renomearCategoria(projeto.nome, nome);
+        // se o filtro de categoria era esse projeto, ele acompanha o nome novo
+        if (filtros.categoria === projeto.nome) {
+          setFiltros({ ...filtros, categoria: nome });
+        }
+        mostrarToast('Projeto renomeado');
+      } else {
+        await criarCategoria(nome);
+        mostrarToast('Projeto criado com sucesso');
+      }
+
       fecharModalProjeto();
       await recarregar();
-      mostrarToast('Projeto criado com sucesso');
     } catch (e) {
       console.error(e);
-      mostrarToast('Erro ao criar o projeto', 'erro');
+      mostrarToast('Erro ao salvar o projeto', 'erro');
     }
   }
 
@@ -412,6 +435,7 @@ function App() {
                 tarefas={tarefas}
                 categorias={categorias}
                 aoAbrirProjeto={abrirProjeto}
+                aoRenomear={abrirRenomearProjeto}
               />
             )}
           </section>
@@ -433,6 +457,7 @@ function App() {
         <FormProjeto
           key={modalProjeto.vez}
           categorias={categorias}
+          projetoEditando={modalProjeto.projeto}
           aoCancelar={fecharModalProjeto}
           aoSalvar={salvarProjeto}
         />

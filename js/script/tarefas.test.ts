@@ -146,6 +146,12 @@ describe('validarProjeto', () => {
   it('aceita um nome novo', () => {
     expect(validarProjeto('Faculdade', categorias)).toBe('');
   });
+
+  it('ao renomear, o próprio projeto não conta como repetido', () => {
+    const duas = [...categorias, { nome: 'Estudos', icone: 'bx-book-open' }];
+    expect(validarProjeto('design', categorias, 'Design')).toBe('');
+    expect(validarProjeto('Design', duas, 'Estudos')).toBe('Já existe um projeto com esse nome.');
+  });
 });
 
 describe('validarBackup', () => {
