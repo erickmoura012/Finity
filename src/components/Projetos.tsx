@@ -7,9 +7,10 @@ interface ProjetosProps {
   categorias: Categoria[];
   aoAbrirProjeto: (categoria: string) => void;
   aoRenomear: (categoria: Categoria) => void;
+  aoExcluir: (categoria: Categoria) => void;
 }
 
-function Projetos({ tarefas, categorias, aoAbrirProjeto, aoRenomear }: ProjetosProps) {
+function Projetos({ tarefas, categorias, aoAbrirProjeto, aoRenomear, aoExcluir }: ProjetosProps) {
   const acoes = useAcoesTarefa();
 
   return (
@@ -49,6 +50,17 @@ function Projetos({ tarefas, categorias, aoAbrirProjeto, aoRenomear }: ProjetosP
                   }}
                 >
                   <i className="bx bx-edit-alt"></i>
+                </button>
+                <button
+                  className="btn-icone perigo"
+                  title="Excluir"
+                  aria-label={'Excluir projeto ' + categoria.nome}
+                  onClick={evento => {
+                    evento.stopPropagation();
+                    aoExcluir(categoria);
+                  }}
+                >
+                  <i className="bx bx-trash"></i>
                 </button>
               </div>
             </div>

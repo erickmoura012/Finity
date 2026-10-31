@@ -1,22 +1,23 @@
+import type { ReactNode } from 'react';
 import Modal from './Modal';
-import type { Tarefa } from '../../js/script/tarefas';
 
 interface ModalExcluirProps {
   aberto: boolean;
-  tarefa: Tarefa | null;
+  titulo: string;
+  mensagem: ReactNode; // o texto pode ter uma parte em negrito, por isso não é só string
   aoCancelar: () => void;
   aoConfirmar: () => void;
 }
 
-function ModalExcluir({ aberto, tarefa, aoCancelar, aoConfirmar }: ModalExcluirProps) {
+// Confirmação de exclusão. Quem usa diz o título e a mensagem,
+// assim o mesmo modal serve pra excluir tarefa e projeto.
+function ModalExcluir({ aberto, titulo, mensagem, aoCancelar, aoConfirmar }: ModalExcluirProps) {
   return (
     <Modal aberto={aberto} pequeno idTitulo="tituloModalExcluir" aoFechar={aoCancelar}>
       <div className="modal-corpo modal-confirmacao">
         <div className="confirmacao-icone"><i className="bx bx-trash"></i></div>
-        <h2 id="tituloModalExcluir">Excluir tarefa?</h2>
-        <p>
-          A tarefa <strong>"{tarefa?.titulo}"</strong> será removida e não poderá ser recuperada.
-        </p>
+        <h2 id="tituloModalExcluir">{titulo}</h2>
+        <p>{mensagem}</p>
       </div>
 
       <div className="modal-rodape">

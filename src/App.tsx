@@ -24,6 +24,7 @@ import {
   excluirTarefa,
   criarCategoria,
   renomearCategoria,
+  excluirCategoria,
   importarBackup,
   type NovaTarefa
 } from '../js/script/api';
@@ -80,10 +81,12 @@ function App() {
     valores: FORMULARIO_VAZIO,
     vez: 0
   });
-  // a tarefa continua guardada depois de fechar, pra o nome não sumir durante a animação
-  const [exclusao, setExclusao] = useState<{ aberto: boolean; tarefa: Tarefa | null }>({
+  // O que está pra ser excluído: uma tarefa ou um projeto (o outro fica null).
+  // Continua guardado depois de fechar, pra o nome não sumir durante a animação.
+  const [exclusao, setExclusao] = useState<{ aberto: boolean; tarefa: Tarefa | null; projeto: Categoria | null }>({
     aberto: false,
-    tarefa: null
+    tarefa: null,
+    projeto: null
   });
   // mesma ideia do modal de tarefa: a vez faz o formulário começar limpo
   // e o projeto é o que está sendo renomeado (null = projeto novo)
@@ -319,7 +322,16 @@ function App() {
   }
 
   function abrirExclusao(tarefa: Tarefa) {
-    setExclusao({ aberto: true, tarefa: tarefa });
+    setExclusao({ aberto: true, tarefa: tarefa, projeto: null });
+  }
+
+  function abrirExclusaoProjeto(categoria: Categoria) {
+    // sem nenhum projeto não daria pra criar tarefa
+    if (categorias.length === 1) {
+      mostrarToast('Precisa ter pelo menos um projeto', 'erro');
+      return;
+    }
+    setExclusao({ aberto: true, tarefa: null, projeto: categoria });
   }
 
   function fecharExclusao() {
@@ -327,17 +339,44 @@ function App() {
   }
 
   async function confirmarExclusao() {
-    if (!exclusao.tarefa) return;
-
     try {
-      await excluirTarefa(exclusao.tarefa.id);
+      if (exclusao.projeto) {
+        await excluirCategoria(exclusao.projeto.nome);
+        // o filtro não pode continuar apontando pra um projeto que não existe mais
+        if (filtros.categoria === exclusao.projeto.nome) {
+          setFiltros({ ...filtros, categoria: '' });
+        }
+        mostrarToast('Projeto excluído');
+      } else if (exclusao.tarefa) {
+        await excluirTarefa(exclusao.tarefa.id);
+        mostrarToast('Tarefa excluída');
+      }
+
       fecharExclusao();
       await recarregar();
-      mostrarToast('Tarefa excluída');
     } catch (e) {
       console.error(e);
-      mostrarToast('Erro ao excluir a tarefa', 'erro');
+      mostrarToast('Erro ao excluir', 'erro');
     }
+  }
+
+  // título e texto do modal de exclusão, conforme o que está pra ser excluído
+  let tituloExclusao = 'Excluir tarefa?';
+  let mensagemExclusao = (
+    <>A tarefa <strong>"{exclusao.tarefa?.titulo}"</strong> será removida e não poderá ser recuperada.</>
+  );
+  if (exclusao.projeto) {
+    const nome = exclusao.projeto.nome;
+    const quantidade = tarefas.filter(t => t.categoria === nome).length;
+    tituloExclusao = 'Excluir projeto?';
+
+    let fim = ' será removido e não poderá ser recuperado.';
+    if (quantidade === 1) {
+      fim = ' e a tarefa dele serão removidos e não poderão ser recuperados.';
+    } else if (quantidade > 1) {
+      fim = ' e as ' + quantidade + ' tarefas dele serão removidos e não poderão ser recuperados.';
+    }
+    mensagemExclusao = <>O projeto <strong>"{nome}"</strong>{fim}</>;
   }
 
   const pagina = PAGINAS[paginaAtual];
@@ -436,6 +475,7 @@ function App() {
                 categorias={categorias}
                 aoAbrirProjeto={abrirProjeto}
                 aoRenomear={abrirRenomearProjeto}
+                aoExcluir={abrirExclusaoProjeto}
               />
             )}
           </section>
@@ -465,7 +505,8 @@ function App() {
 
       <ModalExcluir
         aberto={exclusao.aberto}
-        tarefa={exclusao.tarefa}
+        titulo={tituloExclusao}
+        mensagem={mensagemExclusao}
         aoCancelar={fecharExclusao}
         aoConfirmar={confirmarExclusao}
       />

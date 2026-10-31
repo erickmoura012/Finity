@@ -144,6 +144,16 @@ export async function renomearCategoria(nomeAtual: string, novoNome: string): Pr
   return categoria;
 }
 
+// DELETE /api/categorias/:nome
+// As tarefas do projeto vão junto, senão ficariam apontando pra um projeto que não existe
+export async function excluirCategoria(nome: string): Promise<void> {
+  const categorias = await listarCategorias();
+  gravarStorage(CHAVE_CATEGORIAS, categorias.filter(c => c.nome !== nome));
+
+  const tarefas = await listarTarefas();
+  gravarStorage(CHAVE_TAREFAS, tarefas.filter(t => t.categoria !== nome));
+}
+
 // POST /api/importar
 // Troca todas as tarefas e projetos pelos do arquivo importado
 export async function importarBackup(backup: Backup): Promise<void> {
