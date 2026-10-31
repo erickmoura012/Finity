@@ -96,7 +96,8 @@ Finity/
 │       ├── utils.ts             funções de ajuda (datas, porcentagem...)
 │       ├── api.ts               salvar e buscar os dados (hoje usa o LocalStorage)
 │       ├── tarefas.test.ts      testes das regras das tarefas
-│       └── utils.test.ts        testes do utils
+│       ├── utils.test.ts        testes do utils
+│       └── api.test.ts          testes do api (com um LocalStorage de mentira)
 └── css/
     └── style/
         ├── main.scss            junta todos os partials
@@ -146,8 +147,10 @@ A ideia é transformar o projeto em full stack:
 - [ ] Cadastro e login de usuários
 
 Toda a parte de dados está no `js/script/api.ts` (`listarTarefas`, `criarTarefa`,
-`atualizarTarefa` e `excluirTarefa`). Essas funções já são `async`, então quando a API existir é só
-trocar o LocalStorage por `fetch` dentro delas, sem mexer no resto do código.
+`atualizarTarefa`, `excluirTarefa` e as mesmas funções pros projetos). Essas funções já são `async`,
+então quando a API existir é só trocar o LocalStorage por `fetch` dentro delas, sem mexer no resto
+do código. Os testes do `api.test.ts` ajudam a garantir que o comportamento continua o mesmo depois
+da troca.
 
 Rotas que pretendo criar:
 
