@@ -76,7 +76,9 @@ O site fica em `http://localhost:8080`.
 ```
 Finity/
 ├── index.html
+├── vercel.json              faz a Vercel devolver o index.html em qualquer caminho
 ├── Dockerfile
+├── nginx.conf               mesma coisa, pro Nginx do container
 ├── src/
 │   ├── main.tsx                 ponto de entrada do React (com o BrowserRouter)
 │   ├── App.tsx                  rotas, modais e ações das tarefas
