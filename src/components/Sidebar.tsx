@@ -1,15 +1,15 @@
 import { useRef } from 'react';
+import { NavLink } from 'react-router';
 import { PAGINAS, type Pagina } from '../paginas';
 
 interface SidebarProps {
-  paginaAtual: Pagina;
   aberta: boolean;
-  aoMudarPagina: (pagina: Pagina) => void;
+  aoFecharMenu: () => void;
   aoExportar: () => void;
   aoImportar: (arquivo: File) => void;
 }
 
-function Sidebar({ paginaAtual, aberta, aoMudarPagina, aoExportar, aoImportar }: SidebarProps) {
+function Sidebar({ aberta, aoFecharMenu, aoExportar, aoImportar }: SidebarProps) {
   const paginas = Object.keys(PAGINAS) as Pagina[];
 
   // o input de arquivo fica escondido, o botão Importar é que abre a janela dele
@@ -25,18 +25,17 @@ function Sidebar({ paginaAtual, aberta, aoMudarPagina, aoExportar, aoImportar }:
       <nav className="menu">
         <p className="menu-titulo">Menu</p>
 
+        {/* o NavLink já sabe se o link é o da página atual (isActive) */}
         {paginas.map(pagina => (
-          <a
+          <NavLink
             key={pagina}
-            href="#"
-            className={pagina === paginaAtual ? 'menu-item ativo' : 'menu-item'}
-            onClick={evento => {
-              evento.preventDefault();
-              aoMudarPagina(pagina);
-            }}
+            to={PAGINAS[pagina].caminho}
+            end
+            className={({ isActive }) => (isActive ? 'menu-item ativo' : 'menu-item')}
+            onClick={aoFecharMenu} // no celular, fecha o menu depois de escolher
           >
             <i className={'bx ' + PAGINAS[pagina].icone}></i> {PAGINAS[pagina].titulo}
-          </a>
+          </NavLink>
         ))}
 
         <p className="menu-titulo menu-titulo-dados">Dados</p>

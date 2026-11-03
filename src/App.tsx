@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
@@ -15,7 +16,7 @@ import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
 import { useAtalho } from './hooks/useAtalho';
-import { PAGINAS, type Pagina } from './paginas';
+import { PAGINAS, paginaDoCaminho } from './paginas';
 import { baixarArquivoJSON } from './arquivos';
 import { AcoesTarefaContext, type AcoesTarefa } from './contexts/AcoesTarefaContext';
 import {
@@ -70,7 +71,10 @@ const SEM_FILTROS: FiltrosTela = {
 };
 
 function App() {
-  const [paginaAtual, setPaginaAtual] = useState<Pagina>('dashboard');
+  // a página atual vem da URL (/, /projetos, /tarefas ou /concluidas)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const paginaAtual = paginaDoCaminho(location.pathname) ?? 'dashboard';
   const [menuAberto, setMenuAberto] = useState(false);
   const { escuro, trocarTema } = useTema();
   const { tarefas, categorias, carregando, erro, recarregar } = useTarefas();
@@ -124,11 +128,6 @@ function App() {
   // a página Concluídas mostra "X de Y", onde Y é o total de concluídas
   const concluidasFiltradas = tarefasOrdenadas.filter(t => t.status === 'concluido');
   const totalConcluidas = tarefas.filter(t => t.status === 'concluido').length;
-
-  function mudarPagina(pagina: Pagina) {
-    setPaginaAtual(pagina);
-    setMenuAberto(false); // no celular, fecha o menu depois de escolher
-  }
 
   async function moverTarefa(id: string, novoStatus: Status) {
     const tarefa = tarefas.find(t => t.id === id);
@@ -308,7 +307,7 @@ function App() {
   // clicar num projeto mostra as tarefas dele na página Tarefas
   function abrirProjeto(categoria: string) {
     setFiltros({ ...SEM_FILTROS, categoria: categoria });
-    mudarPagina('tarefas');
+    navigate(PAGINAS.tarefas.caminho);
   }
 
   function ordenarPor(campo: CampoOrdem) {
@@ -393,9 +392,8 @@ function App() {
   return (
     <div className="app">
       <Sidebar
-        paginaAtual={paginaAtual}
         aberta={menuAberto}
-        aoMudarPagina={mudarPagina}
+        aoFecharMenu={() => setMenuAberto(false)}
         aoExportar={exportarTarefas}
         aoImportar={importarTarefas}
       />
@@ -438,45 +436,65 @@ function App() {
             {carregando && <p className="resultado">Carregando tarefas...</p>}
             {erro && <p className="resultado">{erro}</p>}
 
-            {!carregando && !erro && paginaAtual === 'dashboard' && (
-              <>
-                <Indicadores tarefas={tarefas} />
-                <Quadro tarefas={tarefasFiltradas} />
-              </>
-            )}
-
-            {!carregando && !erro && paginaAtual === 'tarefas' && (
-              <>
-                <p className="resultado">{textoResultado(tabelaTarefas.length, tarefas.length)}</p>
-                <Tabela
-                  tarefas={tabelaTarefas}
-                  mensagemVazia="Nenhuma tarefa encontrada."
-                  ordem={ordem}
-                  aoOrdenar={ordenarPor}
+            {/* cada caminho da URL mostra uma página; os caminhos vêm do paginas.ts */}
+            {!carregando && !erro && (
+              <Routes>
+                <Route
+                  path={PAGINAS.dashboard.caminho}
+                  element={
+                    <>
+                      <Indicadores tarefas={tarefas} />
+                      <Quadro tarefas={tarefasFiltradas} />
+                    </>
+                  }
                 />
-              </>
-            )}
 
-            {!carregando && !erro && paginaAtual === 'concluidas' && (
-              <>
-                <p className="resultado">{textoResultado(concluidasFiltradas.length, totalConcluidas)}</p>
-                <Tabela
-                  tarefas={concluidasFiltradas}
-                  mensagemVazia="Nenhuma tarefa concluída por enquanto."
-                  ordem={ordem}
-                  aoOrdenar={ordenarPor}
+                <Route
+                  path={PAGINAS.tarefas.caminho}
+                  element={
+                    <>
+                      <p className="resultado">{textoResultado(tabelaTarefas.length, tarefas.length)}</p>
+                      <Tabela
+                        tarefas={tabelaTarefas}
+                        mensagemVazia="Nenhuma tarefa encontrada."
+                        ordem={ordem}
+                        aoOrdenar={ordenarPor}
+                      />
+                    </>
+                  }
                 />
-              </>
-            )}
 
-            {!carregando && !erro && paginaAtual === 'projetos' && (
-              <Projetos
-                tarefas={tarefas}
-                categorias={categorias}
-                aoAbrirProjeto={abrirProjeto}
-                aoRenomear={abrirRenomearProjeto}
-                aoExcluir={abrirExclusaoProjeto}
-              />
+                <Route
+                  path={PAGINAS.concluidas.caminho}
+                  element={
+                    <>
+                      <p className="resultado">{textoResultado(concluidasFiltradas.length, totalConcluidas)}</p>
+                      <Tabela
+                        tarefas={concluidasFiltradas}
+                        mensagemVazia="Nenhuma tarefa concluída por enquanto."
+                        ordem={ordem}
+                        aoOrdenar={ordenarPor}
+                      />
+                    </>
+                  }
+                />
+
+                <Route
+                  path={PAGINAS.projetos.caminho}
+                  element={
+                    <Projetos
+                      tarefas={tarefas}
+                      categorias={categorias}
+                      aoAbrirProjeto={abrirProjeto}
+                      aoRenomear={abrirRenomearProjeto}
+                      aoExcluir={abrirExclusaoProjeto}
+                    />
+                  }
+                />
+
+                {/* qualquer outro caminho volta pro dashboard */}
+                <Route path="*" element={<Navigate to={PAGINAS.dashboard.caminho} replace />} />
+              </Routes>
             )}
           </section>
         </main>

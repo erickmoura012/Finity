@@ -10,6 +10,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 ## Tecnologias
 
 - **React 19** com componentes, hooks próprios e Context API
+- **React Router** para cada página ter a sua URL
 - **TypeScript 7**
 - **SASS** (partials, variáveis, mixins e aninhamento)
 - **Vite** para o servidor de desenvolvimento e o build
@@ -77,9 +78,9 @@ Finity/
 ├── index.html
 ├── Dockerfile
 ├── src/
-│   ├── main.tsx                 ponto de entrada do React
-│   ├── App.tsx                  estado da página, modais e ações das tarefas
-│   ├── paginas.ts               títulos e ícones de cada página
+│   ├── main.tsx                 ponto de entrada do React (com o BrowserRouter)
+│   ├── App.tsx                  rotas, modais e ações das tarefas
+│   ├── paginas.ts               caminho, título e ícone de cada página
 │   ├── arquivos.ts              baixar o arquivo do exportar
 │   ├── components/              Sidebar, Topo, Filtros, Indicadores, Quadro, Coluna, Card,
 │   │                            Tabela, Projetos, Modal, FormTarefa, FormProjeto, ModalExcluir, Toast
