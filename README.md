@@ -139,6 +139,8 @@ testes, e por último foi migrado para React. A migração foi feita aos poucos,
 React crescendo do lado da antiga até fazer tudo que ela fazia.
 
 A versão sem framework ficou guardada na tag [`v1.0.0`](https://github.com/erickmoura012/Finity/tree/v1.0.0).
+A versão em React, com todas as páginas, os testes e o React Router, é a
+[`v2.0.0`](https://github.com/erickmoura012/Finity/tree/v2.0.0).
 
 ## Próximos passos
 
