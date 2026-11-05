@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router';
+import { Routes, Route, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
@@ -99,7 +99,27 @@ function App() {
     projeto: null,
     vez: 0
   });
-  const [filtros, setFiltros] = useState<FiltrosTela>(SEM_FILTROS);
+  // Os filtros ficam na URL (/tarefas?busca=react&categoria=Design), assim dá pra
+  // compartilhar um link já filtrado e o voltar do navegador desfaz o filtro.
+  // O useSearchParams devolve o mesmo objeto enquanto a URL não muda, então o
+  // useMemo só monta os filtros de novo quando eles mudam de verdade.
+  const [parametros, setParametros] = useSearchParams();
+  const filtros = useMemo<FiltrosTela>(() => ({
+    busca: parametros.get('busca') ?? '',
+    prioridade: parametros.get('prioridade') ?? '',
+    categoria: parametros.get('categoria') ?? '',
+    status: parametros.get('status') ?? ''
+  }), [parametros]);
+
+  // só os filtros preenchidos vão pra URL
+  function mudarFiltros(novos: FiltrosTela) {
+    const novosParametros = new URLSearchParams();
+    for (const [campo, valor] of Object.entries(novos)) {
+      if (valor) novosParametros.set(campo, valor);
+    }
+    // replace: cada letra digitada na busca não vira uma entrada no histórico
+    setParametros(novosParametros, { replace: true });
+  }
   // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
   const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
 
@@ -182,7 +202,7 @@ function App() {
         await renomearCategoria(projeto.nome, nome);
         // se o filtro de categoria era esse projeto, ele acompanha o nome novo
         if (filtros.categoria === projeto.nome) {
-          setFiltros({ ...filtros, categoria: nome });
+          mudarFiltros({ ...filtros, categoria: nome });
         }
         mostrarToast('Projeto renomeado');
       } else {
@@ -304,10 +324,10 @@ function App() {
     }
   }
 
-  // clicar num projeto mostra as tarefas dele na página Tarefas
+  // clicar num projeto mostra as tarefas dele na página Tarefas (/tarefas?categoria=Design)
   function abrirProjeto(categoria: string) {
-    setFiltros({ ...SEM_FILTROS, categoria: categoria });
-    navigate(PAGINAS.tarefas.caminho);
+    const parametrosProjeto = new URLSearchParams({ categoria: categoria });
+    navigate(PAGINAS.tarefas.caminho + '?' + parametrosProjeto.toString());
   }
 
   function ordenarPor(campo: CampoOrdem) {
@@ -343,7 +363,7 @@ function App() {
         await excluirCategoria(exclusao.projeto.nome);
         // o filtro não pode continuar apontando pra um projeto que não existe mais
         if (filtros.categoria === exclusao.projeto.nome) {
-          setFiltros({ ...filtros, categoria: '' });
+          mudarFiltros({ ...filtros, categoria: '' });
         }
         mostrarToast('Projeto excluído');
       } else if (exclusao.tarefa) {
@@ -426,8 +446,8 @@ function App() {
               filtros={filtros}
               categorias={categorias}
               mostrarStatus={paginaAtual === 'tarefas'}
-              aoMudar={setFiltros}
-              aoLimpar={() => setFiltros(SEM_FILTROS)}
+              aoMudar={mudarFiltros}
+              aoLimpar={() => mudarFiltros(SEM_FILTROS)}
             />
           )}
 

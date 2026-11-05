@@ -26,7 +26,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - Atalho `N` para criar uma tarefa nova
 - Mover as tarefas entre as colunas (A Fazer, Em andamento e Concluído) arrastando os cards
 - Pesquisar por título ou descrição
-- Filtrar por prioridade, categoria e status
+- Filtrar por prioridade, categoria e status (os filtros ficam na URL, então dá pra compartilhar um link já filtrado)
 - Ordenar as tabelas clicando no nome da coluna
 - Indicadores com o total de tarefas, pendentes, em andamento e concluídas
 - Página "Meus projetos", com as tarefas agrupadas por categoria e o progresso de cada uma
