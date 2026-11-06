@@ -55,6 +55,15 @@ describe('App', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Concluídas' })).toBeTruthy();
   });
 
+  it('o título da aba muda junto com a página', async () => {
+    const usuario = userEvent.setup();
+    montar('/');
+    expect(document.title).toBe('Dashboard | Finity');
+
+    await usuario.click(screen.getByRole('link', { name: 'Tarefas' }));
+    expect(document.title).toBe('Tarefas | Finity');
+  });
+
   it('um link com filtro já abre filtrado', async () => {
     montar('/tarefas?categoria=Design');
 
@@ -86,6 +95,7 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { level: 2, name: 'Página não encontrada' })).toBeTruthy();
     // na 404 não tem filtro
     expect(screen.queryByRole('combobox', { name: 'Filtrar por categoria' })).toBeNull();
+    expect(document.title).toBe('Página não encontrada | Finity');
 
     await usuario.click(screen.getByRole('link', { name: 'Voltar pro dashboard' }));
 

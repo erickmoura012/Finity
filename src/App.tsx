@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Routes, Route, useLocation, useNavigate, useSearchParams } from 'react-router';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
@@ -418,6 +418,12 @@ function App() {
   const pagina = paginaAtual
     ? PAGINAS[paginaAtual]
     : { titulo: 'Página não encontrada', subtitulo: 'Esse endereço não existe no Finity' };
+
+  // o título da aba do navegador acompanha a página (ex: "Tarefas | Finity"),
+  // assim dá pra saber onde está quando tem várias abas abertas
+  useEffect(() => {
+    document.title = pagina.titulo + ' | Finity';
+  }, [pagina.titulo]);
 
   // o que os componentes de tarefa vão pegar pelo useAcoesTarefa
   const acoes: AcoesTarefa = {
