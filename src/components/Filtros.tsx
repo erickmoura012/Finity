@@ -27,13 +27,16 @@ function Filtros({ filtros, categorias, mostrarStatus, aoMudar, aoLimpar }: Filt
           type="text"
           className="input"
           placeholder="Pesquisar tarefas..."
+          aria-label="Pesquisar tarefas"
           value={filtros.busca}
           onChange={evento => mudar('busca', evento.target.value)}
         />
       </div>
 
+      {/* sem um label na tela, o aria-label diz pro leitor de tela o que é cada campo */}
       <select
         className="input"
+        aria-label="Filtrar por prioridade"
         value={filtros.prioridade}
         onChange={evento => mudar('prioridade', evento.target.value)}
       >
@@ -45,6 +48,7 @@ function Filtros({ filtros, categorias, mostrarStatus, aoMudar, aoLimpar }: Filt
 
       <select
         className="input"
+        aria-label="Filtrar por categoria"
         value={filtros.categoria}
         onChange={evento => mudar('categoria', evento.target.value)}
       >
@@ -57,6 +61,7 @@ function Filtros({ filtros, categorias, mostrarStatus, aoMudar, aoLimpar }: Filt
       {mostrarStatus && (
         <select
           className="input"
+          aria-label="Filtrar por status"
           value={filtros.status}
           onChange={evento => mudar('status', evento.target.value)}
         >
