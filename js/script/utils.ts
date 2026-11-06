@@ -54,3 +54,13 @@ export function escaparHTML(texto: string | undefined): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+// Deixa o texto pronto pra comparar na busca: tudo minúsculo e sem acento.
+// O normalize('NFD') separa a letra do acento ("á" vira "a" + "´")
+// e o replace tira os acentos que sobraram soltos.
+export function normalizarTexto(texto: string): string {
+  return texto
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+}

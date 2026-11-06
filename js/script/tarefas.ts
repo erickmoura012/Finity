@@ -1,6 +1,6 @@
 // Regras das tarefas: valores possíveis, filtros, contagem e validação
 
-import { dataDeHoje } from './utils.ts';
+import { dataDeHoje, normalizarTexto } from './utils.ts';
 
 export type Status = 'a_fazer' | 'em_andamento' | 'concluido';
 export type Prioridade = 'alta' | 'media' | 'baixa';
@@ -88,10 +88,11 @@ export const CATEGORIAS_PADRAO: Categoria[] = [
 ];
 
 export function filtrarTarefas(tarefas: Tarefa[], filtros: Filtros): Tarefa[] {
-  const busca = filtros.busca.trim().toLowerCase();
+  // sem acento dos dois lados: "relatorio" acha "Relatório" e "função" acha "funcao"
+  const busca = normalizarTexto(filtros.busca.trim());
 
   return tarefas.filter(function (tarefa) {
-    const texto = (tarefa.titulo + ' ' + tarefa.descricao).toLowerCase();
+    const texto = normalizarTexto(tarefa.titulo + ' ' + tarefa.descricao);
 
     if (busca && !texto.includes(busca)) return false;
     if (filtros.prioridade && tarefa.prioridade !== filtros.prioridade) return false;

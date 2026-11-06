@@ -44,6 +44,11 @@ describe('filtrarTarefas', () => {
     expect(filtrarTarefas(tarefas, { ...semFiltro, busca: 'cores' })[0].id).toBe('2');
   });
 
+  it('busca sem ligar pros acentos', () => {
+    expect(filtrarTarefas(tarefas, { ...semFiltro, busca: 'abaco' })[0].id).toBe('3');
+    expect(filtrarTarefas(tarefas, { ...semFiltro, busca: 'lógo' })[0].id).toBe('2');
+  });
+
   it('filtra por prioridade e categoria juntas', () => {
     const resultado = filtrarTarefas(tarefas, { ...semFiltro, prioridade: 'alta', categoria: 'Design' });
     expect(resultado.map(t => t.id)).toEqual(['2']);

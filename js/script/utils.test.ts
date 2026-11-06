@@ -4,7 +4,8 @@ import {
   somarDias,
   formatarData,
   calcularPorcentagem,
-  escaparHTML
+  escaparHTML,
+  normalizarTexto
 } from './utils.ts';
 
 describe('datas', () => {
@@ -58,5 +59,12 @@ describe('escaparHTML', () => {
   it('devolve texto vazio quando não recebe nada', () => {
     expect(escaparHTML('')).toBe('');
     expect(escaparHTML(undefined)).toBe('');
+  });
+});
+
+describe('normalizarTexto', () => {
+  it('tira os acentos e deixa tudo minúsculo', () => {
+    expect(normalizarTexto('Relatório de Função')).toBe('relatorio de funcao');
+    expect(normalizarTexto('AÇÃO')).toBe('acao');
   });
 });
