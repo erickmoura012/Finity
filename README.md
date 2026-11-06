@@ -85,7 +85,8 @@ Finity/
 │   ├── paginas.ts               caminho, título e ícone de cada página
 │   ├── arquivos.ts              baixar o arquivo do exportar
 │   ├── components/              Sidebar, Topo, Filtros, Indicadores, Quadro, Coluna, Card,
-│   │                            Tabela, Projetos, Modal, FormTarefa, FormProjeto, ModalExcluir, Toast
+│   │                            Tabela, Projetos, Modal, FormTarefa, FormProjeto, ModalExcluir,
+│   │                            Toast e NaoEncontrada (página 404)
 │   ├── hooks/
 │   │   ├── useTarefas.ts        carrega as tarefas e os projetos
 │   │   ├── useTema.ts           tema claro e escuro

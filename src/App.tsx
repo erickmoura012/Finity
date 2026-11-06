@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router';
+import { Routes, Route, useLocation, useNavigate, useSearchParams } from 'react-router';
 import Sidebar from './components/Sidebar';
 import Topo from './components/Topo';
 import Indicadores from './components/Indicadores';
@@ -12,6 +12,7 @@ import Filtros, { type FiltrosTela } from './components/Filtros';
 import Tabela, { type Ordem } from './components/Tabela';
 import Projetos from './components/Projetos';
 import FormProjeto from './components/FormProjeto';
+import NaoEncontrada from './components/NaoEncontrada';
 import { useTema } from './hooks/useTema';
 import { useTarefas } from './hooks/useTarefas';
 import { useToast } from './hooks/useToast';
@@ -73,9 +74,10 @@ const SEM_FILTROS: FiltrosTela = {
 
 function App() {
   // a página atual vem da URL (/, /projetos, /tarefas ou /concluidas)
+  // e fica null quando o caminho não é de nenhuma página
   const location = useLocation();
   const navigate = useNavigate();
-  const paginaAtual = paginaDoCaminho(location.pathname) ?? 'dashboard';
+  const paginaAtual = paginaDoCaminho(location.pathname);
   const [menuAberto, setMenuAberto] = useState(false);
   const { escuro, trocarTema } = useTema();
   const { tarefas, categorias, carregando, erro, recarregar } = useTarefas();
@@ -412,7 +414,10 @@ function App() {
     mensagemExclusao = <>O projeto <strong>"{nome}"</strong>{fim}</>;
   }
 
-  const pagina = PAGINAS[paginaAtual];
+  // na página 404 o topo também avisa que não achou
+  const pagina = paginaAtual
+    ? PAGINAS[paginaAtual]
+    : { titulo: 'Página não encontrada', subtitulo: 'Esse endereço não existe no Finity' };
 
   // o que os componentes de tarefa vão pegar pelo useAcoesTarefa
   const acoes: AcoesTarefa = {
@@ -454,8 +459,8 @@ function App() {
             }}
           />
 
-          {/* na página de projetos os filtros não fazem sentido */}
-          {paginaAtual !== 'projetos' && (
+          {/* na página de projetos e na 404 os filtros não fazem sentido */}
+          {paginaAtual && paginaAtual !== 'projetos' && (
             <Filtros
               filtros={filtros}
               categorias={categorias}
@@ -466,7 +471,7 @@ function App() {
           )}
 
           {/* a key faz a animação de entrada rodar de novo a cada troca de página */}
-          <section className="pagina ativa" key={paginaAtual}>
+          <section className="pagina ativa" key={paginaAtual ?? '404'}>
             {carregando && <p className="resultado">Carregando tarefas...</p>}
             {erro && <p className="resultado">{erro}</p>}
 
@@ -526,8 +531,8 @@ function App() {
                   }
                 />
 
-                {/* qualquer outro caminho volta pro dashboard */}
-                <Route path="*" element={<Navigate to={PAGINAS.dashboard.caminho} replace />} />
+                {/* qualquer outro caminho mostra a página de não encontrada */}
+                <Route path="*" element={<NaoEncontrada />} />
               </Routes>
             )}
           </section>
