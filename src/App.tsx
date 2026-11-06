@@ -38,6 +38,7 @@ import {
   type Backup,
   type CampoOrdem,
   type Categoria,
+  lerCampoOrdem,
   type Status,
   type DadosTarefa,
   type Tarefa
@@ -111,17 +112,31 @@ function App() {
     status: parametros.get('status') ?? ''
   }), [parametros]);
 
-  // só os filtros preenchidos vão pra URL
-  function mudarFiltros(novos: FiltrosTela) {
+  // A ordenação das tabelas também fica na URL: ?ordem=titulo, e &desc=1 quando é decrescente.
+  // Sem o parâmetro (ou com um campo que não existe) fica na ordem em que foram criadas.
+  const ordem = useMemo<Ordem>(() => ({
+    campo: lerCampoOrdem(parametros.get('ordem')),
+    crescente: parametros.get('desc') !== '1'
+  }), [parametros]);
+
+  // Monta a URL nova com os filtros e a ordenação. Só vai o que está preenchido.
+  function mudarParametros(novosFiltros: FiltrosTela, novaOrdem: Ordem) {
     const novosParametros = new URLSearchParams();
-    for (const [campo, valor] of Object.entries(novos)) {
+    for (const [campo, valor] of Object.entries(novosFiltros)) {
       if (valor) novosParametros.set(campo, valor);
+    }
+    if (novaOrdem.campo) {
+      novosParametros.set('ordem', novaOrdem.campo);
+      if (!novaOrdem.crescente) novosParametros.set('desc', '1');
     }
     // replace: cada letra digitada na busca não vira uma entrada no histórico
     setParametros(novosParametros, { replace: true });
   }
-  // vale pras duas tabelas (campo vazio = ordem em que foram criadas)
-  const [ordem, setOrdem] = useState<Ordem>({ campo: '', crescente: true });
+
+  // mudar os filtros mantém a ordenação, e ordenar mantém os filtros
+  function mudarFiltros(novos: FiltrosTela) {
+    mudarParametros(novos, ordem);
+  }
 
   // Não precisa de useState pra isso: a lista filtrada sai das tarefas e dos filtros.
   // O useMemo guarda o resultado e só filtra de novo quando um dos dois muda.
@@ -331,13 +346,12 @@ function App() {
   }
 
   function ordenarPor(campo: CampoOrdem) {
-    setOrdem(atual => {
-      // clicar de novo na mesma coluna inverte a ordem
-      if (atual.campo === campo) {
-        return { campo: campo, crescente: !atual.crescente };
-      }
-      return { campo: campo, crescente: true };
-    });
+    // clicar de novo na mesma coluna inverte a ordem
+    if (ordem.campo === campo) {
+      mudarParametros(filtros, { campo: campo, crescente: !ordem.crescente });
+    } else {
+      mudarParametros(filtros, { campo: campo, crescente: true });
+    }
   }
 
   function abrirExclusao(tarefa: Tarefa) {

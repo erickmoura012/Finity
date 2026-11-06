@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   filtrarTarefas,
   ordenarTarefas,
+  lerCampoOrdem,
   contarTarefas,
   textoResultado,
   estaAtrasada,
@@ -68,6 +69,19 @@ describe('ordenarTarefas', () => {
   it('não muda a lista original', () => {
     ordenarTarefas(tarefas, 'titulo', true);
     expect(tarefas.map(t => t.id)).toEqual(['1', '2', '3']);
+  });
+});
+
+describe('lerCampoOrdem', () => {
+  it('aceita as colunas que dá pra ordenar', () => {
+    expect(lerCampoOrdem('titulo')).toBe('titulo');
+    expect(lerCampoOrdem('dataLimite')).toBe('dataLimite');
+  });
+
+  it('qualquer outra coisa fica sem ordenação', () => {
+    expect(lerCampoOrdem(null)).toBe('');
+    expect(lerCampoOrdem('descricao')).toBe('');
+    expect(lerCampoOrdem('constructor')).toBe('');
   });
 });
 

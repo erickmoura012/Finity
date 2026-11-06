@@ -54,6 +54,17 @@ export interface Backup {
 // Colunas da tabela que dá pra ordenar (vazio = sem ordenação)
 export type CampoOrdem = 'titulo' | 'categoria' | 'prioridade' | 'status' | 'dataLimite' | 'dataCriacao' | '';
 
+const CAMPOS_ORDEM = ['titulo', 'categoria', 'prioridade', 'status', 'dataLimite', 'dataCriacao'];
+
+// O campo da ordenação vem da URL, onde a pessoa pode escrever qualquer coisa.
+// Se não for uma coluna que existe, fica sem ordenação.
+export function lerCampoOrdem(texto: string | null): CampoOrdem {
+  if (texto && CAMPOS_ORDEM.includes(texto)) {
+    return texto as CampoOrdem;
+  }
+  return '';
+}
+
 export const STATUS: Record<Status, string> = {
   a_fazer: 'A Fazer',
   em_andamento: 'Em andamento',
