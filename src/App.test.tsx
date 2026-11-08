@@ -71,6 +71,20 @@ describe('App', () => {
     expect(screen.getByRole<HTMLSelectElement>('combobox', { name: 'Filtrar por categoria' }).value).toBe('Design');
   });
 
+  it('o filtro Atrasadas mostra só as que passaram da data e não foram concluídas', async () => {
+    const usuario = userEvent.setup();
+    montar('/tarefas');
+    await screen.findByText('7 tarefas');
+
+    await usuario.selectOptions(screen.getByRole('combobox', { name: 'Filtrar por status' }), 'Atrasadas');
+
+    expect(url()).toBe('/tarefas?status=atrasadas');
+    // das tarefas de exemplo, 3 passaram da data, mas 2 delas já estão concluídas
+    expect(screen.getByText('Mostrando 1 de 7 tarefas')).toBeTruthy();
+    expect(screen.getByText('Corrigir validação do formulário de login')).toBeTruthy();
+    expect(screen.queryByText('Revisar paleta de cores')).toBeNull();
+  });
+
   it('ordenar põe a ordem na URL e mantém os filtros', async () => {
     const usuario = userEvent.setup();
     montar('/tarefas?categoria=Design');

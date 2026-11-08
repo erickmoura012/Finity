@@ -32,6 +32,7 @@ import {
 } from '../js/script/api';
 import {
   STATUS,
+  estaAtrasada,
   filtrarTarefas,
   ordenarTarefas,
   textoResultado,
@@ -156,9 +157,12 @@ function App() {
   );
 
   // o filtro de status só vale pra tabela da página Tarefas (no quadro as
-  // colunas já separam por status, e Concluídas só tem um status)
+  // colunas já separam por status, e Concluídas só tem um status).
+  // "atrasadas" não é um status de verdade: junta as de qualquer status que passaram da data
   let tabelaTarefas = tarefasOrdenadas;
-  if (filtros.status) {
+  if (filtros.status === 'atrasadas') {
+    tabelaTarefas = tarefasOrdenadas.filter(t => estaAtrasada(t));
+  } else if (filtros.status) {
     tabelaTarefas = tarefasOrdenadas.filter(t => t.status === filtros.status);
   }
 

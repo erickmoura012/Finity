@@ -78,6 +78,7 @@ function Filtros({ filtros, categorias, mostrarStatus, atalhoAtivo, aoMudar, aoL
           <option value="a_fazer">A Fazer</option>
           <option value="em_andamento">Em andamento</option>
           <option value="concluido">Concluído</option>
+          <option value="atrasadas">Atrasadas</option>
         </select>
       )}
 
