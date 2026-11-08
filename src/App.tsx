@@ -471,6 +471,7 @@ function App() {
               filtros={filtros}
               categorias={categorias}
               mostrarStatus={paginaAtual === 'tarefas'}
+              atalhoAtivo={!algumModalAberto}
               aoMudar={mudarFiltros}
               aoLimpar={() => mudarFiltros(SEM_FILTROS)}
             />

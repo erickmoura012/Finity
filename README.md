@@ -24,6 +24,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 
 - Criar, editar, duplicar e excluir tarefas
 - Atalho `N` para criar uma tarefa nova
+- Atalho `/` para ir direto para a busca
 - Mover as tarefas entre as colunas (A Fazer, Em andamento e Concluído) arrastando os cards
 - Pesquisar por título ou descrição
 - Filtrar por prioridade, categoria e status (os filtros ficam na URL, então dá pra compartilhar um link já filtrado)

@@ -1,3 +1,5 @@
+import { useCallback, useRef } from 'react';
+import { useAtalho } from '../hooks/useAtalho';
 import type { Categoria, Filtros as FiltrosTarefas } from '../../js/script/tarefas';
 
 // os filtros das tarefas + o status, que só é usado na página Tarefas
@@ -9,11 +11,17 @@ interface FiltrosProps {
   filtros: FiltrosTela;
   categorias: Categoria[];
   mostrarStatus: boolean;
+  atalhoAtivo: boolean; // fica desligado quando tem algum modal aberto
   aoMudar: (filtros: FiltrosTela) => void;
   aoLimpar: () => void;
 }
 
-function Filtros({ filtros, categorias, mostrarStatus, aoMudar, aoLimpar }: FiltrosProps) {
+function Filtros({ filtros, categorias, mostrarStatus, atalhoAtivo, aoMudar, aoLimpar }: FiltrosProps) {
+  // a tecla / leva direto pra busca, igual em vários sites (GitHub, YouTube...)
+  const campoBusca = useRef<HTMLInputElement>(null);
+  const focarBusca = useCallback(() => campoBusca.current?.focus(), []);
+  useAtalho('/', focarBusca, atalhoAtivo);
+
   // troca só um campo e mantém os outros
   function mudar(campo: keyof FiltrosTela, valor: string) {
     aoMudar({ ...filtros, [campo]: valor });
@@ -24,9 +32,10 @@ function Filtros({ filtros, categorias, mostrarStatus, aoMudar, aoLimpar }: Filt
       <div className="campo-busca">
         <i className="bx bx-search"></i>
         <input
+          ref={campoBusca}
           type="text"
           className="input"
-          placeholder="Pesquisar tarefas..."
+          placeholder="Pesquisar tarefas (atalho /)"
           aria-label="Pesquisar tarefas"
           value={filtros.busca}
           onChange={evento => mudar('busca', evento.target.value)}

@@ -14,7 +14,7 @@ const categorias = [
 // já começa com uma busca, pra conferir que ela não se perde ao mudar outro filtro
 const filtros: FiltrosTela = { busca: 'react', prioridade: '', categoria: '', status: '' };
 
-function montar(mostrarStatus = false) {
+function montar(mostrarStatus = false, atalhoAtivo = true) {
   const aoMudar = vi.fn();
   const aoLimpar = vi.fn();
 
@@ -23,6 +23,7 @@ function montar(mostrarStatus = false) {
       filtros={filtros}
       categorias={categorias}
       mostrarStatus={mostrarStatus}
+      atalhoAtivo={atalhoAtivo}
       aoMudar={aoMudar}
       aoLimpar={aoLimpar}
     />
@@ -56,6 +57,26 @@ describe('Filtros', () => {
     cleanup();
     montar(true);
     expect(screen.getByRole('combobox', { name: 'Filtrar por status' })).toBeTruthy();
+  });
+
+  it('a tecla / leva pra busca', async () => {
+    const usuario = userEvent.setup();
+    const { aoMudar } = montar();
+
+    await usuario.keyboard('/');
+
+    expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'Pesquisar tarefas' }));
+    // a barra não pode ir parar dentro do campo (isso mudaria a busca)
+    expect(aoMudar).not.toHaveBeenCalled();
+  });
+
+  it('com o atalho desligado a tecla / não faz nada', async () => {
+    const usuario = userEvent.setup();
+    montar(false, false);
+
+    await usuario.keyboard('/');
+
+    expect(document.activeElement).toBe(document.body);
   });
 
   it('o botão Limpar chama o aoLimpar', async () => {
