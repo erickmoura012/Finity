@@ -28,7 +28,7 @@ beforeEach(() => {
   // começa sem nada salvo, então o App cria as 7 tarefas de exemplo
   localStorage.clear();
   // o jsdom não tem o matchMedia, que o useTema usa pra ver o tema do computador
-  vi.stubGlobal('matchMedia', () => ({ matches: false }));
+  vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
 });
 
 afterEach(() => {
