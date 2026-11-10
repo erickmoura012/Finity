@@ -39,6 +39,10 @@ function Filtros({ filtros, categorias, mostrarStatus, atalhoAtivo, aoMudar, aoL
           aria-label="Pesquisar tarefas"
           value={filtros.busca}
           onChange={evento => mudar('busca', evento.target.value)}
+          onKeyDown={evento => {
+            // Esc sai do campo, assim os atalhos (N e /) voltam a funcionar sem precisar clicar fora
+            if (evento.key === 'Escape') evento.currentTarget.blur();
+          }}
         />
       </div>
 

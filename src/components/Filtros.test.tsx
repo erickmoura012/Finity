@@ -70,6 +70,18 @@ describe('Filtros', () => {
     expect(aoMudar).not.toHaveBeenCalled();
   });
 
+  it('Esc sai do campo de busca', async () => {
+    const usuario = userEvent.setup();
+    montar();
+    const busca = screen.getByRole('textbox', { name: 'Pesquisar tarefas' });
+
+    await usuario.click(busca);
+    expect(document.activeElement).toBe(busca);
+
+    await usuario.keyboard('{Escape}');
+    expect(document.activeElement).toBe(document.body);
+  });
+
   it('com o atalho desligado a tecla / não faz nada', async () => {
     const usuario = userEvent.setup();
     montar(false, false);
