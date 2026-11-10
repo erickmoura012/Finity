@@ -259,6 +259,11 @@
     color: var(--vermelho);
     font-weight: 500;
   }
+
+  &.vence-hoje {
+    color: var(--amarelo);
+    font-weight: 500;
+  }
 }
 
 .card-criacao {

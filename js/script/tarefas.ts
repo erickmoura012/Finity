@@ -1,6 +1,6 @@
 // Regras das tarefas: valores possíveis, filtros, contagem e validação
 
-import { dataDeHoje, normalizarTexto } from './utils.ts';
+import { dataDeHoje, somarDias, formatarData, normalizarTexto } from './utils.ts';
 
 export type Status = 'a_fazer' | 'em_andamento' | 'concluido';
 export type Prioridade = 'alta' | 'media' | 'baixa';
@@ -150,6 +150,14 @@ export function contarTarefas(tarefas: Tarefa[]): Contagem {
 export function estaAtrasada(tarefa: Tarefa): boolean {
   if (!tarefa.dataLimite || tarefa.status === 'concluido') return false;
   return tarefa.dataLimite < dataDeHoje();
+}
+
+// Texto da data limite no card: "Hoje" e "Amanhã" chamam mais atenção
+// do que a data, nos outros dias fica a data normal (DD/MM/AAAA)
+export function textoPrazo(dataLimite: string): string {
+  if (dataLimite === dataDeHoje()) return 'Hoje';
+  if (dataLimite === somarDias(1)) return 'Amanhã';
+  return formatarData(dataLimite);
 }
 
 // Retorna uma mensagem de erro, ou texto vazio se estiver tudo certo.

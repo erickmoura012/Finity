@@ -6,6 +6,7 @@ import {
   contarTarefas,
   textoResultado,
   estaAtrasada,
+  textoPrazo,
   validarTarefa,
   validarProjeto,
   validarBackup
@@ -131,6 +132,27 @@ describe('estaAtrasada', () => {
 
   it('tarefa concluída nunca fica atrasada', () => {
     expect(estaAtrasada(criarTarefa({ dataLimite: '2026-10-01', status: 'concluido' }))).toBe(false);
+  });
+});
+
+describe('textoPrazo', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 31));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('mostra Hoje e Amanhã, mesmo virando o mês', () => {
+    expect(textoPrazo('2026-10-31')).toBe('Hoje');
+    expect(textoPrazo('2026-11-01')).toBe('Amanhã');
+  });
+
+  it('nos outros dias mostra a data', () => {
+    expect(textoPrazo('2026-11-02')).toBe('02/11/2026');
+    expect(textoPrazo('2026-10-30')).toBe('30/10/2026');
   });
 });
 

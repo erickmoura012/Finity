@@ -79,6 +79,15 @@ describe('Card', () => {
     expect(screen.queryByTitle('Atrasada')).toBeNull();
   });
 
+  it('mostra Hoje e Amanhã no lugar da data', () => {
+    montar({ dataLimite: '2026-10-28' });
+    expect(screen.getByText('Hoje').className).toContain('vence-hoje');
+
+    cleanup();
+    montar({ dataLimite: '2026-10-29' });
+    expect(screen.getByText('Amanhã')).toBeTruthy();
+  });
+
   it('clicar no card abre a edição', async () => {
     const usuario = userEvent.setup();
     const acoes = montar();

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { PRIORIDADES, estaAtrasada, type Tarefa } from '../../js/script/tarefas';
-import { formatarData, formatarDataCriacao } from '../../js/script/utils';
+import { PRIORIDADES, estaAtrasada, textoPrazo, type Tarefa } from '../../js/script/tarefas';
+import { formatarDataCriacao } from '../../js/script/utils';
 import { useAcoesTarefa } from '../contexts/AcoesTarefaContext';
 
 interface CardProps {
@@ -11,7 +11,16 @@ function Card({ tarefa }: CardProps) {
   // as ações vêm do contexto, não precisam mais descer pelo Quadro e pela Coluna
   const acoes = useAcoesTarefa();
   const atrasada = estaAtrasada(tarefa);
+  const prazo = textoPrazo(tarefa.dataLimite);
   const [arrastando, setArrastando] = useState(false);
+
+  // vermelho se já passou, laranja se vence hoje
+  let classeData = 'card-data';
+  if (atrasada) {
+    classeData += ' atrasada';
+  } else if (prazo === 'Hoje' && tarefa.status !== 'concluido') {
+    classeData += ' vence-hoje';
+  }
 
   // no React não precisa do escaparHTML: o texto entre {} já é escapado
   return (
@@ -75,8 +84,8 @@ function Card({ tarefa }: CardProps) {
 
       <div className="card-rodape">
         <span className="tag tag-categoria">{tarefa.categoria}</span>
-        <span className={atrasada ? 'card-data atrasada' : 'card-data'} title={atrasada ? 'Atrasada' : 'Data limite'}>
-          <i className="bx bx-calendar"></i> {formatarData(tarefa.dataLimite)}
+        <span className={classeData} title={atrasada ? 'Atrasada' : 'Data limite'}>
+          <i className="bx bx-calendar"></i> {prazo}
         </span>
       </div>
 
