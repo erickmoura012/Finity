@@ -27,6 +27,11 @@ function Filtros({ filtros, categorias, mostrarStatus, atalhoAtivo, aoMudar, aoL
     aoMudar({ ...filtros, [campo]: valor });
   }
 
+  // o status só conta quando o filtro dele aparece na tela
+  const temFiltro = Boolean(
+    filtros.busca || filtros.prioridade || filtros.categoria || (mostrarStatus && filtros.status)
+  );
+
   return (
     <section className="filtros">
       <div className="campo-busca">
@@ -86,7 +91,7 @@ function Filtros({ filtros, categorias, mostrarStatus, atalhoAtivo, aoMudar, aoL
         </select>
       )}
 
-      <button className="btn btn-texto" onClick={aoLimpar}>
+      <button className="btn btn-texto" disabled={!temFiltro} onClick={aoLimpar}>
         <i className="bx bx-x"></i> Limpar
       </button>
     </section>

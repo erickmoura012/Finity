@@ -169,6 +169,14 @@ a {
   color: var(--cor-texto);
 }
 
+/* sem nada pra limpar, o botão fica apagado e não reage ao mouse */
+.btn-texto:disabled {
+  opacity: 0.5;
+  cursor: default;
+  color: var(--cor-texto-secundario);
+  transform: none;
+}
+
 .btn-icone {
   width: 28px;
   height: 28px;

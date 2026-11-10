@@ -14,13 +14,13 @@ const categorias = [
 // já começa com uma busca, pra conferir que ela não se perde ao mudar outro filtro
 const filtros: FiltrosTela = { busca: 'react', prioridade: '', categoria: '', status: '' };
 
-function montar(mostrarStatus = false, atalhoAtivo = true) {
+function montar(mostrarStatus = false, atalhoAtivo = true, valores = filtros) {
   const aoMudar = vi.fn();
   const aoLimpar = vi.fn();
 
   render(
     <Filtros
-      filtros={filtros}
+      filtros={valores}
       categorias={categorias}
       mostrarStatus={mostrarStatus}
       atalhoAtivo={atalhoAtivo}
@@ -33,6 +33,21 @@ function montar(mostrarStatus = false, atalhoAtivo = true) {
 }
 
 describe('Filtros', () => {
+  it('o Limpar fica desabilitado quando não tem filtro', () => {
+    const vazio = { busca: '', prioridade: '', categoria: '', status: '' };
+    montar(false, true, vazio);
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Limpar' }).disabled).toBe(true);
+
+    // o status escondido (fora da página Tarefas) não conta
+    cleanup();
+    montar(false, true, { ...vazio, status: 'concluido' });
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Limpar' }).disabled).toBe(true);
+
+    cleanup();
+    montar(true, true, { ...vazio, status: 'concluido' });
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Limpar' }).disabled).toBe(false);
+  });
+
   it('mostra os valores que recebeu e as categorias', () => {
     montar();
 
