@@ -45,7 +45,7 @@ function montar() {
     novaTarefa: vi.fn()
   };
   const aoAbrirProjeto = vi.fn();
-  const aoRenomear = vi.fn();
+  const aoEditar = vi.fn();
   const aoExcluir = vi.fn();
 
   render(
@@ -54,13 +54,13 @@ function montar() {
         tarefas={tarefas}
         categorias={categorias}
         aoAbrirProjeto={aoAbrirProjeto}
-        aoRenomear={aoRenomear}
+        aoEditar={aoEditar}
         aoExcluir={aoExcluir}
       />
     </AcoesTarefaContext>
   );
 
-  return { acoes, aoAbrirProjeto, aoRenomear, aoExcluir };
+  return { acoes, aoAbrirProjeto, aoEditar, aoExcluir };
 }
 
 // o card inteiro é o pai do título
@@ -95,15 +95,15 @@ describe('Projetos', () => {
 
   it('os botões chamam a ação certa sem abrir o projeto junto', async () => {
     const usuario = userEvent.setup();
-    const { acoes, aoAbrirProjeto, aoRenomear, aoExcluir } = montar();
+    const { acoes, aoAbrirProjeto, aoEditar, aoExcluir } = montar();
 
     await usuario.click(screen.getByRole('button', { name: 'Adicionar tarefa no projeto Design' }));
-    await usuario.click(screen.getByRole('button', { name: 'Renomear projeto Design' }));
+    await usuario.click(screen.getByRole('button', { name: 'Editar projeto Design' }));
     await usuario.click(screen.getByRole('button', { name: 'Excluir projeto Design' }));
 
     // a tarefa nova já começa em "A Fazer" e no projeto clicado
     expect(acoes.novaTarefa).toHaveBeenCalledWith('a_fazer', 'Design');
-    expect(aoRenomear).toHaveBeenCalledWith(categorias[1]);
+    expect(aoEditar).toHaveBeenCalledWith(categorias[1]);
     expect(aoExcluir).toHaveBeenCalledWith(categorias[1]);
     // o stopPropagation impede o clique de chegar no card
     expect(aoAbrirProjeto).not.toHaveBeenCalled();

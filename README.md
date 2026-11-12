@@ -31,7 +31,7 @@ Os dados ficam salvos no LocalStorage do navegador.
 - Ordenar as tabelas clicando no nome da coluna
 - Indicadores com o total de tarefas, pendentes, em andamento e concluídas
 - Página "Meus projetos", com as tarefas agrupadas por categoria e o progresso de cada uma
-- Criar, renomear e excluir projetos (categorias) e adicionar tarefas direto neles
+- Criar, editar (nome e ícone) e excluir projetos (categorias) e adicionar tarefas direto neles
 - Lista com todas as tarefas e outra só com as concluídas
 - Destaque em vermelho para tarefas atrasadas
 - Tema claro e escuro (a escolha fica salva no navegador)

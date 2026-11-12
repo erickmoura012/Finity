@@ -6,11 +6,11 @@ interface ProjetosProps {
   tarefas: Tarefa[];
   categorias: Categoria[];
   aoAbrirProjeto: (categoria: string) => void;
-  aoRenomear: (categoria: Categoria) => void;
+  aoEditar: (categoria: Categoria) => void;
   aoExcluir: (categoria: Categoria) => void;
 }
 
-function Projetos({ tarefas, categorias, aoAbrirProjeto, aoRenomear, aoExcluir }: ProjetosProps) {
+function Projetos({ tarefas, categorias, aoAbrirProjeto, aoEditar, aoExcluir }: ProjetosProps) {
   const acoes = useAcoesTarefa();
 
   return (
@@ -42,11 +42,11 @@ function Projetos({ tarefas, categorias, aoAbrirProjeto, aoRenomear, aoExcluir }
                 </button>
                 <button
                   className="btn-icone"
-                  title="Renomear"
-                  aria-label={'Renomear projeto ' + categoria.nome}
+                  title="Editar"
+                  aria-label={'Editar projeto ' + categoria.nome}
                   onClick={evento => {
                     evento.stopPropagation();
-                    aoRenomear(categoria);
+                    aoEditar(categoria);
                   }}
                 >
                   <i className="bx bx-edit-alt"></i>

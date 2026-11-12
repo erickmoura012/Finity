@@ -7,7 +7,7 @@ import {
   excluirTarefa,
   listarCategorias,
   criarCategoria,
-  renomearCategoria,
+  editarCategoria,
   excluirCategoria
 } from './api.ts';
 import type { NovaTarefa } from './api.ts';
@@ -106,6 +106,11 @@ describe('listarCategorias', () => {
     expect(CATEGORIAS_PADRAO).toHaveLength(5);
     expect(await listarCategorias()).toHaveLength(6);
   });
+
+  it('editar um projeto não altera a lista padrão', async () => {
+    await editarCategoria('Estudos', 'Faculdade', 'bx-briefcase');
+    expect(CATEGORIAS_PADRAO.map(c => c.nome)).toContain('Estudos');
+  });
 });
 
 describe('criarCategoria', () => {
@@ -121,13 +126,13 @@ describe('criarCategoria', () => {
   });
 });
 
-describe('renomearCategoria', () => {
-  it('muda o nome do projeto e das tarefas dele, mantendo o ícone', async () => {
+describe('editarCategoria', () => {
+  it('muda o nome do projeto e das tarefas dele', async () => {
     comecarSemTarefas();
     await criarTarefa(nova);
     await criarTarefa({ ...nova, categoria: 'Design' });
 
-    const categoria = await renomearCategoria('Estudos', 'Faculdade');
+    const categoria = await editarCategoria('Estudos', 'Faculdade', 'bx-book-open');
     const categorias = await listarCategorias();
     const tarefas = await listarTarefas();
 
@@ -137,8 +142,13 @@ describe('renomearCategoria', () => {
     expect(tarefas.map(t => t.categoria)).toEqual(['Faculdade', 'Design']);
   });
 
+  it('troca só o ícone, mantendo o nome', async () => {
+    const categoria = await editarCategoria('Estudos', 'Estudos', 'bx-briefcase');
+    expect(categoria).toEqual({ nome: 'Estudos', icone: 'bx-briefcase' });
+  });
+
   it('dá erro se o projeto não existe', async () => {
-    await expect(renomearCategoria('Nada', 'Outro')).rejects.toThrow('Projeto não encontrado');
+    await expect(editarCategoria('Nada', 'Outro', 'bx-folder')).rejects.toThrow('Projeto não encontrado');
   });
 });
 

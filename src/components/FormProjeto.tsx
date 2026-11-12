@@ -9,7 +9,7 @@ interface FormProjetoProps {
 }
 
 function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: FormProjetoProps) {
-  // ao renomear, o campo já começa com o nome de hoje
+  // ao editar, o nome e o ícone já começam com os de hoje
   const [nome, setNome] = useState(projetoEditando ? projetoEditando.nome : '');
   // projeto novo começa com o primeiro ícone da lista (a pasta)
   const [icone, setIcone] = useState(projetoEditando ? projetoEditando.icone : ICONES_PROJETO[0].icone);
@@ -20,8 +20,8 @@ function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: Form
 
     const nomeLimpo = nome.trim();
 
-    // renomear sem mudar nada é a mesma coisa que cancelar
-    if (projetoEditando && nomeLimpo === projetoEditando.nome) {
+    // editar sem mudar nada é a mesma coisa que cancelar
+    if (projetoEditando && nomeLimpo === projetoEditando.nome && icone === projetoEditando.icone) {
       aoCancelar();
       return;
     }
@@ -40,7 +40,7 @@ function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: Form
   return (
     <>
       <div className="modal-topo">
-        <h2 id="tituloModalProjeto">{projetoEditando ? 'Renomear projeto' : 'Novo projeto'}</h2>
+        <h2 id="tituloModalProjeto">{projetoEditando ? 'Editar projeto' : 'Novo projeto'}</h2>
         <button className="btn-icone" title="Fechar" onClick={aoCancelar}>
           <i className="bx bx-x"></i>
         </button>
@@ -62,27 +62,24 @@ function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: Form
             />
           </div>
 
-          {/* por enquanto o ícone só é escolhido ao criar o projeto */}
-          {!projetoEditando && (
-            <div className="campo">
-              <span className="campo-rotulo" id="rotuloIconeProjeto">Ícone</span>
-              <div className="seletor-icones" role="group" aria-labelledby="rotuloIconeProjeto">
-                {ICONES_PROJETO.map(opcao => (
-                  <button
-                    key={opcao.icone}
-                    type="button"
-                    className={opcao.icone === icone ? 'opcao-icone selecionado' : 'opcao-icone'}
-                    title={opcao.nome}
-                    aria-label={'Ícone ' + opcao.nome}
-                    aria-pressed={opcao.icone === icone}
-                    onClick={() => setIcone(opcao.icone)}
-                  >
-                    <i className={'bx ' + opcao.icone}></i>
-                  </button>
-                ))}
-              </div>
+          <div className="campo">
+            <span className="campo-rotulo" id="rotuloIconeProjeto">Ícone</span>
+            <div className="seletor-icones" role="group" aria-labelledby="rotuloIconeProjeto">
+              {ICONES_PROJETO.map(opcao => (
+                <button
+                  key={opcao.icone}
+                  type="button"
+                  className={opcao.icone === icone ? 'opcao-icone selecionado' : 'opcao-icone'}
+                  title={opcao.nome}
+                  aria-label={'Ícone ' + opcao.nome}
+                  aria-pressed={opcao.icone === icone}
+                  onClick={() => setIcone(opcao.icone)}
+                >
+                  <i className={'bx ' + opcao.icone}></i>
+                </button>
+              ))}
             </div>
-          )}
+          </div>
 
           <p className={erro ? 'form-erro visivel' : 'form-erro'}>{erro}</p>
         </div>

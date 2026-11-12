@@ -102,8 +102,9 @@ export async function listarCategorias(): Promise<Categoria[]> {
 
   // primeira vez: começa com as categorias padrão
   if (categorias === null) {
-    // uso uma cópia pra não alterar a constante quando um projeto novo for criado
-    categorias = [...CATEGORIAS_PADRAO];
+    // uso uma cópia de cada projeto pra não alterar a constante quando um projeto
+    // for criado ou editado (com [...lista] os objetos de dentro continuariam os mesmos)
+    categorias = CATEGORIAS_PADRAO.map(categoria => ({ ...categoria }));
     gravarStorage(CHAVE_CATEGORIAS, categorias);
   }
 
@@ -123,8 +124,8 @@ export async function criarCategoria(nome: string, icone = 'bx-folder'): Promise
 }
 
 // PUT /api/categorias/:nome
-// As tarefas guardam o nome do projeto, então elas também precisam mudar
-export async function renomearCategoria(nomeAtual: string, novoNome: string): Promise<Categoria> {
+// Troca o nome e o ícone. As tarefas guardam o nome do projeto, então elas também precisam mudar
+export async function editarCategoria(nomeAtual: string, novoNome: string, novoIcone: string): Promise<Categoria> {
   const categorias = await listarCategorias();
   const categoria = categorias.find(c => c.nome === nomeAtual);
 
@@ -133,6 +134,7 @@ export async function renomearCategoria(nomeAtual: string, novoNome: string): Pr
   }
 
   categoria.nome = novoNome;
+  categoria.icone = novoIcone;
   gravarStorage(CHAVE_CATEGORIAS, categorias);
 
   const tarefas = await listarTarefas();

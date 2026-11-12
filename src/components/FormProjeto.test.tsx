@@ -66,11 +66,11 @@ describe('FormProjeto', () => {
     expect(aoSalvar).not.toHaveBeenCalled();
   });
 
-  it('ao renomear, começa com o nome atual e o botão vira Salvar', async () => {
+  it('ao editar, começa com o nome atual e o botão vira Salvar', async () => {
     const usuario = userEvent.setup();
     const { aoSalvar } = montar(categorias[1]);
 
-    expect(screen.getByRole('heading', { name: 'Renomear projeto' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Editar projeto' })).toBeTruthy();
     const campo = screen.getByLabelText<HTMLInputElement>('Nome do projeto');
     expect(campo.value).toBe('Design');
 
@@ -81,7 +81,7 @@ describe('FormProjeto', () => {
     expect(aoSalvar).toHaveBeenCalledWith('Visual', 'bx-palette');
   });
 
-  it('ao renomear, o próprio nome não conta como repetido', async () => {
+  it('ao editar, o próprio nome não conta como repetido', async () => {
     const usuario = userEvent.setup();
     const { aoSalvar } = montar(categorias[1]);
 
@@ -93,7 +93,20 @@ describe('FormProjeto', () => {
     expect(aoSalvar).toHaveBeenCalledWith('design', 'bx-palette');
   });
 
-  it('salvar sem mudar o nome só fecha o modal', async () => {
+  it('ao editar, dá pra trocar só o ícone', async () => {
+    const usuario = userEvent.setup();
+    const { aoSalvar } = montar(categorias[1]);
+
+    // começa marcado o ícone que o projeto já tem
+    expect(screen.getByRole('button', { name: 'Ícone Paleta' }).getAttribute('aria-pressed')).toBe('true');
+
+    await usuario.click(screen.getByRole('button', { name: 'Ícone Casa' }));
+    await usuario.click(screen.getByRole('button', { name: 'Salvar' }));
+
+    expect(aoSalvar).toHaveBeenCalledWith('Design', 'bx-home');
+  });
+
+  it('salvar sem mudar nada só fecha o modal', async () => {
     const usuario = userEvent.setup();
     const { aoSalvar, aoCancelar } = montar(categorias[1]);
 

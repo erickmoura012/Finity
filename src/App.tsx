@@ -25,7 +25,7 @@ import {
   criarTarefa,
   excluirTarefa,
   criarCategoria,
-  renomearCategoria,
+  editarCategoria,
   excluirCategoria,
   importarBackup,
   type NovaTarefa
@@ -97,7 +97,7 @@ function App() {
     projeto: null
   });
   // mesma ideia do modal de tarefa: a vez faz o formulário começar limpo
-  // e o projeto é o que está sendo renomeado (null = projeto novo)
+  // e o projeto é o que está sendo editado (null = projeto novo)
   const [modalProjeto, setModalProjeto] = useState<{ aberto: boolean; projeto: Categoria | null; vez: number }>({
     aberto: false,
     projeto: null,
@@ -207,7 +207,7 @@ function App() {
     setModalProjeto(atual => ({ aberto: true, projeto: null, vez: atual.vez + 1 }));
   }, []);
 
-  function abrirRenomearProjeto(categoria: Categoria) {
+  function abrirEdicaoProjeto(categoria: Categoria) {
     setModalProjeto(atual => ({ aberto: true, projeto: categoria, vez: atual.vez + 1 }));
   }
 
@@ -220,12 +220,12 @@ function App() {
 
     try {
       if (projeto) {
-        await renomearCategoria(projeto.nome, nome);
+        await editarCategoria(projeto.nome, nome, icone);
         // se o filtro de categoria era esse projeto, ele acompanha o nome novo
         if (filtros.categoria === projeto.nome) {
           mudarFiltros({ ...filtros, categoria: nome });
         }
-        mostrarToast('Projeto renomeado');
+        mostrarToast('Projeto atualizado');
       } else {
         await criarCategoria(nome, icone);
         mostrarToast('Projeto criado com sucesso');
@@ -536,7 +536,7 @@ function App() {
                       tarefas={tarefas}
                       categorias={categorias}
                       aoAbrirProjeto={abrirProjeto}
-                      aoRenomear={abrirRenomearProjeto}
+                      aoEditar={abrirEdicaoProjeto}
                       aoExcluir={abrirExclusaoProjeto}
                     />
                   }

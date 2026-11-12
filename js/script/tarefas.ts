@@ -87,7 +87,7 @@ export const CATEGORIAS_PADRAO: Categoria[] = [
   { nome: 'Pessoal', icone: 'bx-user' }
 ];
 
-// Ícones que dá pra escolher ao criar um projeto (todos do Boxicons).
+// Ícones que dá pra escolher pra um projeto (todos do Boxicons).
 // O nome é o que o leitor de tela fala, já que o botão só mostra o desenho.
 export const ICONES_PROJETO = [
   { icone: 'bx-folder', nome: 'Pasta' },
@@ -198,7 +198,7 @@ export function validarTarefa(dados: DadosTarefa): string {
   return '';
 }
 
-// Ao renomear, o nomeAtual é o do próprio projeto, que não conta como repetido
+// Ao editar, o nomeAtual é o do próprio projeto, que não conta como repetido
 export function validarProjeto(nome: string, categorias: Categoria[], nomeAtual = ''): string {
   if (!nome) {
     return 'Informe o nome do projeto.';
