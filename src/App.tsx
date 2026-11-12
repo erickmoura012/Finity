@@ -215,7 +215,7 @@ function App() {
     setModalProjeto(atual => ({ ...atual, aberto: false }));
   }
 
-  async function salvarProjeto(nome: string) {
+  async function salvarProjeto(nome: string, icone: string) {
     const projeto = modalProjeto.projeto;
 
     try {
@@ -227,7 +227,7 @@ function App() {
         }
         mostrarToast('Projeto renomeado');
       } else {
-        await criarCategoria(nome);
+        await criarCategoria(nome, icone);
         mostrarToast('Projeto criado com sucesso');
       }
 

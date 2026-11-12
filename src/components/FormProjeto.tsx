@@ -1,16 +1,18 @@
 import { useState, type FormEvent } from 'react';
-import { validarProjeto, type Categoria } from '../../js/script/tarefas';
+import { ICONES_PROJETO, validarProjeto, type Categoria } from '../../js/script/tarefas';
 
 interface FormProjetoProps {
   categorias: Categoria[];
   projetoEditando: Categoria | null; // null = projeto novo
   aoCancelar: () => void;
-  aoSalvar: (nome: string) => void;
+  aoSalvar: (nome: string, icone: string) => void;
 }
 
 function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: FormProjetoProps) {
   // ao renomear, o campo já começa com o nome de hoje
   const [nome, setNome] = useState(projetoEditando ? projetoEditando.nome : '');
+  // projeto novo começa com o primeiro ícone da lista (a pasta)
+  const [icone, setIcone] = useState(projetoEditando ? projetoEditando.icone : ICONES_PROJETO[0].icone);
   const [erro, setErro] = useState('');
 
   function enviar(evento: FormEvent<HTMLFormElement>) {
@@ -32,7 +34,7 @@ function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: Form
       return;
     }
 
-    aoSalvar(nomeLimpo);
+    aoSalvar(nomeLimpo, icone);
   }
 
   return (
@@ -59,6 +61,28 @@ function FormProjeto({ categorias, projetoEditando, aoCancelar, aoSalvar }: Form
               onChange={evento => setNome(evento.target.value)}
             />
           </div>
+
+          {/* por enquanto o ícone só é escolhido ao criar o projeto */}
+          {!projetoEditando && (
+            <div className="campo">
+              <span className="campo-rotulo" id="rotuloIconeProjeto">Ícone</span>
+              <div className="seletor-icones" role="group" aria-labelledby="rotuloIconeProjeto">
+                {ICONES_PROJETO.map(opcao => (
+                  <button
+                    key={opcao.icone}
+                    type="button"
+                    className={opcao.icone === icone ? 'opcao-icone selecionado' : 'opcao-icone'}
+                    title={opcao.nome}
+                    aria-label={'Ícone ' + opcao.nome}
+                    aria-pressed={opcao.icone === icone}
+                    onClick={() => setIcone(opcao.icone)}
+                  >
+                    <i className={'bx ' + opcao.icone}></i>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <p className={erro ? 'form-erro visivel' : 'form-erro'}>{erro}</p>
         </div>

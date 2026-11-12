@@ -586,6 +586,36 @@
   max-width: 400px;
 }
 
+// os ícones pra escolher no projeto novo, 6 por linha
+.seletor-icones {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.opcao-icone {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  background-color: var(--cor-fundo-suave);
+  color: var(--cor-texto-secundario);
+  font-size: 20px;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover {
+    color: var(--cor-texto);
+  }
+
+  &.selecionado {
+    border-color: var(--cor-primaria);
+    background-color: var(--cor-primaria-clara);
+    color: var(--cor-primaria);
+  }
+}
+
 .modal-topo {
   display: flex;
   align-items: center;
@@ -623,7 +653,8 @@
   color: var(--cor-texto-claro);
 }
 
-.campo label {
+.campo label,
+.campo-rotulo {
   display: block;
   margin-bottom: 6px;
   font-size: 13px;

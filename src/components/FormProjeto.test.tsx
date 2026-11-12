@@ -37,7 +37,22 @@ describe('FormProjeto', () => {
     await usuario.type(screen.getByLabelText('Nome do projeto'), '  Faculdade  ');
     await usuario.click(screen.getByRole('button', { name: 'Criar projeto' }));
 
-    expect(aoSalvar).toHaveBeenCalledWith('Faculdade');
+    // sem escolher, fica com a pasta
+    expect(aoSalvar).toHaveBeenCalledWith('Faculdade', 'bx-folder');
+  });
+
+  it('salva com o ícone escolhido', async () => {
+    const usuario = userEvent.setup();
+    const { aoSalvar } = montar();
+
+    await usuario.type(screen.getByLabelText('Nome do projeto'), 'Academia');
+    await usuario.click(screen.getByRole('button', { name: 'Ícone Academia' }));
+
+    expect(screen.getByRole('button', { name: 'Ícone Academia' }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByRole('button', { name: 'Ícone Pasta' }).getAttribute('aria-pressed')).toBe('false');
+
+    await usuario.click(screen.getByRole('button', { name: 'Criar projeto' }));
+    expect(aoSalvar).toHaveBeenCalledWith('Academia', 'bx-dumbbell');
   });
 
   it('mostra o erro e não salva quando o nome já existe', async () => {
@@ -63,7 +78,7 @@ describe('FormProjeto', () => {
     await usuario.type(campo, 'Visual');
     await usuario.click(screen.getByRole('button', { name: 'Salvar' }));
 
-    expect(aoSalvar).toHaveBeenCalledWith('Visual');
+    expect(aoSalvar).toHaveBeenCalledWith('Visual', 'bx-palette');
   });
 
   it('ao renomear, o próprio nome não conta como repetido', async () => {
@@ -75,7 +90,7 @@ describe('FormProjeto', () => {
     await usuario.type(campo, 'design');
     await usuario.click(screen.getByRole('button', { name: 'Salvar' }));
 
-    expect(aoSalvar).toHaveBeenCalledWith('design');
+    expect(aoSalvar).toHaveBeenCalledWith('design', 'bx-palette');
   });
 
   it('salvar sem mudar o nome só fecha o modal', async () => {

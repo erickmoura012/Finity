@@ -111,11 +111,11 @@ export async function listarCategorias(): Promise<Categoria[]> {
 }
 
 // POST /api/categorias
-export async function criarCategoria(nome: string): Promise<Categoria> {
+// Sem escolher um ícone, o projeto fica com o de pasta
+export async function criarCategoria(nome: string, icone = 'bx-folder'): Promise<Categoria> {
   const categorias = await listarCategorias();
 
-  // projeto novo usa o ícone de pasta
-  const novaCategoria: Categoria = { nome: nome, icone: 'bx-folder' };
+  const novaCategoria: Categoria = { nome: nome, icone: icone };
 
   categorias.push(novaCategoria);
   gravarStorage(CHAVE_CATEGORIAS, categorias);

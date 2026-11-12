@@ -87,6 +87,23 @@ export const CATEGORIAS_PADRAO: Categoria[] = [
   { nome: 'Pessoal', icone: 'bx-user' }
 ];
 
+// Ícones que dá pra escolher ao criar um projeto (todos do Boxicons).
+// O nome é o que o leitor de tela fala, já que o botão só mostra o desenho.
+export const ICONES_PROJETO = [
+  { icone: 'bx-folder', nome: 'Pasta' },
+  { icone: 'bx-code-alt', nome: 'Código' },
+  { icone: 'bx-palette', nome: 'Paleta' },
+  { icone: 'bx-trending-up', nome: 'Gráfico' },
+  { icone: 'bx-book-open', nome: 'Livro' },
+  { icone: 'bx-user', nome: 'Pessoa' },
+  { icone: 'bx-briefcase', nome: 'Maleta' },
+  { icone: 'bx-home', nome: 'Casa' },
+  { icone: 'bx-heart', nome: 'Coração' },
+  { icone: 'bx-dumbbell', nome: 'Academia' },
+  { icone: 'bx-cart', nome: 'Compras' },
+  { icone: 'bx-music', nome: 'Música' }
+];
+
 export function filtrarTarefas(tarefas: Tarefa[], filtros: Filtros): Tarefa[] {
   // sem acento dos dois lados: "relatorio" acha "Relatório" e "função" acha "funcao"
   const busca = normalizarTexto(filtros.busca.trim());

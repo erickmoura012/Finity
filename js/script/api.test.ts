@@ -109,9 +109,15 @@ describe('listarCategorias', () => {
 });
 
 describe('criarCategoria', () => {
-  it('projeto novo usa o ícone de pasta', async () => {
+  it('sem escolher ícone, o projeto usa o de pasta', async () => {
     const categoria = await criarCategoria('Faculdade');
     expect(categoria).toEqual({ nome: 'Faculdade', icone: 'bx-folder' });
+  });
+
+  it('guarda o ícone escolhido', async () => {
+    await criarCategoria('Academia', 'bx-dumbbell');
+    const categorias = await listarCategorias();
+    expect(categorias.at(-1)).toEqual({ nome: 'Academia', icone: 'bx-dumbbell' });
   });
 });
 
