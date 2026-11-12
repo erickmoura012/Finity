@@ -43,6 +43,7 @@ export interface Contagem {
   pendentes: number;
   andamento: number;
   concluidas: number;
+  atrasadas: number; // de qualquer status, menos concluído
 }
 
 // Formato do arquivo de exportar/importar
@@ -159,7 +160,8 @@ export function contarTarefas(tarefas: Tarefa[]): Contagem {
     total: tarefas.length,
     pendentes: tarefas.filter(t => t.status === 'a_fazer').length,
     andamento: tarefas.filter(t => t.status === 'em_andamento').length,
-    concluidas: tarefas.filter(t => t.status === 'concluido').length
+    concluidas: tarefas.filter(t => t.status === 'concluido').length,
+    atrasadas: tarefas.filter(t => estaAtrasada(t)).length
   };
 }
 

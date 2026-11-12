@@ -107,8 +107,18 @@ describe('textoResultado', () => {
 });
 
 describe('contarTarefas', () => {
-  it('conta por status', () => {
-    expect(contarTarefas(tarefas)).toEqual({ total: 3, pendentes: 1, andamento: 1, concluidas: 1 });
+  // as 3 tarefas vencem em 25/10, então no dia 26 já passou
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 26));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('conta por status e as atrasadas (a concluída não conta)', () => {
+    expect(contarTarefas(tarefas)).toEqual({ total: 3, pendentes: 1, andamento: 1, concluidas: 1, atrasadas: 2 });
   });
 });
 

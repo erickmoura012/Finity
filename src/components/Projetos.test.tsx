@@ -36,7 +36,7 @@ const tarefas = [
   criarTarefa({ id: '5', categoria: 'Design' })
 ];
 
-function montar() {
+function montar(lista = tarefas) {
   const acoes: AcoesTarefa = {
     editar: vi.fn(),
     duplicar: vi.fn(),
@@ -51,7 +51,7 @@ function montar() {
   render(
     <AcoesTarefaContext value={acoes}>
       <Projetos
-        tarefas={tarefas}
+        tarefas={lista}
         categorias={categorias}
         aoAbrirProjeto={aoAbrirProjeto}
         aoEditar={aoEditar}
@@ -82,6 +82,20 @@ describe('Projetos', () => {
     const design = within(cardDe('Design'));
     expect(design.getByText('1 tarefa')).toBeTruthy();
     expect(design.getByText('0% concluído')).toBeTruthy();
+  });
+
+  it('avisa quantas tarefas do projeto estão atrasadas', () => {
+    montar([
+      criarTarefa({ id: '1', dataLimite: '2020-01-10' }),
+      criarTarefa({ id: '2', dataLimite: '2020-01-10', status: 'em_andamento' }),
+      // concluída e no prazo não contam
+      criarTarefa({ id: '3', dataLimite: '2020-01-10', status: 'concluido' }),
+      criarTarefa({ id: '4', dataLimite: '2099-01-10' }),
+      criarTarefa({ id: '5', categoria: 'Design', dataLimite: '2099-01-10' })
+    ]);
+
+    expect(within(cardDe('Estudos')).getByText('2 tarefas atrasadas')).toBeTruthy();
+    expect(within(cardDe('Design')).queryByText(/atrasada/)).toBeNull();
   });
 
   it('clicar no card abre o projeto', async () => {

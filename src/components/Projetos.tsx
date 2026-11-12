@@ -73,6 +73,14 @@ function Projetos({ tarefas, categorias, aoAbrirProjeto, aoEditar, aoExcluir }: 
               <span>{contagem.concluidas} {contagem.concluidas === 1 ? 'concluída' : 'concluídas'}</span>
             </div>
 
+            {/* só aparece quando o projeto tem alguma tarefa atrasada */}
+            {contagem.atrasadas > 0 && (
+              <p className="projeto-atrasadas">
+                <i className="bx bx-error-circle"></i>
+                {contagem.atrasadas === 1 ? '1 tarefa atrasada' : contagem.atrasadas + ' tarefas atrasadas'}
+              </p>
+            )}
+
             <div className="barra">
               <div className="barra-preenchida" style={{ width: progresso + '%' }}></div>
             </div>

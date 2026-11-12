@@ -493,6 +493,20 @@
   transition: width 0.5s ease;
 }
 
+.projeto-atrasadas {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vermelho);
+
+  i {
+    font-size: 15px;
+  }
+}
+
 .projeto-progresso {
   margin-top: 8px;
   font-size: 12px;
