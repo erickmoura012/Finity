@@ -34,6 +34,12 @@ function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar }: TabelaProps) {
     return ordem.crescente ? 'crescente' : 'decrescente';
   }
 
+  // o aria-sort conta pro leitor de tela qual coluna está ordenando e pra que lado
+  function ariaSortDaColuna(campo: CampoOrdem) {
+    if (ordem.campo !== campo) return undefined;
+    return ordem.crescente ? 'ascending' : 'descending';
+  }
+
   return (
     <div className="tabela-container">
       <table className="tabela">
@@ -44,9 +50,12 @@ function Tabela({ tarefas, mensagemVazia, ordem, aoOrdenar }: TabelaProps) {
                 key={coluna.campo}
                 data-ordem={coluna.campo}
                 className={classeDaColuna(coluna.campo)}
-                onClick={() => aoOrdenar(coluna.campo)}
+                aria-sort={ariaSortDaColuna(coluna.campo)}
               >
-                {coluna.nome}
+                {/* com um botão dá pra ordenar pelo teclado também (Tab e Enter) */}
+                <button type="button" className="tabela-ordenar" onClick={() => aoOrdenar(coluna.campo)}>
+                  {coluna.nome}
+                </button>
               </th>
             ))}
             <th></th>

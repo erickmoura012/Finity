@@ -90,11 +90,11 @@ describe('App', () => {
     montar('/tarefas?categoria=Design');
     await screen.findByText('Mostrando 2 de 7 tarefas');
 
-    await usuario.click(screen.getByRole('columnheader', { name: 'Tarefa' }));
+    await usuario.click(screen.getByRole('button', { name: 'Tarefa' }));
     expect(url()).toBe('/tarefas?categoria=Design&ordem=titulo');
 
     // clicar de novo inverte
-    await usuario.click(screen.getByRole('columnheader', { name: 'Tarefa' }));
+    await usuario.click(screen.getByRole('button', { name: 'Tarefa' }));
     expect(url()).toBe('/tarefas?categoria=Design&ordem=titulo&desc=1');
 
     // e o Limpar tira só os filtros

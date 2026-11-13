@@ -68,16 +68,33 @@ describe('Tabela', () => {
     const usuario = userEvent.setup();
     const { aoOrdenar } = montar(tarefas);
 
-    await usuario.click(screen.getByRole('columnheader', { name: 'Prioridade' }));
+    await usuario.click(screen.getByRole('button', { name: 'Prioridade' }));
 
     expect(aoOrdenar).toHaveBeenCalledWith('prioridade');
+  });
+
+  it('dá pra ordenar pelo teclado', async () => {
+    const usuario = userEvent.setup();
+    const { aoOrdenar } = montar(tarefas);
+
+    // o primeiro Tab cai no botão da primeira coluna
+    await usuario.tab();
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Tarefa' }));
+
+    await usuario.keyboard('{Enter}');
+    expect(aoOrdenar).toHaveBeenCalledWith('titulo');
   });
 
   it('coloca a setinha só na coluna que está ordenando', () => {
     montar(tarefas, { campo: 'titulo', crescente: false });
 
-    expect(screen.getByRole('columnheader', { name: 'Tarefa' }).className).toBe('decrescente');
-    expect(screen.getByRole('columnheader', { name: 'Categoria' }).className).toBe('');
+    const tarefa = screen.getByRole('columnheader', { name: 'Tarefa' });
+    const categoria = screen.getByRole('columnheader', { name: 'Categoria' });
+
+    expect(tarefa.className).toBe('decrescente');
+    expect(tarefa.getAttribute('aria-sort')).toBe('descending');
+    expect(categoria.className).toBe('');
+    expect(categoria.getAttribute('aria-sort')).toBeNull();
   });
 
   it('os botões de cada linha chamam a ação com a tarefa daquela linha', async () => {
