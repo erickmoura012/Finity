@@ -88,6 +88,22 @@ describe('Card', () => {
     expect(screen.getByText('Amanhã')).toBeTruthy();
   });
 
+  it('o botão de avançar move a tarefa pra próxima coluna', async () => {
+    const usuario = userEvent.setup();
+    const acoes = montar({ status: 'em_andamento' });
+
+    await usuario.click(screen.getByRole('button', { name: 'Mover tarefa Estudar React para Concluído' }));
+
+    expect(acoes.mover).toHaveBeenCalledWith('1', 'concluido');
+    // e não abre a edição junto
+    expect(acoes.editar).not.toHaveBeenCalled();
+  });
+
+  it('tarefa concluída não tem o botão de avançar', () => {
+    montar({ status: 'concluido' });
+    expect(screen.queryByRole('button', { name: /Mover tarefa/ })).toBeNull();
+  });
+
   it('clicar no card abre a edição', async () => {
     const usuario = userEvent.setup();
     const acoes = montar();

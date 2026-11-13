@@ -72,6 +72,14 @@ export const STATUS: Record<Status, string> = {
   concluido: 'Concluído'
 };
 
+// A coluna seguinte no quadro: A Fazer -> Em andamento -> Concluído.
+// Concluído é a última, então não tem próxima (null).
+export function proximoStatus(status: Status): Status | null {
+  if (status === 'a_fazer') return 'em_andamento';
+  if (status === 'em_andamento') return 'concluido';
+  return null;
+}
+
 export const PRIORIDADES: Record<Prioridade, string> = {
   alta: 'Alta',
   media: 'Média',

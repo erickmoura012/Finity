@@ -7,6 +7,7 @@ import {
   textoResultado,
   estaAtrasada,
   textoPrazo,
+  proximoStatus,
   validarTarefa,
   validarProjeto,
   validarBackup
@@ -163,6 +164,17 @@ describe('textoPrazo', () => {
   it('nos outros dias mostra a data', () => {
     expect(textoPrazo('2026-11-02')).toBe('02/11/2026');
     expect(textoPrazo('2026-10-30')).toBe('30/10/2026');
+  });
+});
+
+describe('proximoStatus', () => {
+  it('segue a ordem das colunas do quadro', () => {
+    expect(proximoStatus('a_fazer')).toBe('em_andamento');
+    expect(proximoStatus('em_andamento')).toBe('concluido');
+  });
+
+  it('concluído é a última coluna', () => {
+    expect(proximoStatus('concluido')).toBeNull();
   });
 });
 

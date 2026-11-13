@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PRIORIDADES, estaAtrasada, textoPrazo, type Tarefa } from '../../js/script/tarefas';
+import { PRIORIDADES, STATUS, estaAtrasada, proximoStatus, textoPrazo, type Tarefa } from '../../js/script/tarefas';
 import { formatarDataCriacao } from '../../js/script/utils';
 import { useAcoesTarefa } from '../contexts/AcoesTarefaContext';
 
@@ -12,6 +12,8 @@ function Card({ tarefa }: CardProps) {
   const acoes = useAcoesTarefa();
   const atrasada = estaAtrasada(tarefa);
   const prazo = textoPrazo(tarefa.dataLimite);
+  // pra onde o botão de avançar leva a tarefa (null quando já está concluída)
+  const proximo = proximoStatus(tarefa.status);
   const [arrastando, setArrastando] = useState(false);
 
   // vermelho se já passou, laranja se vence hoje
@@ -40,6 +42,21 @@ function Card({ tarefa }: CardProps) {
         <span className={'tag prioridade-' + tarefa.prioridade}>{PRIORIDADES[tarefa.prioridade]}</span>
 
         <div className="card-acoes">
+          {/* no celular não dá pra arrastar, então esse botão passa a tarefa pra próxima coluna */}
+          {proximo && (
+            <button
+              className="btn-icone"
+              title={'Mover para ' + STATUS[proximo]}
+              aria-label={'Mover tarefa ' + tarefa.titulo + ' para ' + STATUS[proximo]}
+              onClick={evento => {
+                evento.stopPropagation();
+                acoes.mover(tarefa.id, proximo);
+              }}
+            >
+              <i className={proximo === 'concluido' ? 'bx bx-check' : 'bx bx-right-arrow-alt'}></i>
+            </button>
+          )}
+
           <button
             className="btn-icone"
             title="Editar"
